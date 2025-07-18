@@ -1,6 +1,5 @@
 import React from "react";
 import { Card, CardContent, Typography } from "@mui/material";
-import {decodeHtml} from "@/data/helpers"
 
 // Props for the PlayerPromptCard component
 type PlayerPromptCardProps = {
@@ -33,7 +32,7 @@ const PlayerPromptCard: React.FC<PlayerPromptCardProps> = ({ title, description 
                             fontSize: "1.5rem",
                         }}
                     >
-                        {decodeHtml(title)}
+                        {title}
                     </Typography>
                 )}
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardMedia, CardContent, Typography } from "@mui/material";
-import {ProfilePictureSettings} from "@/data/values";
+import {ProfilePictureSettings} from "../../data/values";
 
 const {aspectRatio} = ProfilePictureSettings;
 
@@ -63,7 +63,7 @@ const PlayerDisplayCard: React.FC<PlayerDisplayProps> = ({
                   aspectRatio: aspectRatio,
                     height: "auto",// Updates to maintain aspect ratio and fill space nicely
                     width: "100%",
-                    objectFit: "cover",
+                    objectFit: "scale-down",
                 }}
             />
 
