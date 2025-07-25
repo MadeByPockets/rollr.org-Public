@@ -10,6 +10,7 @@ export interface BaseSearchResultCardProps {
   result: SearchResultItem;
   onClick?: (id: number) => void;
   icon?: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 /**

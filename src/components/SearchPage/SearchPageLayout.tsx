@@ -35,6 +35,11 @@ interface SearchPageLayoutProps {
   }) => void;
   
   /**
+   * Optional callback for when the search button is clicked
+   */
+  onSubmit?: () => void;
+  
+  /**
    * Optional callback for when a result is clicked
    */
   onResultClick?: (id: number) => void;
