@@ -1,28 +1,83 @@
 "use client"
 
-import React from 'react';
+import React, { useState } from 'react';
 import SearchPageLayout from '@/components/SearchPage/SearchPageLayout';
-import { SearchResults } from '@/mocks/SearchResults';
+import { SearchResults, SearchResultItem } from '@/mocks/SearchResults';
 
 /**
  * Search page component that serves as a shell to deliver the SearchPageLayout
  */
 const SearchPage = () => {
-  // These handlers would typically update state and trigger re-renders
-  // For this example, they just log to the console
-  const handleTypeChange = (selectedTypes: string[]) => {
-    console.log('Selected types:', selectedTypes);
+  // State to store current filter values
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<{
+    mustHave: number[];
+    mustNotHave: number[];
+    shouldHaveAtLeastOne: number[];
+  }>({
+    mustHave: [],
+    mustNotHave: [],
+    shouldHaveAtLeastOne: []
+  });
+  
+  // State to store filtered results
+  const [filteredResults, setFilteredResults] = useState<SearchResultItem[]>(SearchResults);
+
+  // Handler for type filter changes
+  const handleTypeChange = (types: string[]) => {
+    setSelectedTypes(types);
+    console.log('Selected types:', types);
   };
 
-
-  const handleTagChange = (selectedTags: {
+  // Handler for tag filter changes
+  const handleTagChange = (tags: {
     mustHave: number[];
     mustNotHave: number[];
     shouldHaveAtLeastOne: number[];
   }) => {
-    console.log('Must have tags:', selectedTags.mustHave);
-    console.log('Must not have tags:', selectedTags.mustNotHave);
-    console.log('Should contain at least one tag:', selectedTags.shouldHaveAtLeastOne);
+    setSelectedTags(tags);
+    console.log('Must have tags:', tags.mustHave);
+    console.log('Must not have tags:', tags.mustNotHave);
+    console.log('Should contain at least one tag:', tags.shouldHaveAtLeastOne);
+  };
+
+  // Handler for search button click
+  const handleSubmit = () => {
+    console.log('Search button clicked');
+    console.log('Applying filters:', { selectedTypes, selectedTags });
+    
+    // Filter results based on selected types and tags
+    let results = [...SearchResults];
+    
+    // Filter by type if any types are selected
+    if (selectedTypes.length > 0) {
+      results = results.filter(result => selectedTypes.includes(result.type));
+    }
+    
+    // Filter by "must have" tags
+    if (selectedTags.mustHave.length > 0) {
+      results = results.filter(result => 
+        result.tags && selectedTags.mustHave.every(tagId => result.tags!.includes(tagId))
+      );
+    }
+    
+    // Filter by "must not have" tags
+    if (selectedTags.mustNotHave.length > 0) {
+      results = results.filter(result => 
+        !result.tags || !selectedTags.mustNotHave.some(tagId => result.tags!.includes(tagId))
+      );
+    }
+    
+    // Filter by "should have at least one" tags
+    if (selectedTags.shouldHaveAtLeastOne.length > 0) {
+      results = results.filter(result => 
+        result.tags && selectedTags.shouldHaveAtLeastOne.some(tagId => result.tags!.includes(tagId))
+      );
+    }
+    
+    // Update filtered results
+    setFilteredResults(results);
+    console.log('Filtered results:', results);
   };
 
   const handleResultClick = (id: number) => {
@@ -32,9 +87,10 @@ const SearchPage = () => {
   return (
     <SearchPageLayout
       title="Search"
-      results={SearchResults}
+      results={filteredResults}
       onTypeChange={handleTypeChange}
       onTagChange={handleTagChange}
+      onSubmit={handleSubmit}
       onResultClick={handleResultClick}
     />
   );

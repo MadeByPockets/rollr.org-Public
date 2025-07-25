@@ -57,6 +57,7 @@ export default function SearchPageLayout({
   title = 'Search Results',
   onTypeChange,
   onTagChange,
+  onSubmit,
   onResultClick
 }: SearchPageLayoutProps) {
   const theme = useTheme();
@@ -97,6 +98,7 @@ export default function SearchPageLayout({
               <FiltersContainer 
                 onTypeChange={onTypeChange}
                 onTagChange={onTagChange}
+                onSubmit={onSubmit}
               />
             </CardContent>
           </Card>
