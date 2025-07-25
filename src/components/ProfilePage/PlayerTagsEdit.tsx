@@ -6,28 +6,25 @@ import CardContent from "@mui/material/CardContent"
 import Autocomplete from "@mui/material/Autocomplete"
 import TextField from "@mui/material/TextField"
 import Popper, {PopperProps} from "@mui/material/Popper";
-import React from "react";
+import React, {useEffect} from "react";
 
 export default function PlayerTagsEdit(props: {
   PlayerTags: TagsFormat[],
   possibleTags: TagsFormat[],
-  updatePlayerTags: (ids:number[]) => void,
+  updatePlayerTags: (id:number) => void,
 }) {
-
-  const [currentTags, setCurrentTags] = React.useState<number[]>((props.PlayerTags).map((tag)=> tag.id ));
   const [inputValue, setInputValue] = React.useState('');
+  const tags:number[] = props.PlayerTags.map((tag) => tag.id)
 
 
   const updateCurrentTags = (id:number) => {
-    if (currentTags.includes(id)) {
-      setCurrentTags(currentTags.filter((tag) => tag !== id));
-    }
-    else {
-      setCurrentTags([...currentTags, id]);
-    }
-
-    props.updatePlayerTags(currentTags)
+    console.log(id)
+    props.updatePlayerTags(id)
   }
+
+  useEffect(() => {
+  }, [props.PlayerTags]);
+
 
   const generateLabel = (tag: TagsFormat) => {
 
@@ -57,8 +54,8 @@ export default function PlayerTagsEdit(props: {
 
   const renderLabels = () => {
     const tagValues:TagsFormat[] = []
-      props.possibleTags.map((tag) => {
-      if (currentTags.includes(tag.id)) {
+    props.possibleTags.map((tag) => {
+      if (tags.includes(tag.id)) {
         tagValues.push( {id:tag.id, label:tag.label, color:tag.color, image:tag.image} as TagsFormat);
       }
     })
@@ -72,8 +69,8 @@ export default function PlayerTagsEdit(props: {
   const tagValues:{value:number, label:string}[] = props.possibleTags.map((tag) =>
   {return {value:tag.id, label:tag.label}});
 
-    return (
-      <Grid container>
+  return (
+    <Grid container>
       <Grid size={{xs:12, md:3}}>
         <Card>
           <CardHeader title="Player Tags" style={{
@@ -87,14 +84,14 @@ export default function PlayerTagsEdit(props: {
             <Grid container spacing={3}>
               <Grid sx={{marginTop:3, width: "100%"}}>
                 <Autocomplete
-                  key={currentTags.join('-')}
+                  key={props.PlayerTags.join('-')}
                   options={tagValues}
                   filterOptions={(options, state) => {
                     return options
                       .filter(
                         (option) =>
                           // Exclude options already in currentTags
-                          !currentTags.includes(option.value) &&
+                          !tags.includes(option.value) &&
                           // Filter based on user input
                           option.label.toLowerCase().includes(state.inputValue.toLowerCase())
                       )
@@ -128,9 +125,9 @@ export default function PlayerTagsEdit(props: {
           </CardContent>
         </Card>
       </Grid>
-      </Grid>
+    </Grid>
 
-    )
+  )
 }
 
 const CustomPopper = (props: PopperProps) => {
@@ -155,5 +152,4 @@ const CustomPopper = (props: PopperProps) => {
     />
   );
 };
-
 

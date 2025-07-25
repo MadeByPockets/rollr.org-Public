@@ -1,122 +1,126 @@
 export const Tags: TagsFormat[] = [
+  // Game tags
   {
     id: 1,
-    label: 'ClutchMaster',
+    label: 'D&D 5e',
     color: '#FF5733',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: true
+    }
   },
   {
     id: 2,
-    label: 'ChillGrinder',
+    label: 'Smash Bros',
     color: '#33FF57',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: true
+    }
   },
   {
     id: 3,
-    label: 'StrategicSage',
+    label: 'Settlers of Catan',
     color: '#3357FF',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: true
+    }
   },
   {
     id: 4,
-    label: 'FearlessRush',
+    label: 'Magic: The Gathering',
     color: '#FF33A1',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: true
+    }
   },
+  // Play style tags
   {
     id: 5,
-    label: 'SilentStriker',
+    label: 'Competitive',
     color: '#57FF33',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: false
+    }
   },
   {
     id: 6,
-    label: 'MysticSupport',
+    label: 'Casual',
     color: '#33FFF7',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: false
+    }
   },
   {
     id: 7,
-    label: 'AggroKing',
+    label: 'RP Heavy',
+    color: '#FF8A33',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: false
+    }
   },
   {
     id: 8,
-    label: 'XPCollector',
+    label: 'Grimdark',
     color: '#D433FF',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: false
+    }
   },
+  // Social indicator tags
   {
     id: 9,
-    label: 'Wildcard',
+    label: 'LGBT-Friendly',
     color: '#33FF93',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: true
+    }
   },
   {
     id: 10,
-    label: 'SniperSoul',
+    label: 'No Politics',
+    color: '#FFC300',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: true
+    }
   },
   {
     id: 11,
-    label: 'MetaMaster',
+    label: 'Beginner Friendly',
     color: '#FF8A33',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: true
+    }
   },
   {
     id: 12,
-    label: 'BossDestroyer',
+    label: 'Family Friendly',
     color: '#FFC300',
-  }
-]
-
-export const EventTags: TagsFormat[] = [
-  {
-    id: 1,
-    label: 'ClutchMaster',
-    color: '#FF5733',
-  },
-  {
-    id: 2,
-    label: 'ChillGrinder',
-    color: '#33FF57',
-  },
-  {
-    id: 3,
-    label: 'StrategicSage',
-    color: '#3357FF',
-  },
-  {
-    id: 4,
-    label: 'FearlessRush',
-    color: '#FF33A1',
-  },
-  {
-    id: 5,
-    label: 'SilentStriker',
-    color: '#57FF33',
-  },
-  {
-    id: 6,
-    label: 'MysticSupport',
-    color: '#33FFF7',
-  },
-  {
-    id: 7,
-    label: 'AggroKing',
-  },
-  {
-    id: 8,
-    label: 'XPCollector',
-    color: '#D433FF',
-  },
-  {
-    id: 9,
-    label: 'Wildcard',
-    color: '#33FF93',
-  },
-  {
-    id: 10,
-    label: 'SniperSoul',
-  },
-  {
-    id: 11,
-    label: 'MetaMaster',
-    color: '#FF8A33',
-  },
-  {
-    id: 12,
-    label: 'BossDestroyer',
-    color: '#FFC300',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: true
+    }
   }
 ]
 
@@ -126,4 +130,9 @@ export interface TagsFormat {
   label: string,
   color?: string,
   image?: string,
+  appliesTo: {
+    players: boolean,
+    events: boolean,
+    tables: boolean
+  }
 }
