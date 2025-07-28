@@ -17,7 +17,7 @@ const ResultsContainer: React.FC<ResultsContainerProps> = ({
   results,
   onResultClick
 }) => {
-  if (results.length === 0) {
+  if (results.length === 0 || !results.map) {
     return (
       <Box sx={{ textAlign: 'center', py: 4 }}>
         No results found. Try adjusting your filters.
