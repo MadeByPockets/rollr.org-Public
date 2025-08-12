@@ -5,6 +5,7 @@ import Button from '@mui/material/Button';
 import SearchIcon from '@mui/icons-material/Search';
 import TypeFilter from './Filters/TypeFilter';
 import TagsFilter from './Filters/TagsFilter';
+import {TagsFormat} from '@/mocks/Tags';
 
 interface FiltersContainerProps {
   onTypeChange?: (selectedTypes: string[]) => void;
@@ -14,6 +15,7 @@ interface FiltersContainerProps {
     shouldHaveAtLeastOne: number[];
   }) => void;
   onSubmit?: () => void;
+  tags: TagsFormat[];
 }
 
 /**
@@ -22,17 +24,19 @@ interface FiltersContainerProps {
 const FiltersContainer: React.FC<FiltersContainerProps> = ({
   onTypeChange,
   onTagChange,
-  onSubmit
+  onSubmit,
+  tags
 }) => {
   return (
     <Box>
       {/* Type Filters */}
-      <TypeFilter onChange={onTypeChange} />
+      <TypeFilter onChange={onTypeChange}/>
       
       <Divider sx={{ my: 2 }} />
       
       {/* Tags Filter */}
-      <TagsFilter 
+      <TagsFilter
+        tags={tags}
         onChange={onTagChange} 
       />
       

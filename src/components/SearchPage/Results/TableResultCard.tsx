@@ -1,3 +1,4 @@
+"use client"
 import React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -20,7 +21,8 @@ interface TableResultCardProps extends BaseSearchResultCardProps {
  */
 const TableResultCard: React.FC<TableResultCardProps> = ({ 
   result,
-  onClick
+  onClick,
+  tags
 }) => {
   // Find the full table data from Tables mock data
   const tableData = Tables.find(table => table.id === result.id);
@@ -52,7 +54,7 @@ const TableResultCard: React.FC<TableResultCardProps> = ({
   );
 
   return (
-    <BaseSearchResultCard result={result} onClick={onClick} icon={tableIcon}>
+    <BaseSearchResultCard result={result} onClick={onClick} icon={tableIcon} tags={tags}>
       <Box sx={{ mb: 2 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
           <Typography variant="body2">

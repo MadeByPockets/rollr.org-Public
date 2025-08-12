@@ -8,6 +8,7 @@ import { useMediaQuery, useTheme } from '@mui/material';
 import FiltersContainer from './FiltersContainer';
 import ResultsContainer from './ResultsContainer';
 import { SearchResultItem } from '@/mocks/SearchResults';
+import {TagsFormat} from '@/mocks/Tags'
 
 interface SearchPageLayoutProps {
   /**
@@ -33,6 +34,8 @@ interface SearchPageLayoutProps {
     mustNotHave: number[];
     shouldHaveAtLeastOne: number[];
   }) => void;
+  allTags: TagsFormat[];
+  validTags: TagsFormat[];
   
   /**
    * Optional callback for when the search button is clicked
@@ -42,7 +45,7 @@ interface SearchPageLayoutProps {
   /**
    * Optional callback for when a result is clicked
    */
-  onResultClick?: (id: number) => void;
+  onResultClick?: (id: number, type: "player" | "event" | "table") => void;
 }
 
 /**
@@ -58,7 +61,9 @@ export default function SearchPageLayout({
   onTypeChange,
   onTagChange,
   onSubmit,
-  onResultClick
+  onResultClick,
+  validTags,
+  allTags
 }: SearchPageLayoutProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -99,6 +104,7 @@ export default function SearchPageLayout({
                 onTypeChange={onTypeChange}
                 onTagChange={onTagChange}
                 onSubmit={onSubmit}
+                tags={validTags}
               />
             </CardContent>
           </Card>
@@ -121,6 +127,7 @@ export default function SearchPageLayout({
               <ResultsContainer 
                 results={results}
                 onResultClick={onResultClick}
+                tags={allTags}
               />
             </CardContent>
           </Card>

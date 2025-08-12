@@ -4,13 +4,14 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { SearchResultItem } from '@/mocks/SearchResults';
-import { Tags } from '@/mocks/Tags';
+import {TagsFormat} from '@/mocks/Tags';
 
 export interface BaseSearchResultCardProps {
   result: SearchResultItem;
   onClick?: (id: number) => void;
   icon?: React.ReactNode;
   children?: React.ReactNode;
+  tags: TagsFormat[];
 }
 
 /**
@@ -20,7 +21,8 @@ const BaseSearchResultCard: React.FC<BaseSearchResultCardProps> = ({
   result,
   onClick,
   children,
-  icon
+  icon,
+  tags
 }) => {
   const handleClick = () => {
     if (onClick) {
@@ -67,7 +69,7 @@ const BaseSearchResultCard: React.FC<BaseSearchResultCardProps> = ({
           {result.tags && result.tags.length > 0 && (
             <Box sx={{ mt: 1, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
               {result.tags.map((tagId) => {
-                const tag = Tags.find((t) => t.id === tagId);
+                const tag = tags.find((t) => t.id === tagId);
                 return tag ? (
                   <span
                     key={tag.id}

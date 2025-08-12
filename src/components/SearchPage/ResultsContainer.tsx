@@ -4,10 +4,12 @@ import { SearchResultItem } from '@/mocks/SearchResults';
 import PlayerResultCard from './Results/PlayerResultCard';
 import TableResultCard from './Results/TableResultCard';
 import EventResultCard from './Results/EventResultCard';
+import { TagsFormat } from '@/mocks/Tags';
 
 interface ResultsContainerProps {
   results: SearchResultItem[];
-  onResultClick?: (id: number) => void;
+  onResultClick?: (id: number, type: "player" | "event" | "table") => void;
+  tags: TagsFormat[]
 }
 
 /**
@@ -15,7 +17,8 @@ interface ResultsContainerProps {
  */
 const ResultsContainer: React.FC<ResultsContainerProps> = ({
   results,
-  onResultClick
+  onResultClick,
+  tags
 }) => {
   if (results.length === 0 || !results.map) {
     return (
@@ -23,6 +26,18 @@ const ResultsContainer: React.FC<ResultsContainerProps> = ({
         No results found. Try adjusting your filters.
       </Box>
     );
+  }
+
+  const onPlayerClick = (id: number) => {
+    onResultClick?.(id, 'player');
+  }
+
+  const onTableClick = (id: number) => {
+    onResultClick?.(id, 'table');
+  }
+
+  const onEventClick = (id: number) => {
+    onResultClick?.(id, 'event');
   }
 
   return (
@@ -35,7 +50,8 @@ const ResultsContainer: React.FC<ResultsContainerProps> = ({
               <PlayerResultCard 
                 key={result.id} 
                 result={result as SearchResultItem & { type: 'player' }} 
-                onClick={onResultClick}
+                onClick={onPlayerClick}
+                tags={tags}
               />
             );
           case 'table':
@@ -43,7 +59,8 @@ const ResultsContainer: React.FC<ResultsContainerProps> = ({
               <TableResultCard 
                 key={result.id} 
                 result={result as SearchResultItem & { type: 'table' }} 
-                onClick={onResultClick}
+                onClick={onTableClick}
+                tags={tags}
               />
             );
           case 'event':
@@ -51,7 +68,8 @@ const ResultsContainer: React.FC<ResultsContainerProps> = ({
               <EventResultCard 
                 key={result.id} 
                 result={result as SearchResultItem & { type: 'event' }} 
-                onClick={onResultClick}
+                onClick={onEventClick}
+                tags={tags}
               />
             );
           default:

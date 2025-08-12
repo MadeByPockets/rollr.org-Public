@@ -7,10 +7,11 @@ import BaseSearchResultCard, { BaseSearchResultCardProps } from './BaseSearchRes
  */
 const SearchResultCard: React.FC<BaseSearchResultCardProps> = ({ 
   result,
-  onClick
+  onClick,
+    tags,
 }) => {
   return (
-    <BaseSearchResultCard result={result} onClick={onClick}>
+    <BaseSearchResultCard result={result} onClick={onClick} tags={tags}>
       {/* No specialized content for the generic card */}
     </BaseSearchResultCard>
   );

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import SearchPageLayout from '@/components/SearchPage/SearchPageLayout';
 import { SearchResults, SearchResultItem } from '@/mocks/SearchResults';
+import { Tags } from '@/mocks/Tags';
 
 /**
  * Search page component that serves as a shell to deliver the SearchPageLayout
@@ -86,13 +87,12 @@ const SearchPage = () => {
 
   return (
     <SearchPageLayout
-      title="Search"
-      results={filteredResults}
-      onTypeChange={handleTypeChange}
-      onTagChange={handleTagChange}
-      onSubmit={handleSubmit}
-      onResultClick={handleResultClick}
-    />
+        title="Search"
+        results={filteredResults}
+        onTypeChange={handleTypeChange}
+        onTagChange={handleTagChange}
+        onSubmit={handleSubmit}
+        onResultClick={handleResultClick} allTags={Tags} validTags={Tags}    />
   );
 };
 
