@@ -9,6 +9,7 @@ import FiltersContainer from './FiltersContainer';
 import ResultsContainer from './ResultsContainer';
 import { SearchResultItem } from '@/mocks/SearchResults';
 import {TagsFormat} from '@/mocks/Tags'
+import {SelectChangeEvent} from "@mui/material/Select";
 
 interface SearchPageLayoutProps {
   /**
@@ -46,6 +47,9 @@ interface SearchPageLayoutProps {
    * Optional callback for when a result is clicked
    */
   onResultClick?: (id: number, type: "player" | "event" | "table") => void;
+  
+  distance?: string;
+  onDistanceChange?: (event: SelectChangeEvent) => void;
 }
 
 /**
@@ -63,7 +67,9 @@ export default function SearchPageLayout({
   onSubmit,
   onResultClick,
   validTags,
-  allTags
+  allTags,
+    distance,
+    onDistanceChange,
 }: SearchPageLayoutProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -105,6 +111,8 @@ export default function SearchPageLayout({
                 onTagChange={onTagChange}
                 onSubmit={onSubmit}
                 tags={validTags}
+                distance={distance}
+                onDistanceChange={onDistanceChange}
               />
             </CardContent>
           </Card>

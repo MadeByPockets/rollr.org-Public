@@ -39,8 +39,6 @@ const TagsFilter: React.FC<TagsFilterProps> = ({
 
   // Convert tags to format needed for Autocomplete
   const tagOptions = React.useMemo(() => {
-    console.log("available tags: " + JSON.stringify(Tags))
-    console.log(!Tags)
     if (!Tags || Tags.length == 0 || !Tags.map) return [];
     return Tags.map(tag => ({
       value: tag.id,

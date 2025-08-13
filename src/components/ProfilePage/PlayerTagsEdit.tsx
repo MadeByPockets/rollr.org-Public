@@ -18,7 +18,6 @@ export default function PlayerTagsEdit(props: {
 
 
   const updateCurrentTags = (id:number) => {
-    console.log(id)
     props.updatePlayerTags(id)
   }
 

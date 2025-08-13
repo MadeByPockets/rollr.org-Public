@@ -6,6 +6,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import TypeFilter from './Filters/TypeFilter';
 import TagsFilter from './Filters/TagsFilter';
 import {TagsFormat} from '@/mocks/Tags';
+import {DistanceFilter} from "@/components/SearchPage/Filters/DistanceFilter";
+import {SelectChangeEvent} from "@mui/material/Select";
 
 interface FiltersContainerProps {
   onTypeChange?: (selectedTypes: string[]) => void;
@@ -14,8 +16,10 @@ interface FiltersContainerProps {
     mustNotHave: number[];
     shouldHaveAtLeastOne: number[];
   }) => void;
+  onDistanceChange?: ((event: SelectChangeEvent) => void) | null;
   onSubmit?: () => void;
   tags: TagsFormat[];
+  distance?: string;
 }
 
 /**
@@ -24,13 +28,18 @@ interface FiltersContainerProps {
 const FiltersContainer: React.FC<FiltersContainerProps> = ({
   onTypeChange,
   onTagChange,
+  onDistanceChange,
   onSubmit,
-  tags
+  tags,
+    distance
 }) => {
   return (
     <Box>
       {/* Type Filters */}
       <TypeFilter onChange={onTypeChange}/>
+
+        {/* Distance Filters */}
+        <DistanceFilter onChange={onDistanceChange || null} value={distance || "15"}/>
       
       <Divider sx={{ my: 2 }} />
       

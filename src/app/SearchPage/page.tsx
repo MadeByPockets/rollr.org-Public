@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import SearchPageLayout from '@/components/SearchPage/SearchPageLayout';
 import { SearchResults, SearchResultItem } from '@/mocks/SearchResults';
 import { Tags } from '@/mocks/Tags';
+import {SelectChangeEvent} from "@mui/material/Select";
 
 /**
  * Search page component that serves as a shell to deliver the SearchPageLayout
@@ -20,6 +21,7 @@ const SearchPage = () => {
     mustNotHave: [],
     shouldHaveAtLeastOne: []
   });
+  const [distance, setDistance] = useState<string>("15");
   
   // State to store filtered results
   const [filteredResults, setFilteredResults] = useState<SearchResultItem[]>(SearchResults);
@@ -41,6 +43,13 @@ const SearchPage = () => {
     console.log('Must not have tags:', tags.mustNotHave);
     console.log('Should contain at least one tag:', tags.shouldHaveAtLeastOne);
   };
+  
+  // Handler for distance filter changes
+  
+  const handleDistanceChange = (event: SelectChangeEvent) => {
+    setDistance(event.target.value);
+    console.log('Distance:', event.target.value);
+  }
 
   // Handler for search button click
   const handleSubmit = () => {
@@ -92,7 +101,11 @@ const SearchPage = () => {
         onTypeChange={handleTypeChange}
         onTagChange={handleTagChange}
         onSubmit={handleSubmit}
-        onResultClick={handleResultClick} allTags={Tags} validTags={Tags}    />
+        onResultClick={handleResultClick}
+        allTags={Tags}
+        validTags={Tags}
+        distance={distance}
+        onDistanceChange={handleDistanceChange}/>
   );
 };
 
