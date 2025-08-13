@@ -7,9 +7,11 @@ import EventIcon from '@mui/icons-material/Event';
 import { SearchResultItem } from '@/mocks/SearchResults';
 import { Events } from '@/mocks/Events';
 import BaseSearchResultCard, { BaseSearchResultCardProps } from './BaseSearchResultCard';
+import {TagsFormat} from "@/mocks/Tags";
 
 interface EventResultCardProps extends BaseSearchResultCardProps {
   result: SearchResultItem & { type: 'event' };
+  tags: TagsFormat[]
 }
 
 /**
@@ -18,7 +20,8 @@ interface EventResultCardProps extends BaseSearchResultCardProps {
  */
 const EventResultCard: React.FC<EventResultCardProps> = ({ 
   result,
-  onClick
+  onClick,
+  tags
 }) => {
   // Find the full event data from Events mock data
   const eventData = Events.find(event => event.id === result.id);
@@ -55,7 +58,7 @@ const EventResultCard: React.FC<EventResultCardProps> = ({
   );
 
   return (
-    <BaseSearchResultCard result={result} onClick={onClick} icon={eventIcon}>
+    <BaseSearchResultCard result={result} onClick={onClick} icon={eventIcon} tags={tags}>
       <Box sx={{ mb: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
           <CalendarTodayIcon sx={{ mr: 1, color: 'primary.main' }} />

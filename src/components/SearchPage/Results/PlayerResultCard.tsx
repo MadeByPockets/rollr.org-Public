@@ -2,9 +2,11 @@ import React from 'react';
 import Avatar from '@mui/material/Avatar';
 import { SearchResultItem } from '@/mocks/SearchResults';
 import BaseSearchResultCard, { BaseSearchResultCardProps } from './BaseSearchResultCard';
+import {TagsFormat} from "@/mocks/Tags";
 
 interface PlayerResultCardProps extends BaseSearchResultCardProps {
-  result: SearchResultItem & { type: 'player' };
+  result: SearchResultItem & { type: 'player' }
+  tags:TagsFormat[];
 }
 
 /**
@@ -13,7 +15,8 @@ interface PlayerResultCardProps extends BaseSearchResultCardProps {
  */
 const PlayerResultCard: React.FC<PlayerResultCardProps> = ({ 
   result,
-  onClick
+  onClick,
+  tags
 }) => {
   // Get the first letter of the username for the avatar fallback
   const firstLetter = result.title.charAt(0).toUpperCase();
@@ -54,7 +57,7 @@ const PlayerResultCard: React.FC<PlayerResultCardProps> = ({
   );
 
   return (
-    <BaseSearchResultCard result={result} onClick={onClick} icon={playerIcon}>
+    <BaseSearchResultCard result={result} onClick={onClick} icon={playerIcon} tags={tags}>
       {/* No additional content needed after removing join date */}
     </BaseSearchResultCard>
   );

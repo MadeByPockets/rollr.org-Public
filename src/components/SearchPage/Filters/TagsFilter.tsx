@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import Popper, { PopperProps } from '@mui/material/Popper';
-import { Tags, TagsFormat } from '@/mocks/Tags';
+import {TagsFormat} from '@/mocks/Tags';
 import Divider from '@mui/material/Divider';
 
 interface TagsFilterProps {
@@ -13,6 +13,7 @@ interface TagsFilterProps {
     mustNotHave: number[];
     shouldHaveAtLeastOne: number[];
   }) => void;
+  tags: TagsFormat[];
 }
 
 type TagCategory = 'mustHave' | 'mustNotHave' | 'shouldHaveAtLeastOne';
@@ -23,30 +24,29 @@ type TagCategory = 'mustHave' | 'mustNotHave' | 'shouldHaveAtLeastOne';
  * Provides three separate sections for tags: must haves, must not haves, and should contain at least one
  */
 const TagsFilter: React.FC<TagsFilterProps> = ({ 
-  onChange 
+  onChange, tags: Tags = []
 }) => {
   const [mustHaveTags, setMustHaveTags] = React.useState<number[]>([]);
   const [mustNotHaveTags, setMustNotHaveTags] = React.useState<number[]>([]);
   const [shouldHaveAtLeastOneTags, setShouldHaveAtLeastOneTags] = React.useState<number[]>([]);
+  Tags = !!Tags ? Tags : [];
   
   const [inputValues, setInputValues] = React.useState({
     mustHave: '',
     mustNotHave: '',
     shouldHaveAtLeastOne: ''
   });
-  
-  // Get all available tags
-  const availableTags = React.useMemo(() => {
-    return Tags;
-  }, []);
 
   // Convert tags to format needed for Autocomplete
   const tagOptions = React.useMemo(() => {
-    return availableTags.map(tag => ({
+    console.log("available tags: " + JSON.stringify(Tags))
+    console.log(!Tags)
+    if (!Tags || Tags.length == 0 || !Tags.map) return [];
+    return Tags.map(tag => ({
       value: tag.id,
       label: tag.label
     }));
-  }, [availableTags]);
+  }, [Tags]);
 
   const handleTagChange = (tagId: number, category: TagCategory) => {
     let newTags: number[] = [];
@@ -84,7 +84,9 @@ const TagsFilter: React.FC<TagsFilterProps> = ({
   // Render selected tags as labels with remove buttons
   const renderSelectedTags = (selectedTags: number[], category: TagCategory) => {
     const tagValues: TagsFormat[] = [];
-    availableTags.forEach((tag) => {
+
+    if (!Tags || Tags.length == 0 || !Tags.map) return null;
+    Tags.forEach((tag) => {
       if (selectedTags.includes(tag.id)) {
         tagValues.push(tag);
       }
