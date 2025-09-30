@@ -23,7 +23,7 @@ export interface TableFormat {
   features?: string[];
   capacity?: number;
   waitlist?:boolean;
-  communicationPreferances: string;
+  communicationPreferences: string;
   location?: string;
   tags?: number[];
   imageUrl?: string;
@@ -77,7 +77,7 @@ export const Tables: TableFormat[] = [
         tags: [1, 4, 5],
         imageUrl: '/images/tables/table1.jpg',
         availability: 'Weekends only',
-        communicationPreferances: "",
+        communicationPreferences: "",
         dungeonMaster: 1,
         players: [2, 3, 4],
         owner: 1
@@ -93,7 +93,7 @@ export const Tables: TableFormat[] = [
         tags: [1, 7, 12],
         imageUrl: '/images/tables/table2.jpg',
         availability: 'Daily',
-        communicationPreferances: "",
+        communicationPreferences: "",
         dungeonMaster: 1,
         players: [],
         owner: 2
@@ -109,7 +109,7 @@ export const Tables: TableFormat[] = [
         tags: [3, 4, 11],
         imageUrl: '/images/tables/table3.jpg',
         availability: 'Weekdays after 5pm, all day weekends',
-        communicationPreferances: "",
+        communicationPreferences: "",
         dungeonMaster: 2,
         players: [],
         owner: 3
@@ -125,7 +125,7 @@ export const Tables: TableFormat[] = [
         tags: [4, 5, 10],
         imageUrl: '/images/tables/table4.jpg',
         availability: 'By reservation only',
-        communicationPreferances: "",
+        communicationPreferences: "",
         dungeonMaster: 1,
         players: [],
         owner: 4
@@ -141,7 +141,7 @@ export const Tables: TableFormat[] = [
         tags: [6, 9, 12],
         imageUrl: '/images/tables/table5.jpg',
         availability: 'Daily 10am-10pm',
-        communicationPreferances: "",
+        communicationPreferences: "",
         dungeonMaster: 3,
         players: [],
         owner: 5
