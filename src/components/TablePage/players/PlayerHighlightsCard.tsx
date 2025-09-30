@@ -1,3 +1,4 @@
+import Image from "next/image";
 import {Card, CardContent, CardHeader, Typography} from "@mui/material";
 import Grid from "@mui/material/Grid";
 import {PlayerFormat} from "@/mocks/Players";
@@ -7,11 +8,12 @@ import Button from "@mui/material/Button";
 
 
 export type PlayerHighlightsCardProps = {
-    player: PlayerFormat,
-    allTags: TagsFormat[],
-    isWaitList?: boolean,
-    removeFromTable?: (player: PlayerFormat) => void,
-    addToTable?: (player: PlayerFormat) => void }
+    player: PlayerFormat;
+    allTags: TagsFormat[];
+    isWaitList?: boolean;
+    removeFromTable?: (player: PlayerFormat) => void;
+    addToTable?: (player: PlayerFormat) => void;
+}
 
 export const PlayerHighlightsCard = function({player, allTags, isWaitList, removeFromTable, addToTable}: PlayerHighlightsCardProps) {
     return (
@@ -26,7 +28,12 @@ export const PlayerHighlightsCard = function({player, allTags, isWaitList, remov
                 <Grid container spacing={2} direction="column">
                     <Grid container direction="row">
                         <Grid>
-                            <img src={player.miniPic} alt={player.username + "'s profile pic"} width="64"/>
+                            <Image
+                                alt={player.username + "'s profile pic"}
+                                height={64}
+                                src={player.miniPic}
+                                width={64}
+                            />
                         </Grid>
                         <Grid>
                             <Typography variant="h5">
@@ -75,7 +82,12 @@ export const DMHighlightsCard = function({player, allTags}:{player: PlayerFormat
                     </Grid>
                     <Grid container direction="row">
                         <Grid>
-                            <img src={player.imageUrl} alt={player.username + "'s profile pic"} width="256"/>
+                            <Image
+                                alt={player.username + "'s profile pic"}
+                                height={120}
+                                src={player.imageUrl ? player.imageUrl : ""}
+                                width={256}
+                            />
                         </Grid>
 
                         <Grid>
