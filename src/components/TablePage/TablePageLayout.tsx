@@ -1,5 +1,5 @@
 "use client"
-import { Card, CardContent, CardHeader, Typography, Box } from "@mui/material";
+import {Card, CardContent, CardHeader, Typography, Box} from "@mui/material";
 import { TableFormat } from "@/mocks/Tables";
 import { TagsFormat } from "@/mocks/Tags";
 import { generateTagsDisplay } from "@/components/shared/TagComponents";
