@@ -8,14 +8,17 @@ import Button from "@mui/material/Button";
 
 
 export type PlayerHighlightsCardProps = {
-    player: PlayerFormat;
-    allTags: TagsFormat[];
-    isWaitList?: boolean;
-    removeFromTable?: (player: PlayerFormat) => void;
     addToTable?: (player: PlayerFormat) => void;
+    allTags: TagsFormat[];
+    canRemoveFromTable: boolean;
+    isWaitList?: boolean;
+    player: PlayerFormat;
+    removeFromTable?: (player: PlayerFormat) => void;
 }
 
-export const PlayerHighlightsCard = function({player, allTags, isWaitList, removeFromTable, addToTable}: PlayerHighlightsCardProps) {
+export const PlayerHighlightsCard = function(props: PlayerHighlightsCardProps) {
+    const { allTags, canRemoveFromTable, isWaitList, player, removeFromTable } = props;
+
     return (
         <Card
             elevation={3}
@@ -47,16 +50,16 @@ export const PlayerHighlightsCard = function({player, allTags, isWaitList, remov
                         }
                     </Grid>
                 </Grid>
-                <Button onClick={() => removeFromTable?.(player)}>
-                    { isWaitList && (
-                        <p>Deny Player</p>
-                    ) || (
-                        <p>Remove Player</p>
-                    )
-                    }
-                    {}
-                </Button>
-
+                {canRemoveFromTable && (
+                    <Button onClick={() => removeFromTable?.(player)}>
+                        { isWaitList && (
+                            <p>Deny Player</p>
+                        ) || (
+                            <p>Remove Player</p>
+                        )
+                        }
+                    </Button>
+                )}
             </CardContent>
         </Card>
     )

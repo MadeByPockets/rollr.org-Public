@@ -5,21 +5,25 @@ import { TagsFormat } from "@/mocks/Tags";
 import { generateTagsDisplay } from "@/components/shared/TagComponents";
 import {JSX, useState} from "react";
 import Grid from "@mui/material/Grid";
-import {PlayerFormat} from "@/mocks/Players";
+import {PlayerFormat, Players} from "@/mocks/Players";
 import {DMHighlightsCard, PlayerHighlightsCard} from "@/components/TablePage/players/PlayerHighlightsCard";
 import TableActionsBar from "@/components/TablePage/TableActionsBar";
 import {TableStatus} from "@/components/TablePage/types";
+import {useGameTableContext} from "@/app/TablePage/GameTableProvider/GameTableContext";
 
 export type TablePageProps = {
-    table: TableFormat;
+    // table: TableFormat;
     allTags: TagsFormat[];
     players: PlayerFormat[];
     dungeonMaster: PlayerFormat;
     tableStatus: TableStatus,
-    waitList: PlayerFormat[];
+    // waitList: PlayerFormat[];
 };
 
-export default function TablePageLayout({ table, allTags, players, dungeonMaster, tableStatus}: TablePageProps) {
+export default function TablePageLayout(props: TablePageProps) {
+    const { allTags, dungeonMaster, players, tableStatus } = props;
+    const { table, setTable } = useGameTableContext();
+
     // TODO: possibly use this state variable to set the entire table and all it's corresponding fields into edit state
     const [isTableInEditMode, setIsTableInEditMode] = useState(false);
 
@@ -42,6 +46,7 @@ export default function TablePageLayout({ table, allTags, players, dungeonMaster
             {/* ----- Main Card --------- */}
             <Card
                 sx={{
+                    backgroundColor: isTableInEditMode ? "lightsalmon" : "white",
                     borderRadius: "5%",
                     p: 2,
                     boxShadow: "0px 8px 15px rgba(25, 118, 210, 0.3)",
@@ -66,7 +71,7 @@ export default function TablePageLayout({ table, allTags, players, dungeonMaster
                         {/* ----------- title ------------ */}
                         <Box>
                             <CardHeader
-                                title={table.title}
+                                title={currentTable.title}
                                 sx={{
                                     p: 0,
                                     "& .MuiCardHeader-title": {
@@ -88,6 +93,7 @@ export default function TablePageLayout({ table, allTags, players, dungeonMaster
 
                         { /* TODO: should the edit button enable table editing, or should the ability to edit the table be determined externally? */ }
                         <TableActionsBar
+                            enableEdits={setIsTableInEditMode}
                             numPlayers={currentTable.capacity || 0}
                             slots={currentTable.capacity || 0}
                             tableStatus={tableStatus}
@@ -124,9 +130,10 @@ export default function TablePageLayout({ table, allTags, players, dungeonMaster
                                             (player) => {
                                                 return (
                                                     <PlayerHighlightsCard
+                                                        allTags={allTags}
+                                                        canRemoveFromTable={isTableInEditMode}
                                                         key={player.id}
                                                         player={player}
-                                                        allTags={allTags}
                                                         removeFromTable={handleRemovePlayer}
                                                     />
                                                     )
