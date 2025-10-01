@@ -3,7 +3,7 @@ import {Card, CardContent, CardHeader, Typography, Box} from "@mui/material";
 import { TableFormat } from "@/mocks/Tables";
 import { TagsFormat } from "@/mocks/Tags";
 import { generateTagsDisplay } from "@/components/shared/TagComponents";
-import { JSX } from "react";
+import {JSX, useState} from "react";
 import Grid from "@mui/material/Grid";
 import {PlayerFormat} from "@/mocks/Players";
 import {DMHighlightsCard, PlayerHighlightsCard} from "@/components/TablePage/players/PlayerHighlightsCard";
@@ -20,6 +20,23 @@ export type TablePageProps = {
 };
 
 export default function TablePageLayout({ table, allTags, players, dungeonMaster, tableStatus}: TablePageProps) {
+    // TODO: possibly use this state variable to set the entire table and all it's corresponding fields into edit state
+    const [isTableInEditMode, setIsTableInEditMode] = useState(false);
+
+    const [currentTable, setCurrentTable] = useState<TableFormat>(table);
+    const [currentPlayers, setCurrentPlayers] = useState(players);
+
+    const handleRemovePlayer = (playerToRemove: PlayerFormat): void => {
+        setIsTableInEditMode((prevState) => !prevState);
+        if (currentPlayers.includes(playerToRemove)) {
+            setCurrentPlayers((prevState) => prevState.filter(player => playerToRemove !== player));
+        }
+    }
+
+    // TODO: need to unify data types. Consider creating a handleTableUpdate function
+    //  and a button to 'save' the edited table fields to a new table object. This can
+    //  then be passed to the backend to update the value of the table.
+
     return (
         <>
             {/* ----- Main Card --------- */}
@@ -63,13 +80,19 @@ export default function TablePageLayout({ table, allTags, players, dungeonMaster
 
                         {/* ----------- Short Description -------- */}
                         <Typography sx={{ color: "white", opacity: 0.95 }}>
-                            {table.shortDescription}
+                            {currentTable.shortDescription}
                         </Typography>
 
                         {/* ---------------- Tags -------------- */}
-                        <Grid container>{renderTags(table.tags, allTags)}</Grid>
+                        <Grid container>{renderTags(currentTable.tags, allTags)}</Grid>
 
-                        <TableActionsBar numPlayers={table.capacity || 0} tableStatus={tableStatus} slots={table.capacity || 0} waitlist={0}/>
+                        { /* TODO: should the edit button enable table editing, or should the ability to edit the table be determined externally? */ }
+                        <TableActionsBar
+                            numPlayers={currentTable.capacity || 0}
+                            slots={currentTable.capacity || 0}
+                            tableStatus={tableStatus}
+                            waitlist={0}
+                        />
                     </Grid>
 
                     {/* ------------ Main Body: Two Lanes ------------------- */}
@@ -79,7 +102,7 @@ export default function TablePageLayout({ table, allTags, players, dungeonMaster
                             <Card sx={{ height: "100%" }}>
                                 <CardContent>
                                     <Typography sx={{ whiteSpace: "pre-wrap" }}>
-                                        {table.description}
+                                        {currentTable.description}
                                     </Typography>
                                 </CardContent>
                             </Card>
@@ -97,10 +120,15 @@ export default function TablePageLayout({ table, allTags, players, dungeonMaster
 
                                     {/* Replace this block with your actual player info content */}
                                     {
-                                        players.map(
+                                        currentPlayers.map(
                                             (player) => {
                                                 return (
-                                                    <PlayerHighlightsCard key= {player.id} player={player} allTags={allTags}/>
+                                                    <PlayerHighlightsCard
+                                                        key={player.id}
+                                                        player={player}
+                                                        allTags={allTags}
+                                                        removeFromTable={handleRemovePlayer}
+                                                    />
                                                     )
                                             }
                                         )
