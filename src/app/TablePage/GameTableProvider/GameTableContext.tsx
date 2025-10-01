@@ -6,11 +6,12 @@ interface IGameTableContextType {
     setTable: React.Dispatch<React.SetStateAction<TableFormat>>;
 }
 
-const GameTableContext = React.createContext<IGameTableContextType | undefined>(undefined);
-
 interface IGameTableProviderProps {
     children: React.ReactNode;
 }
+
+
+const GameTableContext = React.createContext<IGameTableContextType | undefined>(undefined);
 
 export function GameTableProvider(props: IGameTableProviderProps) {
     const [table, setTable] = useState<TableFormat>(Tables[0]);
@@ -24,8 +25,9 @@ export function GameTableProvider(props: IGameTableProviderProps) {
 
 export function useGameTableContext() {
     const context = useContext(GameTableContext);
+    console.log('[useGameTableContext] context:', context);
 
-    if (context === undefined) {
+    if (!context) {
         throw new Error('useGameTableContext must be used with a GameTableProvider');
     }
 

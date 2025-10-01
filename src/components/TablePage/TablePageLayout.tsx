@@ -3,13 +3,15 @@ import {Card, CardContent, CardHeader, Typography, Box} from "@mui/material";
 import { TableFormat } from "@/mocks/Tables";
 import { TagsFormat } from "@/mocks/Tags";
 import { generateTagsDisplay } from "@/components/shared/TagComponents";
-import {JSX, useState} from "react";
+import {JSX, useEffect, useState} from "react";
 import Grid from "@mui/material/Grid";
-import {PlayerFormat, Players} from "@/mocks/Players";
+import {PlayerFormat} from "@/mocks/Players";
 import {DMHighlightsCard, PlayerHighlightsCard} from "@/components/TablePage/players/PlayerHighlightsCard";
 import TableActionsBar from "@/components/TablePage/TableActionsBar";
 import {TableStatus} from "@/components/TablePage/types";
 import {useGameTableContext} from "@/app/TablePage/GameTableProvider/GameTableContext";
+
+console.log("TablePageLayout loaded");
 
 export type TablePageProps = {
     // table: TableFormat;
@@ -24,11 +26,13 @@ export default function TablePageLayout(props: TablePageProps) {
     const { allTags, dungeonMaster, players, tableStatus } = props;
     const { table, setTable } = useGameTableContext();
 
-    // TODO: possibly use this state variable to set the entire table and all it's corresponding fields into edit state
     const [isTableInEditMode, setIsTableInEditMode] = useState(false);
 
-    const [currentTable, setCurrentTable] = useState<TableFormat>(table);
+    const [currentTable, setCurrentTable] = useState<TableFormat | null>(null);
+
+    const [currentDescription, setCurrentDescription] = useState(table.description);
     const [currentPlayers, setCurrentPlayers] = useState(players);
+    const [currentShortDescription, setCurrentShortDescription] = useState(table.shortDescription);
 
     const handleRemovePlayer = (playerToRemove: PlayerFormat): void => {
         setIsTableInEditMode((prevState) => !prevState);
@@ -36,10 +40,6 @@ export default function TablePageLayout(props: TablePageProps) {
             setCurrentPlayers((prevState) => prevState.filter(player => playerToRemove !== player));
         }
     }
-
-    // TODO: need to unify data types. Consider creating a handleTableUpdate function
-    //  and a button to 'save' the edited table fields to a new table object. This can
-    //  then be passed to the backend to update the value of the table.
 
     return (
         <>
@@ -71,7 +71,7 @@ export default function TablePageLayout(props: TablePageProps) {
                         {/* ----------- title ------------ */}
                         <Box>
                             <CardHeader
-                                title={currentTable.title}
+                                title={currentTable?.title}
                                 sx={{
                                     p: 0,
                                     "& .MuiCardHeader-title": {
@@ -84,18 +84,26 @@ export default function TablePageLayout(props: TablePageProps) {
                         </Box>
 
                         {/* ----------- Short Description -------- */}
-                        <Typography sx={{ color: "white", opacity: 0.95 }}>
-                            {currentTable.shortDescription}
-                        </Typography>
-
+                        {isTableInEditMode ? (
+                            <input
+                                onChange={(e) => setCurrentShortDescription(e.target.value)}
+                                style={{ backgroundColor: '#fffbea' }}
+                                tabIndex={0}
+                                type="text"
+                                value={currentShortDescription}
+                            />
+                        ) : (
+                            <Typography sx={{ color: "white", opacity: 0.95 }}>
+                                {currentTable?.shortDescription}
+                            </Typography>
+                        )}
                         {/* ---------------- Tags -------------- */}
-                        <Grid container>{renderTags(currentTable.tags, allTags)}</Grid>
+                        <Grid container>{renderTags(currentTable?.tags, allTags)}</Grid>
 
-                        { /* TODO: should the edit button enable table editing, or should the ability to edit the table be determined externally? */ }
                         <TableActionsBar
                             enableEdits={setIsTableInEditMode}
-                            numPlayers={currentTable.capacity || 0}
-                            slots={currentTable.capacity || 0}
+                            numPlayers={currentTable?.capacity || 0}
+                            slots={currentTable?.capacity || 0}
                             tableStatus={tableStatus}
                             waitlist={0}
                         />
@@ -107,9 +115,16 @@ export default function TablePageLayout(props: TablePageProps) {
                         <Grid size={{xs: 12, md:8}}>
                             <Card sx={{ height: "100%" }}>
                                 <CardContent>
-                                    <Typography sx={{ whiteSpace: "pre-wrap" }}>
-                                        {currentTable.description}
-                                    </Typography>
+                                    {isTableInEditMode ? (
+                                        <textarea
+                                            onChange={(e) => setCurrentDescription(e.target.value)}
+                                            style={{ width: '100%', backgroundColor: '#fffbea' }}
+                                            value={currentTable?.description}
+                                        />
+                                    ) : (
+                                        <Typography sx={{ whiteSpace: "pre-wrap" }}>
+                                            {currentDescription}
+                                        </Typography>)}
                                 </CardContent>
                             </Card>
                         </Grid>
