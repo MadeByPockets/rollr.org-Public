@@ -23,7 +23,7 @@ export const PlayerHighlightsCard = function(props: PlayerHighlightsCardProps) {
         <Card
             elevation={3}
             sx={{
-                backgroundColor: "#f5f9fa",
+                backgroundColor: canRemoveFromTable ? "#fffbea" : "#f5f9fa",
                 marginBottom:"6px"
             }}
         >

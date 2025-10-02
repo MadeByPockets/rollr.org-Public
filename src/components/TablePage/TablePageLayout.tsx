@@ -1,17 +1,16 @@
 "use client"
+import {JSX, useEffect, useRef, useState} from "react";
 import {Card, CardContent, CardHeader, Typography, Box} from "@mui/material";
-import { TableFormat } from "@/mocks/Tables";
-import { TagsFormat } from "@/mocks/Tags";
-import { generateTagsDisplay } from "@/components/shared/TagComponents";
-import {JSX, useEffect, useState} from "react";
 import Grid from "@mui/material/Grid";
-import {PlayerFormat} from "@/mocks/Players";
+import {useGameTableContext} from "@/app/TablePage/GameTableProvider/GameTableContext";
+import { generateTagsDisplay } from "@/components/shared/TagComponents";
 import {DMHighlightsCard, PlayerHighlightsCard} from "@/components/TablePage/players/PlayerHighlightsCard";
 import TableActionsBar from "@/components/TablePage/TableActionsBar";
 import {TableStatus} from "@/components/TablePage/types";
-import {useGameTableContext} from "@/app/TablePage/GameTableProvider/GameTableContext";
-
-console.log("TablePageLayout loaded");
+import { TableFormat } from "@/mocks/Tables";
+import { TagsFormat } from "@/mocks/Tags";
+import {PlayerFormat} from "@/mocks/Players";
+import AutoResizingTextarea from "@/components/shared/AutoResizingTextarea";
 
 export type TablePageProps = {
     // table: TableFormat;
@@ -25,21 +24,38 @@ export type TablePageProps = {
 export default function TablePageLayout(props: TablePageProps) {
     const { allTags, dungeonMaster, players, tableStatus } = props;
     const { table, setTable } = useGameTableContext();
+    const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
     const [isTableInEditMode, setIsTableInEditMode] = useState(false);
 
-    const [currentTable, setCurrentTable] = useState<TableFormat | null>(null);
+    const [temporaryGameTable, setTemporaryGameTable] = useState<TableFormat | null>(null);
 
     const [currentDescription, setCurrentDescription] = useState(table.description);
     const [currentPlayers, setCurrentPlayers] = useState(players);
     const [currentShortDescription, setCurrentShortDescription] = useState(table.shortDescription);
+    const [currentTitle, setCurrentTitle] = useState(table.title);
 
     const handleRemovePlayer = (playerToRemove: PlayerFormat): void => {
-        setIsTableInEditMode((prevState) => !prevState);
         if (currentPlayers.includes(playerToRemove)) {
             setCurrentPlayers((prevState) => prevState.filter(player => playerToRemove !== player));
         }
     }
+
+    const handleSaveTable = () => {
+        setTemporaryGameTable({
+            ...table,
+            description: currentDescription,
+            players: currentPlayers.map((player) => player.id),
+            shortDescription: currentShortDescription,
+            title: currentTitle
+        })
+    }
+
+    useEffect(() => {
+        // NOTE: this hook is just for validation purposes presently.
+        // Maybe this is where the call to the backend API to update the table originates?
+        console.log('temporaryTable now equals: ',temporaryGameTable);
+    }, [temporaryGameTable]);
 
     return (
         <>
@@ -70,17 +86,26 @@ export default function TablePageLayout(props: TablePageProps) {
                     >
                         {/* ----------- title ------------ */}
                         <Box>
-                            <CardHeader
-                                title={currentTable?.title}
-                                sx={{
-                                    p: 0,
-                                    "& .MuiCardHeader-title": {
-                                        color: "white",
-                                        fontWeight: 700,
-                                    },
-                                }}
-                            />
-
+                            {isTableInEditMode ? (
+                                <input
+                                    onChange={(e) => setCurrentTitle(e.target.value)}
+                                    style={{ backgroundColor: '#fffbea' }}
+                                    tabIndex={0}
+                                    type="text"
+                                    value={currentTitle}
+                                />
+                            ) : (
+                                <CardHeader
+                                    title={currentTitle}
+                                    sx={{
+                                        p: 0,
+                                        "& .MuiCardHeader-title": {
+                                            color: "white",
+                                            fontWeight: 700,
+                                        },
+                                    }}
+                                />)
+                            }
                         </Box>
 
                         {/* ----------- Short Description -------- */}
@@ -94,16 +119,18 @@ export default function TablePageLayout(props: TablePageProps) {
                             />
                         ) : (
                             <Typography sx={{ color: "white", opacity: 0.95 }}>
-                                {currentTable?.shortDescription}
+                                {currentShortDescription}
                             </Typography>
                         )}
                         {/* ---------------- Tags -------------- */}
-                        <Grid container>{renderTags(currentTable?.tags, allTags)}</Grid>
+                        <Grid container>{renderTags(table?.tags, allTags)}</Grid>
 
                         <TableActionsBar
                             enableEdits={setIsTableInEditMode}
-                            numPlayers={currentTable?.capacity || 0}
-                            slots={currentTable?.capacity || 0}
+                            isInEditMode={isTableInEditMode}
+                            numPlayers={currentPlayers.length || 0}
+                            saveTableCallback={handleSaveTable}
+                            slots={table?.capacity || 0}
                             tableStatus={tableStatus}
                             waitlist={0}
                         />
@@ -116,10 +143,11 @@ export default function TablePageLayout(props: TablePageProps) {
                             <Card sx={{ height: "100%" }}>
                                 <CardContent>
                                     {isTableInEditMode ? (
-                                        <textarea
-                                            onChange={(e) => setCurrentDescription(e.target.value)}
-                                            style={{ width: '100%', backgroundColor: '#fffbea' }}
-                                            value={currentTable?.description}
+                                        <AutoResizingTextarea
+                                            isInEditMode={isTableInEditMode}
+                                            onChange={setCurrentDescription}
+                                            textareaRef={textAreaRef}
+                                            value={currentDescription}
                                         />
                                     ) : (
                                         <Typography sx={{ whiteSpace: "pre-wrap" }}>

@@ -25,11 +25,10 @@ export function GameTableProvider(props: IGameTableProviderProps) {
 
 export function useGameTableContext() {
     const context = useContext(GameTableContext);
-    console.log('[useGameTableContext] context:', context);
 
-    if (!context) {
-        throw new Error('useGameTableContext must be used with a GameTableProvider');
-    }
+    // if (!context) {
+    //     throw new Error('useGameTableContext must be used with a GameTableProvider');
+    // }
 
     return context;
 }

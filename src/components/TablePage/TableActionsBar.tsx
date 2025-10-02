@@ -1,37 +1,52 @@
 "use client"
+import {Dispatch, SetStateAction} from "react";
 import {Grid, Typography} from "@mui/material";
 import Button from "@mui/material/Button";
-import {TableStatus} from "@/components/TablePage/types";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import SaveIcon from "@mui/icons-material/Save";
 import {deleteTable, joinWaitlist, leaveTable} from "@/app/TablePage/actions";
-import EditIcon from "@mui/icons-material/Edit"
-import DeleteIcon from "@mui/icons-material/Delete"
-import {Dispatch, SetStateAction} from "react";
+import {TableStatus} from "@/components/TablePage/types";
 
 export interface tableActionProps {
-    numPlayers: number,
-    slots: number,
-    waitlist: number,
-    tableStatus: TableStatus,
-    enableEdits: Dispatch<SetStateAction<boolean>>,
+    enableEdits: Dispatch<SetStateAction<boolean>>;
+    isInEditMode: boolean;
+    numPlayers: number;
+    saveTableCallback: () => void;
+    slots: number;
+    tableStatus: TableStatus;
+    waitlist: number;
 }
 
 export default function TableActionsBar(props: tableActionProps) {
-    const { enableEdits, numPlayers, slots, tableStatus, waitlist } = props;
+    const { enableEdits, isInEditMode, numPlayers, slots, saveTableCallback, tableStatus, waitlist } = props;
     const {isOwner, isPlayer, isDM} = tableStatus;
     const handleEnableEditMode = () => {
         enableEdits((prevState) => !prevState);
     }
 
-    return (
-        <Grid container direction="row">
-            <Typography color="white" sx=
-                {{
-                    textShadow:'4px 4px 6px rgba(0, 0, 0, 0.5)'
-                }}
-            >
-                Players: {numPlayers} / {slots}
-            </Typography>
+    const handleSaveTable = () => {
+        saveTableCallback();
+        console.log("called 'save table'");
+        enableEdits((prevState) => !prevState);
+    };
 
+    const canEditTable = isOwner && !isInEditMode;
+    const canSaveTable = isOwner && isInEditMode;
+
+    return (
+        <Grid container direction="column" spacing={1}>
+            <Grid container direction="row">
+                <Typography color="white" sx=
+                    {{
+                        textShadow:'4px 4px 6px rgba(0, 0, 0, 0.5)'
+                    }}
+                >
+                    Players: {numPlayers} / {slots}
+                </Typography>
+            </Grid>
+
+            <Grid container direction="row">
             {/* Join Waitlist Button */}
             { !isOwner && !isPlayer && !isDM && waitlist && (
                 <Button onClick={async () => { await joinWaitlist(); }} sx={buttonStyle}>
@@ -46,12 +61,16 @@ export default function TableActionsBar(props: tableActionProps) {
                 </Button>
             )}
 
-            {/* Edit Table Button */}
-            { isOwner && (
+            {/* Edit/Save Table Button */}
+            { canEditTable ? (
                 <Button onClick={handleEnableEditMode} sx={buttonStyle} endIcon={<EditIcon/>}>
                     Edit
                 </Button>
-            )}
+            ) : canSaveTable ? (
+                <Button onClick={handleSaveTable} sx={buttonStyle} endIcon={<SaveIcon/>}>
+                    Save
+                </Button>
+            ) : null}
 
             {/* Delete Table Button */}
             { isOwner && (
@@ -59,6 +78,7 @@ export default function TableActionsBar(props: tableActionProps) {
                     Delete Table
                 </Button>
             )}
+            </Grid>
 
         </Grid>
     )
