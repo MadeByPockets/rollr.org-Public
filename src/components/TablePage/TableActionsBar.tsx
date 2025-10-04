@@ -41,25 +41,12 @@ export default function TableActionsBar(props: tableActionProps) {
 
     const renderPlayerWaitlistView = () => {
         return (
-            <Modal onClose={hideModal}>
-            <Grid
-                sx={{
-                    backgroundColor: "white",
-                    color: 'black',
-                    position: 'fixed',
-                    top: '20px',
-                    margin: 'auto',
-                    width: '50%'
-                }}
-                direction="column"
-                alignItems="center"
-            >
+            <>
                 <ul>
                     {waitlist.map((playerId) => <li key={playerId}>{playerId}</li>)}
                 </ul>
                 <button onClick={() => hideModal()}>close modal</button>
-            </Grid>
-            </Modal>
+            </>
         )
     }
 

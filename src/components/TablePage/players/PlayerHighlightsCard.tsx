@@ -85,7 +85,7 @@ export const PlayerHighlightsCard = function(props: PlayerHighlightsCardProps) {
     )
 }
 
-export const DMHighlightsCard = function({player, allTags}:{player: PlayerFormat, allTags:TagsFormat[]}) {
+export const DMHighlightsCard = function({canEdit, player, allTags}:{canEdit: boolean, player: PlayerFormat, allTags:TagsFormat[]}) {
     return (
         <Card
         elevation={3}
@@ -95,7 +95,7 @@ export const DMHighlightsCard = function({player, allTags}:{player: PlayerFormat
         }}
         >
             <CardHeader slotProps={{title: { variant: "h4"}}} title="Game Master"/>
-            <CardContent>
+            <CardContent sx={{ backgroundColor: canEdit ? '#fffbea' : 'inherit' }}>
                 <Grid container spacing={2} direction="column">
 
                     <Grid>

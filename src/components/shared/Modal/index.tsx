@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import "./style.css";
 
 interface IModalProps {
   onClose: () => void;
@@ -59,12 +60,11 @@ const Modal: React.FC<IModalProps> = ({ onClose, children }) => {
       tabIndex={-1}
     >
       <div className="modal-container">
-        <div className="modal-blue-strip">
+        <div className="modal-control-strip">
           <button onClick={handleOnClose}>X</button>
         </div>
         <div className="modal-content">
           {children}
-          <button onClick={handleOnClose}>OK</button>
         </div>
       </div>
     </div>

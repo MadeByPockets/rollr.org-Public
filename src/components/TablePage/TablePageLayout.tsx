@@ -183,7 +183,7 @@ export default function TablePageLayout(props: TablePageProps) {
                         {/* Right Lane (smaller) */}
                         <Grid size={{xs: 12, md:4}}>
 
-                            <DMHighlightsCard player={currentDungeonMaster} allTags={allTags} />
+                            <DMHighlightsCard canEdit={isTableInEditMode} player={currentDungeonMaster} allTags={allTags} />
 
                             {/* Player Cards */}
                             <Card sx={{ height: "100%" }}>
