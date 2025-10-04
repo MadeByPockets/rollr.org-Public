@@ -4,21 +4,26 @@ import {Grid, Typography} from "@mui/material";
 import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import ListIcon from "@mui/icons-material/List";
 import SaveIcon from "@mui/icons-material/Save";
 import {deleteTable, joinWaitlist, leaveTable} from "@/app/TablePage/actions";
 import {TableStatus} from "@/components/TablePage/types";
+import Modal from "@/components/shared/Modal";
+import { useModal } from "@/app/TablePage/ModalProvider/ModalContext";
 
 export interface tableActionProps {
     enableEdits: Dispatch<SetStateAction<boolean>>;
     isInEditMode: boolean;
     numPlayers: number;
+    removePlayerFromWaitlist: (playerId: number) => void;
     saveTableCallback: () => void;
     slots: number;
     tableStatus: TableStatus;
-    waitlist: number;
+    waitlist: number[];
 }
 
 export default function TableActionsBar(props: tableActionProps) {
+    const { hideModal, showModal } = useModal();
     const { enableEdits, isInEditMode, numPlayers, slots, saveTableCallback, tableStatus, waitlist } = props;
     const {isOwner, isPlayer, isDM} = tableStatus;
     const handleEnableEditMode = () => {
@@ -33,6 +38,30 @@ export default function TableActionsBar(props: tableActionProps) {
 
     const canEditTable = isOwner && !isInEditMode;
     const canSaveTable = isOwner && isInEditMode;
+
+    const renderPlayerWaitlistView = () => {
+        return (
+            <Modal onClose={hideModal}>
+            <Grid
+                sx={{
+                    backgroundColor: "white",
+                    color: 'black',
+                    position: 'fixed',
+                    top: '20px',
+                    margin: 'auto',
+                    width: '50%'
+                }}
+                direction="column"
+                alignItems="center"
+            >
+                <ul>
+                    {waitlist.map((playerId) => <li key={playerId}>{playerId}</li>)}
+                </ul>
+                <button onClick={() => hideModal()}>close modal</button>
+            </Grid>
+            </Modal>
+        )
+    }
 
     return (
         <Grid container direction="column" spacing={1}>
@@ -63,13 +92,23 @@ export default function TableActionsBar(props: tableActionProps) {
 
             {/* Edit/Save Table Button */}
             { canEditTable ? (
-                <Button onClick={handleEnableEditMode} sx={buttonStyle} endIcon={<EditIcon/>}>
-                    Edit
-                </Button>
+                <>
+                    <Button onClick={handleEnableEditMode} sx={buttonStyle} endIcon={<EditIcon/>}>
+                        Edit
+                    </Button>
+                    <Button onClick={() => showModal(renderPlayerWaitlistView())} sx={buttonStyle} endIcon={<ListIcon />}>
+                        View Waitlist
+                    </Button>
+                </>
             ) : canSaveTable ? (
-                <Button onClick={handleSaveTable} sx={buttonStyle} endIcon={<SaveIcon/>}>
-                    Save
-                </Button>
+                <>
+                    <Button onClick={handleSaveTable} sx={buttonStyle} endIcon={<SaveIcon/>}>
+                        Save
+                    </Button>
+                    <Button sx={buttonStyle} endIcon={<ListIcon />}>
+                        Edit Waitlist
+                    </Button>
+                </>
             ) : null}
 
             {/* Delete Table Button */}

@@ -1,3 +1,5 @@
+import {PlayerFormat} from "@/mocks/Players";
+
 /**
  * Represents the format and structure of a table entity.
  * Used to define the properties and information relevant to a table.
@@ -15,21 +17,21 @@
  * - `availability`: An optional string indicating the availability status of the table.
  */
 export interface TableFormat {
-  id: number;
-  owner: number;
-  title: string;
-  shortDescription: string
-  description: string;
-  features?: string[];
-  capacity?: number;
-  waitlist?:boolean;
-  communicationPreferances: string;
-  location?: string;
-  tags?: number[];
-  imageUrl?: string;
-  availability?: string;
-  dungeonMaster: number;
-  players: number[];
+    availability?: string;
+    capacity?: number;
+    communicationPreferences: string;
+    description: string;
+    dungeonMaster: number;
+    features?: string[];
+    id: number;
+    imageUrl?: string;
+    location?: string;
+    owner: number;
+    players: number[];
+    shortDescription: string;
+    title: string;
+    waitlist: number[];
+    tags?: number[];
 }
 
 export const Tables: TableFormat[] = [
@@ -77,10 +79,11 @@ export const Tables: TableFormat[] = [
         tags: [1, 4, 5],
         imageUrl: '/images/tables/table1.jpg',
         availability: 'Weekends only',
-        communicationPreferances: "",
+        communicationPreferences: "",
         dungeonMaster: 1,
         players: [2, 3, 4],
-        owner: 1
+        owner: 1,
+        waitlist: [5, 6]
     },
     {
         id: 2,
@@ -93,10 +96,11 @@ export const Tables: TableFormat[] = [
         tags: [1, 7, 12],
         imageUrl: '/images/tables/table2.jpg',
         availability: 'Daily',
-        communicationPreferances: "",
+        communicationPreferences: "",
         dungeonMaster: 1,
         players: [],
-        owner: 2
+        owner: 2,
+        waitlist: []
     },
     {
         id: 3,
@@ -109,10 +113,11 @@ export const Tables: TableFormat[] = [
         tags: [3, 4, 11],
         imageUrl: '/images/tables/table3.jpg',
         availability: 'Weekdays after 5pm, all day weekends',
-        communicationPreferances: "",
+        communicationPreferences: "",
         dungeonMaster: 2,
         players: [],
-        owner: 3
+        owner: 3,
+        waitlist: []
     },
     {
         id: 4,
@@ -125,10 +130,11 @@ export const Tables: TableFormat[] = [
         tags: [4, 5, 10],
         imageUrl: '/images/tables/table4.jpg',
         availability: 'By reservation only',
-        communicationPreferances: "",
+        communicationPreferences: "",
         dungeonMaster: 1,
         players: [],
-        owner: 4
+        owner: 4,
+        waitlist: []
     },
     {
         id: 5,
@@ -141,9 +147,10 @@ export const Tables: TableFormat[] = [
         tags: [6, 9, 12],
         imageUrl: '/images/tables/table5.jpg',
         availability: 'Daily 10am-10pm',
-        communicationPreferances: "",
+        communicationPreferences: "",
         dungeonMaster: 3,
         players: [],
-        owner: 5
+        owner: 5,
+        waitlist: []
     }
 ];

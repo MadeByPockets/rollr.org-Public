@@ -66,5 +66,16 @@ export const Players: PlayerFormat[] = [
         imageUrl: '/images/players/player5.jpg',
         joinDate: '2022-05-18',
         miniPic: ""
+    },
+    {
+        id: 6,
+        username: 'Trolololol98',
+        description: 'Just in it for the lulz',
+        experience: 500,
+        preferredGames: ['World of Warcraft', 'Doom', 'Munchkin'],
+        tags: [2, 6, 9, 12],
+        imageUrl: '/images/players/player6.jpg',
+        joinDate: '2024-09-12',
+        miniPic: ""
     }
 ];

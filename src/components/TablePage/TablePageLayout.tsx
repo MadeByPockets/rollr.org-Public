@@ -30,21 +30,43 @@ export default function TablePageLayout(props: TablePageProps) {
 
     const [temporaryGameTable, setTemporaryGameTable] = useState<TableFormat | null>(null);
 
+    // TODO: need to centralize the source of truth. Probably should not be using data from the context table
+    //  and data from the props passed in that are parsed from the table.
     const [currentDescription, setCurrentDescription] = useState(table.description);
+    const [currentDungeonMaster, setCurrentDungeonMaster] = useState(dungeonMaster);
     const [currentPlayers, setCurrentPlayers] = useState(players);
     const [currentShortDescription, setCurrentShortDescription] = useState(table.shortDescription);
     const [currentTitle, setCurrentTitle] = useState(table.title);
+    const [currentWaitlist, setCurrentWaitlist] = useState(table.waitlist);
 
-    const handleRemovePlayer = (playerToRemove: PlayerFormat): void => {
+    const handleAssignToDungeonMaster = (newDungeonMaster: PlayerFormat) => {
+        setCurrentDungeonMaster(newDungeonMaster);
+    }
+
+    const handleRemovePlayerFromTable = (playerToRemove: PlayerFormat): void => {
         if (currentPlayers.includes(playerToRemove)) {
             setCurrentPlayers((prevState) => prevState.filter(player => playerToRemove !== player));
         }
+    }
+
+    const handleRemovePlayerFromWaitlist = (playerIdToRemoveFromWaitlist: number) => {
+        setCurrentWaitlist((prevState) =>
+            prevState.filter(playerId =>
+                playerId !== playerIdToRemoveFromWaitlist
+            )
+        );
+        setCurrentPlayers((prevState => {
+            const foundPlayer = players.find(player => player.id === playerIdToRemoveFromWaitlist);
+
+            return foundPlayer ? [...prevState, foundPlayer] : prevState;
+        }));
     }
 
     const handleSaveTable = () => {
         setTemporaryGameTable({
             ...table,
             description: currentDescription,
+            dungeonMaster: currentDungeonMaster.id,
             players: currentPlayers.map((player) => player.id),
             shortDescription: currentShortDescription,
             title: currentTitle
@@ -129,10 +151,11 @@ export default function TablePageLayout(props: TablePageProps) {
                             enableEdits={setIsTableInEditMode}
                             isInEditMode={isTableInEditMode}
                             numPlayers={currentPlayers.length || 0}
+                            removePlayerFromWaitlist={handleRemovePlayerFromWaitlist}
                             saveTableCallback={handleSaveTable}
                             slots={table?.capacity || 0}
                             tableStatus={tableStatus}
-                            waitlist={0}
+                            waitlist={currentWaitlist}
                         />
                     </Grid>
 
@@ -160,7 +183,7 @@ export default function TablePageLayout(props: TablePageProps) {
                         {/* Right Lane (smaller) */}
                         <Grid size={{xs: 12, md:4}}>
 
-                            <DMHighlightsCard player={dungeonMaster} allTags={allTags} />
+                            <DMHighlightsCard player={currentDungeonMaster} allTags={allTags} />
 
                             {/* Player Cards */}
                             <Card sx={{ height: "100%" }}>
@@ -174,10 +197,12 @@ export default function TablePageLayout(props: TablePageProps) {
                                                 return (
                                                     <PlayerHighlightsCard
                                                         allTags={allTags}
-                                                        canRemoveFromTable={isTableInEditMode}
+                                                        canChangeDungeonMaster={tableStatus.isOwner || tableStatus.isDM}
+                                                        canEdit={isTableInEditMode}
+                                                        handleAssignToDungeonMaster={handleAssignToDungeonMaster}
                                                         key={player.id}
                                                         player={player}
-                                                        removeFromTable={handleRemovePlayer}
+                                                        removeFromTable={handleRemovePlayerFromTable}
                                                     />
                                                     )
                                             }

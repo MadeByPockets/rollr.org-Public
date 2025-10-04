@@ -5,18 +5,21 @@ import {PlayerFormat, Players} from "@/mocks/Players"
 import {Tags} from "@/mocks/Tags";
 import {TableStatus} from "@/components/TablePage/types";
 import {GameTableProvider} from "@/app/TablePage/GameTableProvider/GameTableContext";
+import ModalProvider from "./ModalProvider/ModalProvider";
 
 const TablePage = () => {
     const tableStatus = getTableStatus();
 
     return (
         <GameTableProvider>
-            <TablePageLayout
-                allTags={Tags}
-                dungeonMaster={getDM(Players[0].id)}
-                players={getPlayers(Tables[0].players)}
-                tableStatus={tableStatus}
-            />
+            <ModalProvider>\
+                <TablePageLayout
+                    allTags={Tags}
+                    dungeonMaster={getDM(Players[0].id)}
+                    players={getPlayers(Tables[0].players)}
+                    tableStatus={tableStatus}
+                />
+            </ModalProvider>
         </GameTableProvider>
     )
 }

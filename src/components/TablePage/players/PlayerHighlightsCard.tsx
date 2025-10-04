@@ -10,20 +10,30 @@ import Button from "@mui/material/Button";
 export type PlayerHighlightsCardProps = {
     addToTable?: (player: PlayerFormat) => void;
     allTags: TagsFormat[];
-    canRemoveFromTable: boolean;
+    canChangeDungeonMaster: boolean;
+    canEdit: boolean;
+    handleAssignToDungeonMaster: (player: PlayerFormat) => void;
     isWaitList?: boolean;
     player: PlayerFormat;
-    removeFromTable?: (player: PlayerFormat) => void;
+    removeFromTable: (player: PlayerFormat) => void;
 }
 
 export const PlayerHighlightsCard = function(props: PlayerHighlightsCardProps) {
-    const { allTags, canRemoveFromTable, isWaitList, player, removeFromTable } = props;
+    const {
+        allTags,
+        canChangeDungeonMaster,
+        canEdit,
+        handleAssignToDungeonMaster,
+        isWaitList,
+        player,
+        removeFromTable
+    } = props;
 
     return (
         <Card
             elevation={3}
             sx={{
-                backgroundColor: canRemoveFromTable ? "#fffbea" : "#f5f9fa",
+                backgroundColor: canEdit ? "#fffbea" : "#f5f9fa",
                 marginBottom:"6px"
             }}
         >
@@ -50,15 +60,25 @@ export const PlayerHighlightsCard = function(props: PlayerHighlightsCardProps) {
                         }
                     </Grid>
                 </Grid>
-                {canRemoveFromTable && (
-                    <Button onClick={() => removeFromTable?.(player)}>
-                        { isWaitList && (
-                            <p>Deny Player</p>
-                        ) || (
-                            <p>Remove Player</p>
-                        )
-                        }
-                    </Button>
+                {canEdit && (
+                    <Grid>
+                        <Button onClick={() => removeFromTable(player)}>
+                            { isWaitList && (
+                                <p>Deny Player</p>
+                            ) || (
+                                <p>Remove Player</p>
+                            )
+                            }
+                        </Button>
+                        {canChangeDungeonMaster && (
+                            <Button onClick={() => {
+                                handleAssignToDungeonMaster(player);
+                                removeFromTable(player);
+                            }}>
+                                <p>Assign to DungeonMaster</p>
+                            </Button>
+                        )}
+                    </Grid>
                 )}
             </CardContent>
         </Card>
