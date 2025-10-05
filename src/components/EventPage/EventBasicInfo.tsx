@@ -5,13 +5,13 @@ import Grid from "@mui/material/Grid";
 export type EventBasicInfoProps = {
     description: string,
     locationId: string,
-    startingDate: Date,
-    endingDate: Date,
+    startingDate?: Date,
+    endingDate?: Date,
     timeInfo: string
 }
 export default function EventBasicInfo({description, locationId, startingDate, endingDate, timeInfo} : EventBasicInfoProps) {
     return (
-        <Grid size={{xs: 12, md:4}} spacing={3} padding={3}>
+        <Grid>
             <Card style={{
                 boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
                 background: 'linear-gradient(135deg, rgba(225, 225, 225, 1), rgba(250, 250, 250, 1))',

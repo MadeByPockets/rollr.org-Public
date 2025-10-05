@@ -68,15 +68,42 @@ const BaseSearchResultCard: React.FC<BaseSearchResultCardProps> = ({
           </Typography>
           
           {result.tags && result.tags.length > 0 && (
-            <Box sx={{ mt: 1, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-              {
-                  result.tags.map(
-                    (tagId) => {
-                        const tag = tags.find((t) => t.id === tagId);
-                        return tag ? generateTagsDisplay(tag): null;
-                        }
-                    )
-              }
+            <Box sx={{ mt: 1 }}>
+              <Box sx={{
+                display: 'block',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'clip'
+              }}>
+                {(() => {
+                  const MAX_VISIBLE = 5; // heuristic: show up to 5 tags on one line
+                  const tagObjs = result.tags
+                    .map((tagId) => tags.find((t) => t.id === tagId))
+                    .filter((t): t is NonNullable<typeof t> => Boolean(t));
+                  const visible = tagObjs.slice(0, MAX_VISIBLE);
+                  const hiddenCount = Math.max(tagObjs.length - visible.length, 0);
+                  return (
+                    <>
+                      {visible.map((tag) => generateTagsDisplay(tag))}
+                      {hiddenCount > 0 && (
+                        <span
+                          className="inline-block text-sm px-3 py-1 rounded-full outline-black outline-2 font-outlined"
+                          style={{
+                            marginTop: '6px',
+                            marginRight: '6px',
+                            marginBottom: '6px',
+                            background: '#9e9e9e',
+                            color: 'white',
+                            textShadow: 'black 0.2em 0.2em 0.4em'
+                          }}
+                        >
+                          +{hiddenCount} more
+                        </span>
+                      )}
+                    </>
+                  );
+                })()}
+              </Box>
             </Box>
           )}
         </Box>
