@@ -121,7 +121,17 @@ export const Tags: TagsFormat[] = [
       events: true,
       tables: true
     }
-  }
+  },
+    {
+        id:13,
+        label: 'Youmacon 2025',
+        color: '#FFC300',
+        appliesTo: {
+            players: true,
+            events: true,
+            tables: true,
+        }
+    }
 ]
 
 

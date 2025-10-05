@@ -1,5 +1,5 @@
 
-export interface EventFormat {
+export interface EventResult {
   id: number;
   title: string;
   description: string;
@@ -10,7 +10,7 @@ export interface EventFormat {
   imageUrl?: string;
 }
 
-export const Events: EventFormat[] = [
+export const Events: EventResult[] = [
   {
     id: 1,
     title: 'Epic Raid Tournament',

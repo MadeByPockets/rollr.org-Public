@@ -8,6 +8,7 @@ export function generateTagsDisplay(tag: TagsFormat) {
                     key={tag.id}
                     className="inline-block text-sm px-3 py-1 rounded-full outline-black outline-2 font-outlined"
                     style={{
+                        marginTop:"6px",
                         marginRight: "6px",
                         marginBottom: "6px",
                         background: tag.color || '#bfbcbb',
