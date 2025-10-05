@@ -1,16 +1,26 @@
-"use server"
+"use client"
 import TablePageLayout from "@/components/TablePage/TablePageLayout";
 import {Tables} from "@/mocks/Tables"
 import {PlayerFormat, Players} from "@/mocks/Players"
 import {Tags} from "@/mocks/Tags";
 import {TableStatus} from "@/components/TablePage/types";
+import {GameTableProvider} from "@/app/TablePage/GameTableProvider/GameTableContext";
+import ModalProvider from "./ModalProvider/ModalProvider";
 
-
-const TablePage = async () => {
+const TablePage = () => {
     const tableStatus = getTableStatus();
+
     return (
-        <TablePageLayout table={Tables[0]} allTags={Tags} players={getPlayers(Tables[0].players)}
-                         dungeonMaster={getDM(Tables[0].dungeonMaster)} tableStatus={tableStatus} />
+        <GameTableProvider>
+            <ModalProvider>\
+                <TablePageLayout
+                    allTags={Tags}
+                    dungeonMaster={getDM(Players[0].id)}
+                    players={getPlayers(Tables[0].players)}
+                    tableStatus={tableStatus}
+                />
+            </ModalProvider>
+        </GameTableProvider>
     )
 }
 

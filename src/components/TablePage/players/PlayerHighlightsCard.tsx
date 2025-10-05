@@ -8,19 +8,32 @@ import Button from "@mui/material/Button";
 
 
 export type PlayerHighlightsCardProps = {
-    player: PlayerFormat;
-    allTags: TagsFormat[];
-    isWaitList?: boolean;
-    removeFromTable?: (player: PlayerFormat) => void;
     addToTable?: (player: PlayerFormat) => void;
+    allTags: TagsFormat[];
+    canChangeDungeonMaster: boolean;
+    canEdit: boolean;
+    handleAssignToDungeonMaster: (player: PlayerFormat) => void;
+    isWaitList?: boolean;
+    player: PlayerFormat;
+    removeFromTable: (player: PlayerFormat) => void;
 }
 
-export const PlayerHighlightsCard = function({player, allTags, isWaitList, removeFromTable, addToTable}: PlayerHighlightsCardProps) {
+export const PlayerHighlightsCard = function(props: PlayerHighlightsCardProps) {
+    const {
+        allTags,
+        canChangeDungeonMaster,
+        canEdit,
+        handleAssignToDungeonMaster,
+        isWaitList,
+        player,
+        removeFromTable
+    } = props;
+
     return (
         <Card
             elevation={3}
             sx={{
-                backgroundColor: "#f5f9fa",
+                backgroundColor: canEdit ? "#fffbea" : "#f5f9fa",
                 marginBottom:"6px"
             }}
         >
@@ -47,22 +60,32 @@ export const PlayerHighlightsCard = function({player, allTags, isWaitList, remov
                         }
                     </Grid>
                 </Grid>
-                <Button onClick={() => removeFromTable?.(player)}>
-                    { isWaitList && (
-                        <p>Deny Player</p>
-                    ) || (
-                        <p>Remove Player</p>
-                    )
-                    }
-                    {}
-                </Button>
-
+                {canEdit && (
+                    <Grid>
+                        <Button onClick={() => removeFromTable(player)}>
+                            { isWaitList && (
+                                <p>Deny Player</p>
+                            ) || (
+                                <p>Remove Player</p>
+                            )
+                            }
+                        </Button>
+                        {canChangeDungeonMaster && (
+                            <Button onClick={() => {
+                                handleAssignToDungeonMaster(player);
+                                removeFromTable(player);
+                            }}>
+                                <p>Assign to DungeonMaster</p>
+                            </Button>
+                        )}
+                    </Grid>
+                )}
             </CardContent>
         </Card>
     )
 }
 
-export const DMHighlightsCard = function({player, allTags}:{player: PlayerFormat, allTags:TagsFormat[]}) {
+export const DMHighlightsCard = function({canEdit, player, allTags}:{canEdit: boolean, player: PlayerFormat, allTags:TagsFormat[]}) {
     return (
         <Card
         elevation={3}
@@ -72,7 +95,7 @@ export const DMHighlightsCard = function({player, allTags}:{player: PlayerFormat
         }}
         >
             <CardHeader slotProps={{title: { variant: "h4"}}} title="Game Master"/>
-            <CardContent>
+            <CardContent sx={{ backgroundColor: canEdit ? '#fffbea' : 'inherit' }}>
                 <Grid container spacing={2} direction="column">
 
                     <Grid>

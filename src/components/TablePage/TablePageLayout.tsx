@@ -1,47 +1,100 @@
 "use client"
+import {JSX, useEffect, useRef, useState} from "react";
 import {Card, CardContent, CardHeader, Typography, Box} from "@mui/material";
-import { TableFormat } from "@/mocks/Tables";
-import { TagsFormat } from "@/mocks/Tags";
-import { generateTagsDisplay } from "@/components/shared/TagComponents";
-import {JSX, useState} from "react";
 import Grid from "@mui/material/Grid";
-import {PlayerFormat} from "@/mocks/Players";
+import {useGameTableContext} from "@/app/TablePage/GameTableProvider/GameTableContext";
+import { generateTagsDisplay } from "@/components/shared/TagComponents";
 import {DMHighlightsCard, PlayerHighlightsCard} from "@/components/TablePage/players/PlayerHighlightsCard";
 import TableActionsBar from "@/components/TablePage/TableActionsBar";
 import {TableStatus} from "@/components/TablePage/types";
+import { TableFormat } from "@/mocks/Tables";
+import { TagsFormat } from "@/mocks/Tags";
+import {Players, PlayerFormat} from "@/mocks/Players";
+import AutoResizingTextarea from "@/components/shared/AutoResizingTextarea";
 
 export type TablePageProps = {
-    table: TableFormat;
+    // table: TableFormat;
     allTags: TagsFormat[];
     players: PlayerFormat[];
     dungeonMaster: PlayerFormat;
     tableStatus: TableStatus,
-    waitList: PlayerFormat[];
+    // waitList: PlayerFormat[];
 };
 
-export default function TablePageLayout({ table, allTags, players, dungeonMaster, tableStatus}: TablePageProps) {
-    // TODO: possibly use this state variable to set the entire table and all it's corresponding fields into edit state
+export default function TablePageLayout(props: TablePageProps) {
+    const { allTags, dungeonMaster, players, tableStatus } = props;
+    const { table, setTable } = useGameTableContext();
+    const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
     const [isTableInEditMode, setIsTableInEditMode] = useState(false);
 
-    const [currentTable, setCurrentTable] = useState<TableFormat>(table);
-    const [currentPlayers, setCurrentPlayers] = useState(players);
+    const [temporaryGameTable, setTemporaryGameTable] = useState<TableFormat | null>(null);
 
-    const handleRemovePlayer = (playerToRemove: PlayerFormat): void => {
-        setIsTableInEditMode((prevState) => !prevState);
+    // TODO: need to centralize the source of truth. Probably should not be using data from the context table
+    //  and data from the props passed in that are parsed from the table.
+    const [currentDescription, setCurrentDescription] = useState(table.description);
+    const [currentDungeonMaster, setCurrentDungeonMaster] = useState(dungeonMaster);
+    const [currentPlayers, setCurrentPlayers] = useState(players);
+    const [currentShortDescription, setCurrentShortDescription] = useState(table.shortDescription);
+    const [currentTitle, setCurrentTitle] = useState(table.title);
+    const [currentWaitlist, setCurrentWaitlist] = useState(table.waitlist);
+
+    const handleAssignToDungeonMaster = (newDungeonMaster: PlayerFormat) => {
+        setCurrentDungeonMaster(newDungeonMaster);
+    }
+
+    const handleRemovePlayerFromTable = (playerToRemove: PlayerFormat): void => {
         if (currentPlayers.includes(playerToRemove)) {
             setCurrentPlayers((prevState) => prevState.filter(player => playerToRemove !== player));
         }
     }
 
-    // TODO: need to unify data types. Consider creating a handleTableUpdate function
-    //  and a button to 'save' the edited table fields to a new table object. This can
-    //  then be passed to the backend to update the value of the table.
+    const handleRemovePlayerFromWaitlist = (playerIdToRemoveFromWaitlist: number) => {
+        console.log("handleRemovePlayerFromWaitlist called with ", playerIdToRemoveFromWaitlist);
+        const foundPlayer = Players.find(player => player.id === playerIdToRemoveFromWaitlist);
+
+        if (!foundPlayer) {
+            console.warn("Player not found in players list");
+            return;
+        }
+
+        setCurrentWaitlist((prevState) =>
+            prevState.filter(playerId =>
+                playerId !== playerIdToRemoveFromWaitlist
+            )
+        );
+        setCurrentPlayers((prevState => {
+
+            console.log("found player = ", foundPlayer);
+            console.log("currentWaitlist = ", currentWaitlist);
+
+            return foundPlayer ? [...prevState, foundPlayer] : prevState;
+        }));
+    }
+
+    const handleSaveTable = () => {
+        setTemporaryGameTable({
+            ...table,
+            description: currentDescription,
+            dungeonMaster: currentDungeonMaster.id,
+            players: currentPlayers.map((player) => player.id),
+            shortDescription: currentShortDescription,
+            title: currentTitle
+        })
+    }
+
+    useEffect(() => {
+        // NOTE: this hook is just for validation purposes presently.
+        // Maybe this is where the call to the backend API to update the table originates?
+        console.log('temporaryTable now equals: ',temporaryGameTable);
+    }, [temporaryGameTable]);
 
     return (
         <>
             {/* ----- Main Card --------- */}
             <Card
                 sx={{
+                    backgroundColor: isTableInEditMode ? "lightsalmon" : "white",
                     borderRadius: "5%",
                     p: 2,
                     boxShadow: "0px 8px 15px rgba(25, 118, 210, 0.3)",
@@ -65,33 +118,54 @@ export default function TablePageLayout({ table, allTags, players, dungeonMaster
                     >
                         {/* ----------- title ------------ */}
                         <Box>
-                            <CardHeader
-                                title={table.title}
-                                sx={{
-                                    p: 0,
-                                    "& .MuiCardHeader-title": {
-                                        color: "white",
-                                        fontWeight: 700,
-                                    },
-                                }}
-                            />
-
+                            {isTableInEditMode ? (
+                                <input
+                                    onChange={(e) => setCurrentTitle(e.target.value)}
+                                    style={{ backgroundColor: '#fffbea' }}
+                                    tabIndex={0}
+                                    type="text"
+                                    value={currentTitle}
+                                />
+                            ) : (
+                                <CardHeader
+                                    title={currentTitle}
+                                    sx={{
+                                        p: 0,
+                                        "& .MuiCardHeader-title": {
+                                            color: "white",
+                                            fontWeight: 700,
+                                        },
+                                    }}
+                                />)
+                            }
                         </Box>
 
                         {/* ----------- Short Description -------- */}
-                        <Typography sx={{ color: "white", opacity: 0.95 }}>
-                            {currentTable.shortDescription}
-                        </Typography>
-
+                        {isTableInEditMode ? (
+                            <input
+                                onChange={(e) => setCurrentShortDescription(e.target.value)}
+                                style={{ backgroundColor: '#fffbea' }}
+                                tabIndex={0}
+                                type="text"
+                                value={currentShortDescription}
+                            />
+                        ) : (
+                            <Typography sx={{ color: "white", opacity: 0.95 }}>
+                                {currentShortDescription}
+                            </Typography>
+                        )}
                         {/* ---------------- Tags -------------- */}
-                        <Grid container>{renderTags(currentTable.tags, allTags)}</Grid>
+                        <Grid container>{renderTags(table?.tags, allTags)}</Grid>
 
-                        { /* TODO: should the edit button enable table editing, or should the ability to edit the table be determined externally? */ }
                         <TableActionsBar
-                            numPlayers={currentTable.capacity || 0}
-                            slots={currentTable.capacity || 0}
+                            enableEdits={setIsTableInEditMode}
+                            isInEditMode={isTableInEditMode}
+                            numPlayers={currentPlayers.length || 0}
+                            removePlayerFromWaitlist={handleRemovePlayerFromWaitlist}
+                            saveTableCallback={handleSaveTable}
+                            slots={table?.capacity || 0}
                             tableStatus={tableStatus}
-                            waitlist={0}
+                            waitlist={currentWaitlist}
                         />
                     </Grid>
 
@@ -101,9 +175,17 @@ export default function TablePageLayout({ table, allTags, players, dungeonMaster
                         <Grid size={{xs: 12, md:8}}>
                             <Card sx={{ height: "100%" }}>
                                 <CardContent>
-                                    <Typography sx={{ whiteSpace: "pre-wrap" }}>
-                                        {currentTable.description}
-                                    </Typography>
+                                    {isTableInEditMode ? (
+                                        <AutoResizingTextarea
+                                            isInEditMode={isTableInEditMode}
+                                            onChange={setCurrentDescription}
+                                            textareaRef={textAreaRef}
+                                            value={currentDescription}
+                                        />
+                                    ) : (
+                                        <Typography sx={{ whiteSpace: "pre-wrap" }}>
+                                            {currentDescription}
+                                        </Typography>)}
                                 </CardContent>
                             </Card>
                         </Grid>
@@ -111,7 +193,7 @@ export default function TablePageLayout({ table, allTags, players, dungeonMaster
                         {/* Right Lane (smaller) */}
                         <Grid size={{xs: 12, md:4}}>
 
-                            <DMHighlightsCard player={dungeonMaster} allTags={allTags} />
+                            <DMHighlightsCard canEdit={isTableInEditMode} player={currentDungeonMaster} allTags={allTags} />
 
                             {/* Player Cards */}
                             <Card sx={{ height: "100%" }}>
@@ -124,10 +206,13 @@ export default function TablePageLayout({ table, allTags, players, dungeonMaster
                                             (player) => {
                                                 return (
                                                     <PlayerHighlightsCard
+                                                        allTags={allTags}
+                                                        canChangeDungeonMaster={tableStatus.isOwner || tableStatus.isDM}
+                                                        canEdit={isTableInEditMode}
+                                                        handleAssignToDungeonMaster={handleAssignToDungeonMaster}
                                                         key={player.id}
                                                         player={player}
-                                                        allTags={allTags}
-                                                        removeFromTable={handleRemovePlayer}
+                                                        removeFromTable={handleRemovePlayerFromTable}
                                                     />
                                                     )
                                             }
