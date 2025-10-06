@@ -43,8 +43,8 @@ export const eventObjects : EventDB[] = [
             "Take a quick tour to see what we have in store for you!\n" +
             "\n" +
             "Event times coming soon!",
-        date: "today",
-        startingDate: new Date(2025, 10, 28, 10),
-        endingDate: new Date(2025, 11, 2, 7)
+        date: "Main Convention:\n\tThu - 5pm to 9pm\n\tFri & Sat - 10am to 9pm\n\tSun 10am to 2pm\nGaming Room Hours:\n\tThu - 6pm to 10pm\n\tFri & Sat - 10am to 1am\n\tSun - 10am to 4pm",
+        startingDate: new Date(2025, 9, 30, 10),
+        endingDate: new Date(2025, 10, 2, 7)
     }
 ]

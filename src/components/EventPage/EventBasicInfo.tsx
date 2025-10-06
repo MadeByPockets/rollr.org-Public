@@ -18,13 +18,13 @@ export default function EventBasicInfo({description, locationId, startingDate, e
             }}>
                 <CardContent>
                     {generateTimeInfo(timeInfo, startingDate, endingDate)}
-                    {getLocation(locationId)}
                     <Typography variant={"h5"} paddingTop={2}>
                         About:
                     </Typography>
                     <Typography sx={{whiteSpace: 'pre-wrap'}} paddingTop={1}>
                         {description}
                     </Typography>
+                    {getLocation(locationId)}
                 </CardContent>
             </Card>
         </Grid>

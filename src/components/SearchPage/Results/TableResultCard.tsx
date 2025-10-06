@@ -8,7 +8,6 @@ import PersonIcon from '@mui/icons-material/Person';
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import TableRestaurantIcon from '@mui/icons-material/TableRestaurant';
 import { SearchResultItem } from '@/mocks/SearchResults';
-import { Tables } from '@/mocks/Tables';
 import BaseSearchResultCard, { BaseSearchResultCardProps } from './BaseSearchResultCard';
 
 interface TableResultCardProps extends BaseSearchResultCardProps {
@@ -24,24 +23,16 @@ const TableResultCard: React.FC<TableResultCardProps> = ({
   onClick,
   tags
 }) => {
-  // Find the full table data from Tables mock data
-  const tableData = Tables.find(table => table.id === result.id);
-  
-  // Mock data for active players and DM status (since it's not in the data structure)
-  // In a real application, this would come from the API
-  const getRandomActivePlayers = (capacity: number) => {
-    return Math.floor(Math.random() * (capacity + 1));
-  };
-  
-  const hasDM = Math.random() > 0.5; // 50% chance of having a DM
-  
-  // Use capacity from tableData if available, otherwise default to 6
-  const capacity = tableData?.capacity || 6;
-  const activePlayers = getRandomActivePlayers(capacity);
-  const availableSlots = capacity - activePlayers;
-  
-  // Calculate percentage for progress bar
-  const occupancyPercentage = (activePlayers / capacity) * 100;
+  // Prefer values provided directly on the search result item
+  const capacity = typeof result.capacity === 'number' ? result.capacity : 6;
+  const activePlayers = typeof result.numPlayers === 'number' ? result.numPlayers : 0;
+  const availableSlots = Math.max(capacity - activePlayers, 0);
+
+  // DM status from result if provided
+  const hasDM = typeof result.hasDM === 'boolean' ? result.hasDM : false;
+
+  // Calculate percentage for progress bar (avoid NaN/div by zero)
+  const occupancyPercentage = capacity > 0 ? (activePlayers / capacity) * 100 : 0;
   
   // Create table icon
   const tableIcon = (
@@ -86,10 +77,10 @@ const TableResultCard: React.FC<TableResultCardProps> = ({
             ? `${availableSlots} slot${availableSlots !== 1 ? 's' : ''} available` 
             : 'Table full'}
         </Typography>
-        
-        {tableData?.location && (
+
+        {typeof result.waitlistCount === 'number' && result.waitlistCount > 0 && (
           <Typography variant="body2" sx={{ mt: 1 }}>
-            <strong>Location:</strong> {tableData.location}
+            <strong>Waitlist:</strong> {result.waitlistCount}
           </Typography>
         )}
       </Box>

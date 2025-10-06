@@ -4,6 +4,8 @@ import Typography from '@mui/material/Typography';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import EventIcon from '@mui/icons-material/Event';
+import PeopleIcon from '@mui/icons-material/People';
+import TableRestaurantIcon from '@mui/icons-material/TableRestaurant';
 import { SearchResultItem } from '@/mocks/SearchResults';
 import { Events } from '@/mocks/Events';
 import BaseSearchResultCard, { BaseSearchResultCardProps } from './BaseSearchResultCard';
@@ -73,6 +75,27 @@ const EventResultCard: React.FC<EventResultCardProps> = ({
             <strong>Location:</strong> {location}
           </Typography>
         </Box>
+
+        {(typeof result.numTables === 'number' || typeof result.numPlayers === 'number') && (
+          <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+            {typeof result.numTables === 'number' && (
+              <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
+                <TableRestaurantIcon sx={{ mr: 0.5, color: 'primary.main' }} />
+                <Typography variant="body2">
+                  <strong>Tables:</strong> {result.numTables}
+                </Typography>
+              </Box>
+            )}
+            {typeof result.numPlayers === 'number' && (
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <PeopleIcon sx={{ mr: 0.5, color: 'primary.main' }} />
+                <Typography variant="body2">
+                  <strong>Players:</strong> {result.numPlayers}
+                </Typography>
+              </Box>
+            )}
+          </Box>
+        )}
         
         {eventData?.organizer && (
           <Typography variant="body2" sx={{ mt: 1 }}>

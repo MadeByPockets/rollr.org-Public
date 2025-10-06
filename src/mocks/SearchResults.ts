@@ -6,6 +6,13 @@ export interface SearchResultItem {
   tags?: number[];
   imageUrl?: string;
   date?: string;
+  // Optional metrics for events and tables
+  numTables?: number; // events only
+  numPlayers?: number; // events and tables
+  // Table-specific optional fields
+  capacity?: number;
+  waitlistCount?: number;
+  hasDM?: boolean;
 }
 
 export const SearchResults: SearchResultItem[] = [
@@ -31,7 +38,9 @@ export const SearchResults: SearchResultItem[] = [
     description: 'Annual tournament featuring the best raid teams from around the world.',
     type: 'event',
     tags: [1, 5, 11],
-    date: '2025-08-15'
+    date: '2025-08-15',
+    numTables: 12,
+    numPlayers: 96
   },
   {
     id: 4,
@@ -39,7 +48,11 @@ export const SearchResults: SearchResultItem[] = [
     description: 'Premium gaming table with integrated digital features for enhanced gameplay.',
     type: 'table',
     tags: [1, 4, 10],
-    imageUrl: '/images/tables/table1.jpg'
+    imageUrl: '/images/tables/table1.jpg',
+    capacity: 6,
+    numPlayers: 4,
+    waitlistCount: 1,
+    hasDM: true
   },
   {
     id: 5,
@@ -55,7 +68,9 @@ export const SearchResults: SearchResultItem[] = [
     description: 'Three-day event with tournaments, workshops, and networking opportunities.',
     type: 'event',
     tags: [2, 6, 9],
-    date: '2025-07-30'
+    date: '2025-07-30',
+    numTables: 20,
+    numPlayers: 150
   },
   {
     id: 7,
@@ -63,7 +78,11 @@ export const SearchResults: SearchResultItem[] = [
     description: 'Themed gaming table with immersive lighting and sound effects for RPG sessions.',
     type: 'table',
     tags: [1, 7, 12],
-    imageUrl: '/images/tables/table2.jpg'
+    imageUrl: '/images/tables/table2.jpg',
+    capacity: 8,
+    numPlayers: 3,
+    waitlistCount: 3,
+    hasDM: false
   },
   {
     id: 8,
@@ -88,32 +107,32 @@ export const SearchResults: SearchResultItem[] = [
   { id: 20, title: 'LightningLancer', description: 'Fast-paced melee with high mobility plays.', type: 'player', tags: [1, 2, 8], imageUrl: '/images/players/player16.jpg' },
 
   // Additional Events
-  { id: 21, title: 'Winter Clash Cup', description: 'Seasonal PvP event with elimination brackets.', type: 'event', tags: [1, 4, 9], date: '2025-12-10' },
-  { id: 22, title: 'Indie Dev Showcase', description: 'Spotlight on community-made modules and tools.', type: 'event', tags: [3, 6, 11], date: '2025-11-05' },
-  { id: 23, title: 'Dungeon Delvers Open', description: 'Open registration raid race with live commentary.', type: 'event', tags: [2, 5, 8], date: '2025-10-20' },
-  { id: 24, title: 'Spring Strategy Summit', description: 'Workshops on tactics, VOD reviews, and team building.', type: 'event', tags: [5, 7, 12], date: '2025-03-18' },
-  { id: 25, title: 'Speedrun Marathon', description: 'Charity marathon featuring top speedrunners.', type: 'event', tags: [2, 8, 10], date: '2025-09-01' },
-  { id: 26, title: 'Creators Con', description: 'Panels and meetups with content creators.', type: 'event', tags: [3, 9, 11], date: '2025-06-22' },
-  { id: 27, title: 'Arena Masters', description: 'Team-based arena battles with seasonal rewards.', type: 'event', tags: [1, 6, 12], date: '2025-05-12' },
-  { id: 28, title: 'Co-op Quest Fest', description: 'Casual co-op challenges and puzzle races.', type: 'event', tags: [4, 7, 10], date: '2025-04-08' },
-  { id: 29, title: 'VR Adventures Expo', description: 'Hands-on demos for upcoming VR titles.', type: 'event', tags: [2, 3, 9], date: '2025-08-05' },
-  { id: 30, title: 'Tactics League Finals', description: 'Grand finals for the national tactics league.', type: 'event', tags: [1, 5, 11], date: '2025-10-02' },
-  { id: 31, title: 'Guild Summit', description: 'Networking event for guild leaders and organizers.', type: 'event', tags: [6, 9, 12], date: '2025-07-12' },
-  { id: 32, title: 'Retro Games Carnival', description: 'Celebration of classic games with tournaments.', type: 'event', tags: [3, 4, 8], date: '2025-02-14' },
+  { id: 21, title: 'Winter Clash Cup', description: 'Seasonal PvP event with elimination brackets.', type: 'event', tags: [1, 4, 9], date: '2025-12-10', numTables: 10, numPlayers: 80 },
+  { id: 22, title: 'Indie Dev Showcase', description: 'Spotlight on community-made modules and tools.', type: 'event', tags: [3, 6, 11], date: '2025-11-05', numTables: 6, numPlayers: 42 },
+  { id: 23, title: 'Dungeon Delvers Open', description: 'Open registration raid race with live commentary.', type: 'event', tags: [2, 5, 8], date: '2025-10-20', numTables: 12, numPlayers: 96 },
+  { id: 24, title: 'Spring Strategy Summit', description: 'Workshops on tactics, VOD reviews, and team building.', type: 'event', tags: [5, 7, 12], date: '2025-03-18', numTables: 8, numPlayers: 64 },
+  { id: 25, title: 'Speedrun Marathon', description: 'Charity marathon featuring top speedrunners.', type: 'event', tags: [2, 8, 10], date: '2025-09-01', numTables: 5, numPlayers: 30 },
+  { id: 26, title: 'Creators Con', description: 'Panels and meetups with content creators.', type: 'event', tags: [3, 9, 11], date: '2025-06-22', numTables: 14, numPlayers: 120 },
+  { id: 27, title: 'Arena Masters', description: 'Team-based arena battles with seasonal rewards.', type: 'event', tags: [1, 6, 12], date: '2025-05-12', numTables: 16, numPlayers: 128 },
+  { id: 28, title: 'Co-op Quest Fest', description: 'Casual co-op challenges and puzzle races.', type: 'event', tags: [4, 7, 10], date: '2025-04-08', numTables: 7, numPlayers: 49 },
+  { id: 29, title: 'VR Adventures Expo', description: 'Hands-on demos for upcoming VR titles.', type: 'event', tags: [2, 3, 9], date: '2025-08-05', numTables: 9, numPlayers: 72 },
+  { id: 30, title: 'Tactics League Finals', description: 'Grand finals for the national tactics league.', type: 'event', tags: [1, 5, 11], date: '2025-10-02', numTables: 10, numPlayers: 80 },
+  { id: 31, title: 'Guild Summit', description: 'Networking event for guild leaders and organizers.', type: 'event', tags: [6, 9, 12], date: '2025-07-12', numTables: 4, numPlayers: 28 },
+  { id: 32, title: 'Retro Games Carnival', description: 'Celebration of classic games with tournaments.', type: 'event', tags: [3, 4, 8], date: '2025-02-14', numTables: 6, numPlayers: 48 },
 
   // Additional Tables
-  { id: 33, title: 'Nebula Nexus Table', description: 'Sci-fi themed table with modular hex grid.', type: 'table', tags: [2, 4, 9], imageUrl: '/images/tables/table3.jpg' },
-  { id: 34, title: 'Oakheart Deluxe', description: 'Handcrafted oak table with felt inlays.', type: 'table', tags: [1, 6, 10], imageUrl: '/images/tables/table4.jpg' },
-  { id: 35, title: 'ArenaPro Surface', description: 'Durable top for miniature wargames.', type: 'table', tags: [3, 7, 11], imageUrl: '/images/tables/table5.jpg' },
-  { id: 36, title: 'Crystal Cavern Table', description: 'LED-lit terrain zones for ambience.', type: 'table', tags: [4, 8, 12], imageUrl: '/images/tables/table6.jpg' },
-  { id: 37, title: 'FoldAway Battleboard', description: 'Portable, compact table for small spaces.', type: 'table', tags: [2, 5, 10], imageUrl: '/images/tables/table7.jpg' },
-  { id: 38, title: 'KingsCourt Table', description: 'Regal design perfect for board game nights.', type: 'table', tags: [1, 3, 9], imageUrl: '/images/tables/table8.jpg' },
-  { id: 39, title: 'Vaulted Vale Table', description: 'Storage drawers and cable management built-in.', type: 'table', tags: [6, 8, 11], imageUrl: '/images/tables/table9.jpg' },
-  { id: 40, title: 'Rogue’s Rest', description: 'Compact RPG table with dice towers.', type: 'table', tags: [5, 7, 12], imageUrl: '/images/tables/table10.jpg' },
-  { id: 41, title: 'Starforge Station', description: 'Magnetic tile system for modular setups.', type: 'table', tags: [2, 4, 10], imageUrl: '/images/tables/table11.jpg' },
-  { id: 42, title: 'Seafarer’s Deck', description: 'Nautical theme with resin river centerpiece.', type: 'table', tags: [3, 6, 9], imageUrl: '/images/tables/table12.jpg' },
-  { id: 43, title: 'Runebound Workbench', description: 'Etched runes with underglow lighting.', type: 'table', tags: [1, 8, 11], imageUrl: '/images/tables/table13.jpg' },
-  { id: 44, title: 'Verdant Grove Table', description: 'Green felt ecosystem for nature-themed games.', type: 'table', tags: [4, 7, 12], imageUrl: '/images/tables/table14.jpg' }
+  { id: 33, title: 'Nebula Nexus Table', description: 'Sci-fi themed table with modular hex grid.', type: 'table', tags: [2, 4, 9], imageUrl: '/images/tables/table3.jpg', capacity: 6, numPlayers: 5, waitlistCount: 0, hasDM: false },
+  { id: 34, title: 'Oakheart Deluxe', description: 'Handcrafted oak table with felt inlays.', type: 'table', tags: [1, 6, 10], imageUrl: '/images/tables/table4.jpg', capacity: 8, numPlayers: 6, waitlistCount: 1, hasDM: true },
+  { id: 35, title: 'ArenaPro Surface', description: 'Durable top for miniature wargames.', type: 'table', tags: [3, 7, 11], imageUrl: '/images/tables/table5.jpg', capacity: 4, numPlayers: 2, waitlistCount: 0, hasDM: false },
+  { id: 36, title: 'Crystal Cavern Table', description: 'LED-lit terrain zones for ambience.', type: 'table', tags: [4, 8, 12], imageUrl: '/images/tables/table6.jpg', capacity: 8, numPlayers: 7, waitlistCount: 2, hasDM: false },
+  { id: 37, title: 'FoldAway Battleboard', description: 'Portable, compact table for small spaces.', type: 'table', tags: [2, 5, 10], imageUrl: '/images/tables/table7.jpg', capacity: 4, numPlayers: 3, waitlistCount: 0, hasDM: false },
+  { id: 38, title: 'KingsCourt Table', description: 'Regal design perfect for board game nights.', type: 'table', tags: [1, 3, 9], imageUrl: '/images/tables/table8.jpg', capacity: 6, numPlayers: 4, waitlistCount: 1, hasDM: true },
+  { id: 39, title: 'Vaulted Vale Table', description: 'Storage drawers and cable management built-in.', type: 'table', tags: [6, 8, 11], imageUrl: '/images/tables/table9.jpg', capacity: 6, numPlayers: 5, waitlistCount: 0, hasDM: false },
+  { id: 40, title: 'Rogue’s Rest', description: 'Compact RPG table with dice towers.', type: 'table', tags: [5, 7, 12], imageUrl: '/images/tables/table10.jpg', capacity: 5, numPlayers: 5, waitlistCount: 2, hasDM: true },
+  { id: 41, title: 'Starforge Station', description: 'Magnetic tile system for modular setups.', type: 'table', tags: [2, 4, 10], imageUrl: '/images/tables/table11.jpg', capacity: 7, numPlayers: 4, waitlistCount: 0, hasDM: false },
+  { id: 42, title: 'Seafarer’s Deck', description: 'Nautical theme with resin river centerpiece.', type: 'table', tags: [3, 6, 9], imageUrl: '/images/tables/table12.jpg', capacity: 6, numPlayers: 6, waitlistCount: 3, hasDM: true },
+  { id: 43, title: 'Runebound Workbench', description: 'Etched runes with underglow lighting.', type: 'table', tags: [1, 8, 11], imageUrl: '/images/tables/table13.jpg', capacity: 8, numPlayers: 6, waitlistCount: 1, hasDM: false },
+  { id: 44, title: 'Verdant Grove Table', description: 'Green felt ecosystem for nature-themed games.', type: 'table', tags: [4, 7, 12], imageUrl: '/images/tables/table14.jpg', capacity: 8, numPlayers: 7, waitlistCount: 2, hasDM: false }
 ];
 
 export const SearchFilters = {
