@@ -21,15 +21,24 @@
   "peerDependencies": {
     "next": "^15",
     "react": "^19",
-    "react-dom": "^19"
+    "react-dom": "^19",
+    "@mui/material": "^7",
+    "@mui/icons-material": "^7",
+    "@mui/joy": "^5.0.0-beta",
+    "@emotion/react": "^11",
+    "@emotion/styled": "^11"
+  },
+  "peerDependenciesMeta": {
+    "@mui/icons-material": { "optional": true },
+    "@mui/joy": { "optional": true }
   },
   "devDependencies": {
     "@types/node": "^20",
     "tsup": "^8.5.0",
     "typescript": "^5.9.3",
-    "@mui/material": "^7.2.0",
+    "@mui/material": "^7.3.4",
     "@mui/joy": "^5.0.0-beta.52",
-    "@mui/icons-material": "^7.1.0",
+    "@mui/icons-material": "^7.3.1",
     "@emotion/cache": "^11.14.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",

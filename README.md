@@ -53,9 +53,21 @@ In your Next.js app’s next.config.mjs (or next.config.ts), add:
   };
 
 Peer dependencies expected from the consuming app:
-- react ^18
-- react-dom ^18
-- next ^14 || ^15
+- react ^19
+- react-dom ^19
+- next ^15
+- @mui/material ^7 (required if you use components that rely on MUI)
+- @mui/icons-material ^7 (optional; only if you use components that render icons)
+- @mui/joy ^5.0.0-beta (optional)
+- @emotion/react ^11 and @emotion/styled ^11
+
+### MUI version alignment note
+
+If your app uses @mui/icons-material, ensure its minor version matches your installed @mui/material minor version. For example:
+- If you have @mui/material@7.1.x, use @mui/icons-material@~7.1.0
+- If you upgrade to @mui/material@7.3.x, then use @mui/icons-material@^7.3.0
+
+NPM may otherwise attempt to install the latest @mui/icons-material (e.g., 7.3.x) which requires @mui/material^7.3.x and can cause ERESOLVE in projects pinned to @mui/material 7.1.x.
 
 ## Package entry points
 
