@@ -1,6 +1,6 @@
 {
   "name": "@pockets/shared-ui",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "private": false,
   "type": "module",
   "main": "dist/index.cjs",
@@ -29,8 +29,12 @@
     "@emotion/styled": "^11"
   },
   "peerDependenciesMeta": {
-    "@mui/icons-material": { "optional": true },
-    "@mui/joy": { "optional": true }
+    "@mui/icons-material": {
+      "optional": true
+    },
+    "@mui/joy": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@types/node": "^20",
