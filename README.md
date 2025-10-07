@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# @pockets/shared-ui
 
-## Getting Started
+A shareable UI library of React/Next components and supporting code (components, mocks, etc.). This package is published as a tarball attached to a GitHub Release and can be installed directly from the release URL.
 
-First, run the development server:
+## How to publish a new release
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Prerequisites:
+- GitHub CLI installed and authenticated (`gh auth status`).
+- Clean working tree (no uncommitted changes).
+- Node.js 20+.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Local release:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- patch bump (default):
+  npm run publish:web
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- minor or major bump:
+  node scripts/release.mjs minor
+  node scripts/release.mjs major
 
-## Learn More
+The script will:
+- Bump the version in package.json via `npm version <type>` (commit + tag)
+- Build the package (`tsup`)
+- Create a tarball via `npm pack`
+- Push commit and tag
+- Create a GitHub Release and upload the tarball asset
 
-To learn more about Next.js, take a look at the following resources:
+GitHub Action alternative:
+- Use the Release workflow manually (workflow_dispatch) and pass input `bump` as `patch|minor|major`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## How to consume
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Install from a GitHub Release (replace <ORG>/<REPO> and version):
 
-## Deploy on Vercel
+  npm i https://github.com/<ORG>/<REPO>/releases/download/vX.Y.Z/pockets-shared-ui-X.Y.Z.tgz
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+In your Next.js app’s next.config.mjs (or next.config.ts), add:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+  import { defineConfig } from 'next/config';
+
+  export default {
+    experimental: {
+      // Ensure the package is transpiled by Next
+      transpilePackages: ["@pockets/shared-ui"],
+    },
+  };
+
+Peer dependencies expected from the consuming app:
+- react ^18
+- react-dom ^18
+- next ^14 || ^15
+
+## Package entry points
+
+This package ships ESM and CJS builds with type declarations. The main barrel is `src/index.ts` which re-exports from:
+- components
+- mocks
+- data (placeholder)
+- hooks (placeholder)
+- utils (placeholder)
+
+You can import like:
+
+  import { SearchPageLayout, Tags, Players } from "@pockets/shared-ui";
+
+Or deep-import specific modules if desired (paths are preserved in the build).

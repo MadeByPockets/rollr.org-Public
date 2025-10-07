@@ -1,7 +1,6 @@
 "use client"
 import { Box } from "@mui/material"
 import Grid from "@mui/material/Grid";
-import "dotenv"
 import {generateTagsDisplay} from "@/components/shared/TagComponents";
 import {TagsFormat} from "@/mocks/Tags";
 
@@ -30,7 +29,7 @@ export default function EventBanner({bannerUrl, links, bannerColor, title, event
                 {/* BANNER */}
                 <Box
                     component="img"
-                    src={`${process.env.BASE_URL ?? ""}${bannerUrl.desktop}`}
+                    src={bannerUrl.desktop}
                     alt={title}
                     sx={{
                         display: "block",
