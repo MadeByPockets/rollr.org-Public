@@ -1,4 +1,4 @@
-export const Tags: TagsFormat[] = [
+export const MockedTags: TagsFormat[] = [
   // Game tags
   {
     id: 1,

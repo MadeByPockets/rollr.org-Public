@@ -9,7 +9,7 @@ import TableActionsBar from "@/components/TablePage/TableActionsBar";
 import {TableStatus} from "@/components/TablePage/types";
 import { TableFormat } from "@/mocks/Tables";
 import { TagsFormat } from "@/mocks/Tags";
-import {Players, PlayerFormat} from "@/mocks/Players";
+import {MockedPlayers, PlayerFormat} from "@/mocks/Players";
 import AutoResizingTextarea from "@/components/shared/AutoResizingTextarea";
 
 export type TablePageProps = {
@@ -51,7 +51,7 @@ export default function TablePageLayout(props: TablePageProps) {
 
     const handleRemovePlayerFromWaitlist = (playerIdToRemoveFromWaitlist: number) => {
         console.log("handleRemovePlayerFromWaitlist called with ", playerIdToRemoveFromWaitlist);
-        const foundPlayer = Players.find(player => player.id === playerIdToRemoveFromWaitlist);
+        const foundPlayer = MockedPlayers.find(player => player.id === playerIdToRemoveFromWaitlist);
 
         if (!foundPlayer) {
             console.warn("Player not found in players list");

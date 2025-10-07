@@ -34,7 +34,7 @@ export interface TableFormat {
     tags?: number[];
 }
 
-export const Tables: TableFormat[] = [
+export const MockedTables: TableFormat[] = [
     {
         id: 1,
         title: 'Critical Hit Table',

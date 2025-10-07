@@ -4,7 +4,7 @@ import FormControl from '@mui/material/FormControl';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
-import { SearchFilters } from '@/mocks/SearchResults';
+import { MockedSearchFilters } from '@/mocks/SearchResults';
 
 interface SortOptionsProps {
   defaultValue?: string;
@@ -34,7 +34,7 @@ const SortOptions: React.FC<SortOptionsProps> = ({
           defaultValue={defaultValue}
           onChange={handleSortChange}
         >
-          {SearchFilters.sortOptions.map((option) => (
+          {MockedSearchFilters.sortOptions.map((option) => (
             <FormControlLabel
               key={option.id}
               value={option.id}

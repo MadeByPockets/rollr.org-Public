@@ -3,7 +3,7 @@ import Typography from '@mui/material/Typography';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import { SearchFilters } from '@/mocks/SearchResults';
+import { MockedSearchFilters } from '@/mocks/SearchResults';
 
 interface TypeFilterProps {
   onChange?: (selectedTypes: string[]) => void;
@@ -33,7 +33,7 @@ const TypeFilter: React.FC<TypeFilterProps> = ({ onChange }) => {
         Type
       </Typography>
       <FormGroup>
-        {SearchFilters.types.map((type) => (
+        {MockedSearchFilters.types.map((type) => (
           <FormControlLabel
             key={type.id}
             control={

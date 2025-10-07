@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react';
 import SearchPageLayout from '@/components/SearchPage/SearchPageLayout';
-import { SearchResults, SearchResultItem } from '@/mocks/SearchResults';
-import { Tags } from '@/mocks/Tags';
+import { MockedSearchResults, SearchResultItem } from '@/mocks/SearchResults';
+import { MockedTags } from '@/mocks/Tags';
 
 /**
  * Search page component that serves as a shell to deliver the SearchPageLayout
@@ -22,7 +22,7 @@ const SearchPage = () => {
   });
   
   // State to store filtered results
-  const [filteredResults, setFilteredResults] = useState<SearchResultItem[]>(SearchResults);
+  const [filteredResults, setFilteredResults] = useState<SearchResultItem[]>(MockedSearchResults);
 
   // Handler for type filter changes
   const handleTypeChange = (types: string[]) => {
@@ -48,7 +48,7 @@ const SearchPage = () => {
     console.log('Applying filters:', { selectedTypes, selectedTags });
     
     // Filter results based on selected types and tags
-    let results = [...SearchResults];
+    let results = [...MockedSearchResults];
     
     // Filter by type if any types are selected
     if (selectedTypes.length > 0) {
@@ -92,7 +92,7 @@ const SearchPage = () => {
         onTypeChange={handleTypeChange}
         onTagChange={handleTagChange}
         onSubmit={handleSubmit}
-        onResultClick={handleResultClick} allTags={Tags} validTags={Tags}    />
+        onResultClick={handleResultClick} allTags={MockedTags} validTags={MockedTags}    />
   );
 };
 

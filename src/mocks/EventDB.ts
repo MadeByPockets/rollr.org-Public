@@ -1,4 +1,4 @@
-import {Tags, TagsFormat} from "@/mocks/Tags";
+import {MockedTags, TagsFormat} from "@/mocks/Tags";
 
 export interface EventDB {
     id: number;
@@ -19,11 +19,11 @@ export interface EventDB {
     endingDate?: Date,
 }
 
-export const eventObjects : EventDB[] = [
+export const MockedEventObjects : EventDB[] = [
     {
         id: 1,
         title: "Youmacon 2025",
-        eventTag: Tags[12],
+        eventTag: MockedTags[12],
         bannerUrl: {
             desktop: "/youmacon.png",
             mobile: "/youmacon.png",

@@ -7,7 +7,7 @@ import EventIcon from '@mui/icons-material/Event';
 import PeopleIcon from '@mui/icons-material/People';
 import TableRestaurantIcon from '@mui/icons-material/TableRestaurant';
 import { SearchResultItem } from '@/mocks/SearchResults';
-import { Events } from '@/mocks/Events';
+import { MockedEvents } from '@/mocks/Events';
 import BaseSearchResultCard, { BaseSearchResultCardProps } from './BaseSearchResultCard';
 import {TagsFormat} from "@/mocks/Tags";
 
@@ -26,7 +26,7 @@ const EventResultCard: React.FC<EventResultCardProps> = ({
   tags
 }) => {
   // Find the full event data from Events mock data
-  const eventData = Events.find(event => event.id === result.id);
+  const eventData = MockedEvents.find(event => event.id === result.id);
   
   // Format the date for display
   const formatDate = (dateString: string) => {

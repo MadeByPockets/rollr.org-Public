@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import {TableFormat, Tables} from "@/mocks/Tables"
+import {TableFormat, MockedTables} from "@/mocks/Tables"
 
 interface IGameTableContextType {
     table: TableFormat;
@@ -17,7 +17,7 @@ export function GameTableProvider(props: IGameTableProviderProps) {
     const [table, setTable] = useState<TableFormat | null>(null);
 
     useEffect(() => {
-        setTable(Tables[0]);
+        setTable(MockedTables[0]);
     }, []);
 
     if (!table) {
