@@ -5,9 +5,16 @@ A shareable UI library of React/Next components and supporting code (components,
 ## How to publish a new release
 
 Prerequisites:
-- GitHub CLI installed and authenticated (`gh auth status`).
+- EITHER: GitHub CLI installed and authenticated (`gh auth status`)
+- OR: Set an environment token `GITHUB_TOKEN` (or `GH_TOKEN`) with repo scope
 - Clean working tree (no uncommitted changes).
 - Node.js 20+.
+
+If you don't have gh installed, set a token and run locally:
+- PowerShell (Windows):  $env:GITHUB_TOKEN = "<your-token>"
+- bash/zsh (macOS/Linux): export GITHUB_TOKEN="<your-token>"
+
+The release script will use gh when available; otherwise it will use the GitHub REST API with the token.
 
 Local release:
 
