@@ -186,7 +186,21 @@ async function main() {
     await uploadAssetViaApi({ owner, repo, token, releaseId: release.id, filePath: tarball, assetName: tarball });
   }
 
-  console.log(`\nRelease ${tag} created with asset: ${tarball}`);
+  // Print exact install commands for consuming codebases
+  try {
+    const { owner, repo } = getRepoFromGit();
+    const downloadUrl = `https://github.com/${owner}/${repo}/releases/download/${tag}/${tarball}`;
+    const pkgName = pkg.name;
+    console.log(`\nRelease ${tag} created with asset: ${tarball}`);
+    console.log(`\nTo import this build into another codebase, run one of the following:`);
+    console.log(`  npm install ${downloadUrl}`);
+    console.log(`  pnpm add ${downloadUrl}`);
+    console.log(`  yarn add ${downloadUrl}`);
+    console.log(`\nAlternatively, pin to the package name with a URL:`);
+    console.log(`  npm install ${pkgName}@${downloadUrl}`);
+  } catch (_) {
+    console.log(`\nRelease ${tag} created with asset: ${tarball}`);
+  }
 }
 
 // Node 18+ has global fetch; ensure it exists
