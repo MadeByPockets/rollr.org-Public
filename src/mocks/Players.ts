@@ -11,7 +11,7 @@ export interface PlayerFormat {
   discordId?: number;
 }
 
-export const Players: PlayerFormat[] = [
+export const MockedPlayers: PlayerFormat[] = [
     {
         id: 1,
         username: 'DragonSlayer99',

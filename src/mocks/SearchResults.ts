@@ -15,7 +15,7 @@ export interface SearchResultItem {
   hasDM?: boolean;
 }
 
-export const SearchResults: SearchResultItem[] = [
+export const MockedSearchResults: SearchResultItem[] = [
   {
     id: 1,
     title: 'DragonSlayer99',
@@ -135,7 +135,7 @@ export const SearchResults: SearchResultItem[] = [
   { id: 44, title: 'Verdant Grove Table', description: 'Green felt ecosystem for nature-themed games.', type: 'table', tags: [4, 7, 12], imageUrl: '/images/tables/table14.jpg', capacity: 8, numPlayers: 7, waitlistCount: 2, hasDM: false }
 ];
 
-export const SearchFilters = {
+export const MockedSearchFilters = {
   types: [
     { id: 'player', label: 'Players' },
     { id: 'event', label: 'Events' },
@@ -149,6 +149,6 @@ export const SearchFilters = {
 };
 
 // Convenience filtered mock datasets
-export const SearchResultsEventsOnly: SearchResultItem[] = SearchResults.filter(item => item.type === 'event');
-export const SearchResultsTablesOnly: SearchResultItem[] = SearchResults.filter(item => item.type === 'table');
-export const SearchResultsPlayersOnly: SearchResultItem[] = SearchResults.filter(item => item.type === 'player');
+export const MockedSearchResultsEventsOnly: SearchResultItem[] = MockedSearchResults.filter(item => item.type === 'event');
+export const MockedSearchResultsTablesOnly: SearchResultItem[] = MockedSearchResults.filter(item => item.type === 'table');
+export const MockedSearchResultsPlayersOnly: SearchResultItem[] = MockedSearchResults.filter(item => item.type === 'player');

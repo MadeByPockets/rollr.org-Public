@@ -9,7 +9,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import {deleteTable, joinWaitlist, leaveTable} from "@/app/TablePage/actions";
 import {TableStatus} from "@/components/TablePage/types";
 import { useModal } from "@/app/TablePage/ModalProvider/ModalContext";
-import {Players, PlayerFormat} from "@/mocks/Players";
+import {MockedPlayers, PlayerFormat} from "@/mocks/Players";
 import Image from "next/image";
 import { CardHeader } from "@mui/material";
 
@@ -53,7 +53,7 @@ export default function TableActionsBar(props: tableActionProps) {
     const renderPlayerWaitlistModalContent = (canMovePlayersToTable?: boolean) => {
         const waitlistPlayers: PlayerFormat[] =
             waitlist.map((playerId: number) =>
-                Players.find((player: PlayerFormat) =>
+                MockedPlayers.find((player: PlayerFormat) =>
                     playerId === player.id
                 )
             ).filter((p): p is PlayerFormat => p !== undefined);

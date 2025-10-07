@@ -10,7 +10,7 @@ export interface EventResult {
   imageUrl?: string;
 }
 
-export const Events: EventResult[] = [
+export const MockedEvents: EventResult[] = [
   {
     id: 1,
     title: 'Epic Raid Tournament',
