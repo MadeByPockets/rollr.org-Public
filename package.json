@@ -6,6 +6,28 @@
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./components/*": {
+      "types": "./dist/shared-ui/components/*.d.ts",
+      "import": "./dist/shared-ui/components/*.mjs",
+      "require": "./dist/shared-ui/components/*.cjs"
+    },
+    "./components/EventPage": {
+      "types": "./dist/shared-ui/components/EventPage.d.ts",
+      "import": "./dist/shared-ui/components/EventPage.mjs",
+      "require": "./dist/shared-ui/components/EventPage.cjs"
+    },
+    "./components/common": {
+      "types": "./dist/shared-ui/components/common.d.ts",
+      "import": "./dist/shared-ui/components/common.mjs",
+      "require": "./dist/shared-ui/components/common.cjs"
+    }
+  },
   "files": [
     "dist"
   ],
@@ -15,8 +37,12 @@
     "prepublishOnly": "npm run build",
     "_release": "node scripts/release.mjs",
     "publish:web": "npm run _release",
+    "publish:web:canary": "node scripts/release.mjs --channel canary",
+    "publish:web:nightly": "node scripts/release.mjs --channel nightly",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:publish": "node scripts/test-publish.mjs",
+    "update:barrels": "node scripts/update-barrels.mjs"
   },
   "peerDependencies": {
     "@emotion/react": "^11",

@@ -40,3 +40,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 /.idea/
+
+
+# build artifacts (added by publish:web)
+/dist
+/build_files

@@ -1,4 +1,4 @@
-import { readFileSync, readFileSync as fsReadFileSync } from 'node:fs';
+import { readFileSync, readFileSync as fsReadFileSync, mkdirSync, renameSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import { execSync } from 'node:child_process';
 
@@ -57,7 +57,7 @@ function getRepoFromGit() {
   return { owner, repo };
 }
 
-async function createOrGetReleaseViaApi({ owner, repo, tag, token, title, notes }) {
+async function createOrGetReleaseViaApi({ owner, repo, tag, token, title, notes, prerelease = false }) {
   const headers = {
     'Accept': 'application/vnd.github+json',
     'X-GitHub-Api-Version': '2022-11-28',
@@ -70,7 +70,7 @@ async function createOrGetReleaseViaApi({ owner, repo, tag, token, title, notes 
   let resp = await fetch(`https://api.github.com/repos/${owner}/${repo}/releases`, {
     method: 'POST',
     headers,
-    body: JSON.stringify({ tag_name: tag, name: title ?? tag, body: notes ?? '', draft: false, prerelease: false }),
+    body: JSON.stringify({ tag_name: tag, name: title ?? tag, body: notes ?? '', draft: false, prerelease }),
   });
 
   if (resp.status === 422) {
@@ -125,10 +125,16 @@ async function uploadAssetViaApi({ owner, repo, token, releaseId, filePath, asse
 }
 
 async function main() {
-  const bump = process.argv[2] || 'patch'; // patch | minor | major
-  if (!['patch', 'minor', 'major'].includes(bump)) {
-    console.error('Invalid bump type. Use: patch | minor | major');
-    process.exit(1);
+  // Parse args
+  const argv = process.argv.slice(2);
+  let channel = (process.env.PUBLISH_CHANNEL || 'stable').toLowerCase();
+  let bump = 'patch';
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    if (a === '--channel' && i + 1 < argv.length) { channel = String(argv[++i]).toLowerCase(); continue; }
+    const m = a.match(/^--channel=(.+)$/);
+    if (m) { channel = String(m[1]).toLowerCase(); continue; }
+    if (['patch', 'minor', 'major'].includes(a)) { bump = a; }
   }
 
   // Preflight auth tooling: require gh CLI OR a token before making any changes
@@ -142,64 +148,124 @@ async function main() {
     process.exit(1);
   }
 
-  // Ensure workspace is clean
-  try { sh('git diff --quiet'); } catch {
-    console.error('Working tree is dirty. Commit or stash changes before releasing.');
-    process.exit(1);
-  }
+  // Ensure output dir exists for tarballs
+  const outDir = path.resolve(process.cwd(), path.join('build_files', 'release_candidates'));
+  mkdirSync(outDir, { recursive: true });
 
-  // Bump version (creates a commit and tag)
-  sh(`npm version ${bump} -m "release: v%s"`);
+  if (channel === 'stable') {
+    // Ensure workspace is clean for stable releases
+    try { sh('git diff --quiet'); } catch {
+      console.error('Working tree is dirty. Commit or stash changes before releasing.');
+      process.exit(1);
+    }
 
-  // Read new version
-  const pkg = getPkg();
-  const version = pkg.version;
+    // Bump version (creates a commit and tag)
+    sh(`npm version ${bump} -m "release: v%s"`);
 
-  // Build and pack tarball
-  sh('npm run build');
-  sh('npm pack');
+    // Read new version
+    const pkg = getPkg();
+    const version = pkg.version;
 
-  const tarball = pkgTarballName(pkg);
+    // Build and pack tarball
+    sh('npm run build');
+    sh('npm pack');
 
-  // Push commit and tag
-  sh('git push');
-  sh('git push --tags');
+    const tarball = pkgTarballName(pkg);
+    const srcTar = path.resolve(process.cwd(), tarball);
+    const dstTar = path.join(outDir, tarball);
+    try { if (existsSync(dstTar)) require('node:fs').unlinkSync(dstTar); } catch {}
+    renameSync(srcTar, dstTar);
 
-  // Create GitHub Release and upload asset
-  const tag = `v${version}`;
-  if (ghAvailable) {
-    try {
-      sh(`gh release create ${tag} --title ${tag} --notes "release ${tag}" ${tarball}`);
-    } catch (e) {
-      // If release exists, just upload/clobber asset
+    // Push commit and tag
+    sh('git push');
+    sh('git push --tags');
+
+    // Create GitHub Release and upload asset
+    const tag = `v${version}`;
+    if (ghAvailable) {
       try {
-        sh(`gh release upload ${tag} ${tarball} --clobber`);
-      } catch (e2) {
-        throw e2;
+        sh(`gh release create ${tag} --title ${tag} --notes "release ${tag}" "${dstTar}"`);
+      } catch (e) {
+        // If release exists, just upload/clobber asset
+        try {
+          sh(`gh release upload ${tag} "${dstTar}" --clobber`);
+        } catch (e2) {
+          throw e2;
+        }
       }
+    } else {
+      // REST API fallback using token
+      const { owner, repo } = getRepoFromGit();
+      const release = await createOrGetReleaseViaApi({ owner, repo, tag, token, title: tag, notes: `release ${tag}`, prerelease: false });
+      const assetName = path.basename(dstTar);
+      await deleteAssetIfExists({ owner, repo, token, release, assetName });
+      await uploadAssetViaApi({ owner, repo, token, releaseId: release.id, filePath: dstTar, assetName });
+    }
+
+    // Print exact install commands for consuming codebases
+    try {
+      const { owner, repo } = getRepoFromGit();
+      const downloadUrl = `https://github.com/${owner}/${repo}/releases/download/${tag}/${path.basename(dstTar)}`;
+      const pkgName = pkg.name;
+      console.log(`\nRelease ${tag} created with asset: ${path.basename(dstTar)}`);
+      console.log(`\nTo import this build into another codebase, run one of the following:`);
+      console.log(`  npm install ${downloadUrl}`);
+      console.log(`  pnpm add ${downloadUrl}`);
+      console.log(`  yarn add ${downloadUrl}`);
+      console.log(`\nAlternatively, pin to the package name with a URL:`);
+      console.log(`  npm install ${pkgName}@${downloadUrl}`);
+    } catch (_) {
+      console.log(`\nRelease ${tag} created with asset: ${path.basename(dstTar)}`);
     }
   } else {
-    // REST API fallback using token
-    const { owner, repo } = getRepoFromGit();
-    const release = await createOrGetReleaseViaApi({ owner, repo, tag, token, title: tag, notes: `release ${tag}` });
-    await deleteAssetIfExists({ owner, repo, token, release, assetName: tarball });
-    await uploadAssetViaApi({ owner, repo, token, releaseId: release.id, filePath: tarball, assetName: tarball });
-  }
+    // Canary/Nightly prerelease flow
+    const now = new Date();
+    const pad = (n) => String(n).padStart(2, '0');
+    const stamp = `${now.getUTCFullYear()}${pad(now.getUTCMonth() + 1)}${pad(now.getUTCDate())}-${pad(now.getUTCHours())}${pad(now.getUTCMinutes())}${pad(now.getUTCSeconds())}Z`;
+    let shortSha = '';
+    try { shortSha = execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim(); } catch {}
+    const tag = `${channel}/${stamp}${shortSha ? '-' + shortSha : ''}`;
 
-  // Print exact install commands for consuming codebases
-  try {
-    const { owner, repo } = getRepoFromGit();
-    const downloadUrl = `https://github.com/${owner}/${repo}/releases/download/${tag}/${tarball}`;
-    const pkgName = pkg.name;
-    console.log(`\nRelease ${tag} created with asset: ${tarball}`);
-    console.log(`\nTo import this build into another codebase, run one of the following:`);
-    console.log(`  npm install ${downloadUrl}`);
-    console.log(`  pnpm add ${downloadUrl}`);
-    console.log(`  yarn add ${downloadUrl}`);
-    console.log(`\nAlternatively, pin to the package name with a URL:`);
-    console.log(`  npm install ${pkgName}@${downloadUrl}`);
-  } catch (_) {
-    console.log(`\nRelease ${tag} created with asset: ${tarball}`);
+    // Build and pack tarball
+    sh('npm run build');
+    sh('npm pack');
+    const pkg = getPkg();
+    const tarball = pkgTarballName(pkg);
+    const srcTar = path.resolve(process.cwd(), tarball);
+    const dstTar = path.join(outDir, tarball);
+    try { if (existsSync(dstTar)) require('node:fs').unlinkSync(dstTar); } catch {}
+    renameSync(srcTar, dstTar);
+
+    // Create/force-update tag pointing to current HEAD
+    try { sh(`git tag -f ${tag}`); } catch {}
+    try { sh(`git push origin ${tag} --force`); } catch {}
+
+    // Create prerelease and upload asset
+    if (ghAvailable) {
+      try {
+        sh(`gh release create ${tag} --prerelease --title "${channel} ${stamp}" --notes "${channel} build ${stamp}${shortSha ? ' (' + shortSha + ')' : ''}" "${dstTar}"`);
+      } catch (e) {
+        try {
+          sh(`gh release upload ${tag} "${dstTar}" --clobber`);
+        } catch (e2) { throw e2; }
+      }
+    } else {
+      const { owner, repo } = getRepoFromGit();
+      const release = await createOrGetReleaseViaApi({ owner, repo, tag, token, title: `${channel} ${stamp}`, notes: `${channel} build ${stamp}${shortSha ? ' (' + shortSha + ')' : ''}`, prerelease: true });
+      const assetName = path.basename(dstTar);
+      await deleteAssetIfExists({ owner, repo, token, release, assetName });
+      await uploadAssetViaApi({ owner, repo, token, releaseId: release.id, filePath: dstTar, assetName });
+    }
+
+    // Output
+    try {
+      const { owner, repo } = getRepoFromGit();
+      const downloadUrl = `https://github.com/${owner}/${repo}/releases/download/${tag}/${path.basename(dstTar)}`;
+      console.log(`\nPrerelease ${tag} created with asset: ${path.basename(dstTar)}`);
+      console.log(`Download: ${downloadUrl}`);
+    } catch (_) {
+      console.log(`\nPrerelease ${tag} created with asset: ${path.basename(dstTar)}`);
+    }
   }
 }
 
