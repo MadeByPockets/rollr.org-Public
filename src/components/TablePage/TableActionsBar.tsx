@@ -8,7 +8,7 @@ import ListIcon from "@mui/icons-material/List";
 import SaveIcon from "@mui/icons-material/Save";
 import {deleteTable, joinWaitlist, leaveTable} from "@/app/TablePage/actions";
 import {TableStatus} from "@/components/TablePage/types";
-import { useModal } from "@/app/TablePage/ModalProvider/ModalContext";
+import { useModal } from "@/components/TablePage/ModalProvider/ModalContext";
 import {MockedPlayers, PlayerFormat} from "@/mocks/Players";
 import Image from "next/image";
 import { CardHeader } from "@mui/material";

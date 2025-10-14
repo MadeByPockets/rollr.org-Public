@@ -1,4 +1,4 @@
-import { readFileSync, readFileSync as fsReadFileSync, mkdirSync, renameSync, existsSync } from 'node:fs';
+import { readFileSync, readFileSync as fsReadFileSync, mkdirSync, renameSync, existsSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { execSync } from 'node:child_process';
 
@@ -19,6 +19,33 @@ function getPkg() {
   const pkgPath = path.resolve(process.cwd(), 'package.json');
   const raw = readFileSync(pkgPath, 'utf8');
   return JSON.parse(raw);
+}
+
+function setPkgVersion(version) {
+  const pkgPath = path.resolve(process.cwd(), 'package.json');
+  const pkg = getPkg();
+  pkg.version = version;
+  writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n', 'utf8');
+}
+
+function bumpPrereleaseForChannel(version, channel) {
+  // Produce a semver prerelease: <major>.<minor>.<patch>-<channel>.<build>
+  // Build number is computed from the count of existing tags for the channel, ensuring it increases each run.
+  const plusIdx = version.indexOf('+');
+  const baseNoBuild = plusIdx >= 0 ? version.slice(0, plusIdx) : version;
+  const dashIdx = baseNoBuild.indexOf('-');
+  const core = dashIdx >= 0 ? baseNoBuild.slice(0, dashIdx) : baseNoBuild;
+
+  let buildNum = 0;
+  try {
+    const out = execSync(`git tag --list "${channel}/*"`, { encoding: 'utf8' });
+    const lines = out.split(/\r?\n/).filter(Boolean);
+    buildNum = lines.length;
+  } catch {}
+  // next build number
+  buildNum = (buildNum || 0) + 1;
+
+  return `${core}-${channel}.${buildNum}`;
 }
 
 function pkgTarballName(pkg) {
@@ -226,15 +253,29 @@ async function main() {
     try { shortSha = execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim(); } catch {}
     const tag = `${channel}/${stamp}${shortSha ? '-' + shortSha : ''}`;
 
-    // Build and pack tarball
-    sh('npm run build');
-    sh('npm pack');
-    const pkg = getPkg();
-    const tarball = pkgTarballName(pkg);
-    const srcTar = path.resolve(process.cwd(), tarball);
-    const dstTar = path.join(outDir, tarball);
-    try { if (existsSync(dstTar)) require('node:fs').unlinkSync(dstTar); } catch {}
-    renameSync(srcTar, dstTar);
+    // Temporarily bump the package version with a channel-specific prerelease number
+    const originalPkg = getPkg();
+    const originalVersion = originalPkg.version;
+    const bumpedVersion = bumpPrereleaseForChannel(originalVersion, channel);
+
+    let dstTar = '';
+    try {
+      setPkgVersion(bumpedVersion);
+
+      // Build and pack tarball with bumped prerelease version
+      sh('npm run build');
+      sh('npm pack');
+
+      const pkg = getPkg(); // reads bumped version
+      const tarball = pkgTarballName(pkg);
+      const srcTar = path.resolve(process.cwd(), tarball);
+      dstTar = path.join(outDir, tarball);
+      try { if (existsSync(dstTar)) require('node:fs').unlinkSync(dstTar); } catch {}
+      renameSync(srcTar, dstTar);
+    } finally {
+      // Restore original version so working tree doesn't get a permanent prerelease bump
+      try { setPkgVersion(originalVersion); } catch {}
+    }
 
     // Create/force-update tag pointing to current HEAD
     try { sh(`git tag -f ${tag}`); } catch {}

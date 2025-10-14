@@ -2,7 +2,7 @@
 import {JSX, useEffect, useRef, useState} from "react";
 import {Card, CardContent, CardHeader, Typography, Box} from "@mui/material";
 import Grid from "@mui/material/Grid";
-import {useGameTableContext} from "@/app/TablePage/GameTableProvider/GameTableContext";
+import {useGameTableContext} from "@/components/TablePage/GameTableProvider/GameTableContext";
 import { generateTagsDisplay } from "@/components/shared/TagComponents";
 import {DMHighlightsCard, PlayerHighlightsCard} from "@/components/TablePage/players/PlayerHighlightsCard";
 import TableActionsBar from "@/components/TablePage/TableActionsBar";

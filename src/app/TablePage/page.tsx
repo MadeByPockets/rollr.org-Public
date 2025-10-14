@@ -4,8 +4,8 @@ import {MockedTables} from "@/mocks/Tables"
 import {PlayerFormat, MockedPlayers} from "@/mocks/Players"
 import {MockedTags} from "@/mocks/Tags";
 import {TableStatus} from "@/components/TablePage/types";
-import {GameTableProvider} from "@/app/TablePage/GameTableProvider/GameTableContext";
-import ModalProvider from "./ModalProvider/ModalProvider";
+import {GameTableProvider} from "@/components/TablePage/GameTableProvider/GameTableContext";
+import ModalProvider from "@/components/TablePage/ModalProvider/ModalProvider"
 
 const TablePage = () => {
     const tableStatus = getTableStatus();
