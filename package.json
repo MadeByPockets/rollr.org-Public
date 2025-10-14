@@ -1,6 +1,6 @@
 {
   "name": "@pockets/shared-ui",
-  "version": "0.1.12-canary.6",
+  "version": "0.1.12-canary.5",
   "private": false,
   "type": "module",
   "main": "dist/index.cjs",
