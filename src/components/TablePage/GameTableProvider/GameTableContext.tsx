@@ -14,30 +14,21 @@ interface IGameTableProviderProps {
 
 const GameTableContext = React.createContext<IGameTableContextType | undefined>(undefined);
 
+/**
+ * DEPRECATED: GameTableProvider is a no-op passthrough.
+ * TablePageLayout and its children are now fully prop-driven.
+ */
 export function GameTableProvider(props: IGameTableProviderProps) {
-    const [table, setTable] = useState<TableFormat | null>(null);
-
-    useEffect(() => {
-        setTable(MockedTables[0]);
-    }, []);
-
-    if (!table) {
-        return <>Loading table data...</>
-    }
-
-    return (
-        <GameTableContext.Provider value={{ table, setTable }}>
-            { props.children }
-        </GameTableContext.Provider>
-    );
+    return <>{props.children}</>;
 }
 
-export function useGameTableContext() {
-    const context = useContext(GameTableContext);
-
-    if (!context) {
-        throw new Error('useGameTableContext must be used with a GameTableProvider');
-    }
-
-    return context;
+/**
+ * DEPRECATED: useGameTableContext is a compatibility stub and should not be used.
+ * Returns a benign default to avoid runtime errors.
+ */
+export function useGameTableContext(): IGameTableContextType {
+    return {
+        table: MockedTables[0],
+        setTable: (() => { /* no-op */ }) as React.Dispatch<React.SetStateAction<TableFormat | null>>,
+    };
 }

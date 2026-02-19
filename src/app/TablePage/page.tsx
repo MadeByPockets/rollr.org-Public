@@ -3,24 +3,20 @@ import TablePageLayout from "@/components/TablePage/TablePageLayout";
 import {MockedTables} from "@/mocks/Tables"
 import {PlayerFormat, MockedPlayers} from "@/mocks/Players"
 import {MockedTags} from "@/mocks/Tags";
-import {TableStatus} from "@/components/TablePage/types";
-import {GameTableProvider} from "@/components/TablePage/GameTableProvider/GameTableContext";
+import { TableStatus } from "@/components/TablePage/types";
 import ModalProvider from "@/components/TablePage/ModalProvider/ModalProvider"
 
 const TablePage = () => {
     const tableStatus = getTableStatus();
 
     return (
-        <GameTableProvider>
-            <ModalProvider>\
                 <TablePageLayout
+                    table={MockedTables[0]}
                     allTags={MockedTags}
                     dungeonMaster={getDM(MockedPlayers[0].id)}
                     players={getPlayers(MockedTables[0].players)}
                     tableStatus={tableStatus}
                 />
-            </ModalProvider>
-        </GameTableProvider>
     )
 }
 

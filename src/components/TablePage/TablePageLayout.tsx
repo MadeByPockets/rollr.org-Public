@@ -2,7 +2,6 @@
 import {JSX, useEffect, useRef, useState} from "react";
 import {Card, CardContent, CardHeader, Typography, Box} from "@mui/material";
 import Grid from "@mui/material/Grid";
-import {useGameTableContext} from "@/components/TablePage/GameTableProvider/GameTableContext";
 import { generateTagsDisplay } from "@/components/shared/TagComponents";
 import {DMHighlightsCard, PlayerHighlightsCard} from "@/components/TablePage/players/PlayerHighlightsCard";
 import TableActionsBar from "@/components/TablePage/TableActionsBar";
@@ -12,8 +11,8 @@ import { TagsFormat } from "@/mocks/Tags";
 import {MockedPlayers, PlayerFormat} from "@/mocks/Players";
 import AutoResizingTextarea from "@/components/shared/AutoResizingTextarea";
 
-export type TablePageProps = {
-    // table: TableFormat;
+export type TablePageLayoutProps = {
+    table: TableFormat;
     allTags: TagsFormat[];
     players: PlayerFormat[];
     dungeonMaster: PlayerFormat;
@@ -21,9 +20,8 @@ export type TablePageProps = {
     // waitList: PlayerFormat[];
 };
 
-export default function TablePageLayout(props: TablePageProps) {
-    const { allTags, dungeonMaster, players, tableStatus } = props;
-    const { table, setTable } = useGameTableContext();
+export function TablePageLayout(props: TablePageLayoutProps) {
+    const { allTags, dungeonMaster, players, tableStatus, table } = props;
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
     const [isTableInEditMode, setIsTableInEditMode] = useState(false);
@@ -244,3 +242,5 @@ const renderTags = function (
         </Grid>
     );
 };
+
+export default TablePageLayout;

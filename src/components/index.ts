@@ -40,6 +40,7 @@ export * from "./shared/TagComponents";
 export * from "./TablePage";
 export * from "./TablePage/GameTableProvider";
 export * from "./TablePage/GameTableProvider/GameTableContext";
+export * from "./TablePage/index.client";
 export * from "./TablePage/ModalProvider";
 export * from "./TablePage/ModalProvider/ModalContext";
 export * from "./TablePage/ModalProvider/ModalProvider";

@@ -6,6 +6,7 @@
 
 export * from "./GameTableProvider";
 export * from "./GameTableProvider/GameTableContext";
+export * from "./index.client";
 export * from "./ModalProvider";
 export * from "./ModalProvider/ModalContext";
 export * from "./ModalProvider/ModalProvider";
