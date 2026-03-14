@@ -1,21 +1,22 @@
 import EventPageLayout from "@/components/EventPage/EventPageLayout";
-import {MockedEventObjects} from "@/mocks/EventDB";
-import {SearchResultsTablesOnly} from "@/mocks/SearchResults"
-import {SearchResultsPlayersOnly} from "@/mocks/SearchResults"
-import {MockedTags} from "@/mocks/Tags"
+import { MockedEventObjects } from "@/mocks/EventDB";
+import {
+    MockedSearchResultsTablesOnly,
+    MockedSearchResultsPlayersOnly,
+} from "@/mocks/SearchResults";
+import { MockedTags } from "@/mocks/Tags";
 
 const EventPage = async () => {
-
     return (
         <EventPageLayout
             event={MockedEventObjects[0]}
-            attendees={SearchResultsPlayersOnly.length}
-            numGames={SearchResultsTablesOnly.length}
-            tables={SearchResultsTablesOnly}
+            attendees={MockedSearchResultsPlayersOnly.length}
+            numGames={MockedSearchResultsTablesOnly.length}
+            tables={MockedSearchResultsTablesOnly}
             allTags={MockedTags}
-            players={SearchResultsPlayersOnly}
+            players={MockedSearchResultsPlayersOnly}
         />
-    )
-}
+    );
+};
 
 export default EventPage;

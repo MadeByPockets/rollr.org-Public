@@ -1,54 +1,52 @@
-"use client"
+"use client";
+
 import TablePageLayout from "@/components/TablePage/TablePageLayout";
-import {MockedTables} from "@/mocks/Tables"
-import {PlayerFormat, MockedPlayers} from "@/mocks/Players"
-import {MockedTags} from "@/mocks/Tags";
+import { MockedTables } from "@/mocks/Tables";
+import { PlayerFormat, MockedPlayers } from "@/mocks/Players";
+import { MockedTags } from "@/mocks/Tags";
 import { TableStatus } from "@/components/TablePage/types";
-import ModalProvider from "@/components/TablePage/ModalProvider/ModalProvider"
+import ModalProvider from "@/components/TablePage/ModalProvider/ModalProvider";
 
 const TablePage = () => {
     const tableStatus = getTableStatus();
 
     return (
-                <TablePageLayout
-                    table={MockedTables[0]}
-                    allTags={MockedTags}
-                    dungeonMaster={getDM(MockedPlayers[0].id)}
-                    players={getPlayers(MockedTables[0].players)}
-                    tableStatus={tableStatus}
-                />
-    )
-}
+        <ModalProvider>
+            <TablePageLayout
+                table={MockedTables[0]}
+                allTags={MockedTags}
+                dungeonMaster={getDM(MockedPlayers[0].id)}
+                players={getPlayers(MockedTables[0].players)}
+                tableStatus={tableStatus}
+                waitlistPlayers={getPlayers(MockedTables[0].waitlist ?? [])}
+            />
+        </ModalProvider>
+    );
+};
 
 function getTableStatus(): TableStatus {
     const isOwner = MockedTables[0].owner === MockedPlayers[0].id;
-    const isPlayer = MockedTables[0].players.includes(MockedPlayers[0].id)
+    const isPlayer = MockedTables[0].players.includes(MockedPlayers[0].id);
     const isDM = MockedTables[0].dungeonMaster === MockedPlayers[0].id;
-    const onWaitlist = false
+    const onWaitlist = (MockedTables[0].waitlist ?? []).includes(MockedPlayers[0].id);
 
     return {
         isOwner,
         isDM,
         isPlayer,
         onWaitlist,
-    }
+    };
 }
 
 const getPlayers = function (players: number[]): PlayerFormat[] {
-    return players.map((id) => {
-        return MockedPlayers.find((player) => player.id === id) || null;
-    }).filter((player) => player !== null) as PlayerFormat[];
-}
-
+    return players
+        .map((id) => MockedPlayers.find((player) => player.id === id) || null)
+        .filter((player) => player !== null) as PlayerFormat[];
+};
 
 const getDM = function (id: number) {
-    const result = MockedPlayers.find(
-        (player) => {
-            return player.id === id;
-        }
-    )
+    const result = MockedPlayers.find((player) => player.id === id);
+    return result ? result : MockedPlayers[0];
+};
 
-    return result ? result : MockedPlayers[0]
-}
-
-export default TablePage
+export default TablePage;
