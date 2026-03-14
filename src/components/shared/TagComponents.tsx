@@ -1,5 +1,5 @@
 import React from "react";
-import {TagsFormat} from "@/mocks/Tags";
+import {TagsFormat} from "@/types/tag";
 
 
 export function generateTagsDisplay(tag: TagsFormat) {

@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import SearchIcon from '@mui/icons-material/Search';
 import TypeFilter from './Filters/TypeFilter';
 import TagsFilter from './Filters/TagsFilter';
-import {TagsFormat} from '@/mocks/Tags';
+import {TagsFormat} from '@/types/tag';
 
 interface FiltersContainerProps {
   onTypeChange?: (selectedTypes: string[]) => void;

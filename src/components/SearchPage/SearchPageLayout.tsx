@@ -7,8 +7,8 @@ import Box from '@mui/material/Box';
 import { useMediaQuery, useTheme } from '@mui/material';
 import FiltersContainer from './FiltersContainer';
 import ResultsContainer from './ResultsContainer';
-import { SearchResultItem } from '@/mocks/SearchResults';
-import {TagsFormat} from '@/mocks/Tags'
+import { SearchResultItem } from '@/types/search';
+import {TagsFormat} from '@/types/tag'
 
 interface SearchPageLayoutProps {
   /**

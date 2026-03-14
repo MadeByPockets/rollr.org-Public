@@ -1,10 +1,10 @@
 import React from 'react';
 import Box from '@mui/material/Box';
-import { SearchResultItem } from '@/mocks/SearchResults';
+import { SearchResultItem } from '@/types/search';
 import PlayerResultCard from './Results/PlayerResultCard';
 import TableResultCard from './Results/TableResultCard';
 import EventResultCard from './Results/EventResultCard';
-import { TagsFormat } from '@/mocks/Tags';
+import { TagsFormat } from '@/types/tag';
 
 interface ResultsContainerProps {
   results: SearchResultItem[];

@@ -1,8 +1,8 @@
 import Image from "next/image";
 import {Card, CardContent, CardHeader, Typography} from "@mui/material";
 import Grid from "@mui/material/Grid";
-import {PlayerFormat} from "@/mocks/Players";
-import {TagsFormat} from "@/mocks/Tags";
+import {PlayerFormat} from "@/types/player";
+import {TagsFormat} from "@/types/tag";
 import {renderTagsFromIds} from "@/components/shared/TagComponents";
 import Button from "@mui/material/Button";
 

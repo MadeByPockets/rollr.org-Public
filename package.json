@@ -1,7 +1,7 @@
 {
   "name": "@pockets/shared-ui",
   "version": "0.1.12-canary.5",
-  "private": false,
+  "private": true,
   "type": "module",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
@@ -11,32 +11,14 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
-    },
-    "./components/*": {
-      "types": "./dist/shared-ui/components/*.d.ts",
-      "import": "./dist/shared-ui/components/*.mjs",
-      "require": "./dist/shared-ui/components/*.cjs"
-    },
-    "./components/EventPage": {
-      "types": "./dist/shared-ui/components/EventPage.d.ts",
-      "import": "./dist/shared-ui/components/EventPage.mjs",
-      "require": "./dist/shared-ui/components/EventPage.cjs"
-    },
-    "./components/common": {
-      "types": "./dist/shared-ui/components/common.d.ts",
-      "import": "./dist/shared-ui/components/common.mjs",
-      "require": "./dist/shared-ui/components/common.cjs"
-    },
-    "./mocks/*": {
-      "types": "./dist/shared-ui/mocks/*.d.ts",
-      "import": "./dist/shared-ui/mocks/*.mjs",
-      "require": "./dist/shared-ui/mocks/*.cjs"
     }
   },
   "files": [
     "dist"
   ],
-  "sideEffects": false,
+  "sideEffects": [
+    "**/*.css"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "node scripts/update-barrels.mjs && tsup",

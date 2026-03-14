@@ -2,8 +2,8 @@
 import React from 'react';
 import Box from '@mui/material/Box';
 import ResultsContainer from './ResultsContainer';
-import { SearchResultItem } from '@/mocks/SearchResults';
-import { TagsFormat } from '@/mocks/Tags';
+import { SearchResultItem } from '@/types/search';
+import { TagsFormat } from '@/types/tag';
 
 export interface ScrollableResultsListProps {
   results: SearchResultItem[];

@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import Popper, { PopperProps } from '@mui/material/Popper';
-import {TagsFormat} from '@/mocks/Tags';
+import {TagsFormat} from '@/types/tag';
 import Divider from '@mui/material/Divider';
 
 interface TagsFilterProps {

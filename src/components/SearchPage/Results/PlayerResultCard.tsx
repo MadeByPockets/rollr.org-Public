@@ -1,8 +1,8 @@
 import React from 'react';
 import Avatar from '@mui/material/Avatar';
-import { SearchResultItem } from '@/mocks/SearchResults';
+import { SearchResultItem } from '@/types/search';
 import BaseSearchResultCard, { BaseSearchResultCardProps } from './BaseSearchResultCard';
-import {TagsFormat} from "@/mocks/Tags";
+import {TagsFormat} from "@/types/tag";
 
 interface PlayerResultCardProps extends BaseSearchResultCardProps {
   result: SearchResultItem & { type: 'player' }

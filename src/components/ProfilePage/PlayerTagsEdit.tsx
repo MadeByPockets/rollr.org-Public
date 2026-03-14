@@ -1,4 +1,4 @@
-import {TagsFormat} from "@/mocks/Tags";
+import {TagsFormat} from "@/types/tag";
 import Grid from "@mui/material/Grid"
 import Card from "@mui/material/Card"
 import CardHeader from "@mui/material/CardHeader"

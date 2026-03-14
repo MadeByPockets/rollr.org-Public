@@ -4,24 +4,24 @@ import FormControl from '@mui/material/FormControl';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
-import { MockedSearchFilters } from '@/mocks/SearchResults';
 
 interface SortOptionsProps {
   defaultValue?: string;
   onChange?: (sortOption: string) => void;
 }
 
-/**
- * Component for selecting sort options for search results
- */
-const SortOptions: React.FC<SortOptionsProps> = ({ 
+const SORT_OPTIONS = [
+  { id: 'relevance', label: 'Relevance' },
+  { id: 'newest', label: 'Newest' },
+  { id: 'popular', label: 'Most Popular' },
+];
+
+const SortOptions: React.FC<SortOptionsProps> = ({
   defaultValue = 'relevance',
-  onChange 
+  onChange
 }) => {
   const handleSortChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (onChange) {
-      onChange(event.target.value);
-    }
+    onChange?.(event.target.value);
   };
 
   return (
@@ -30,11 +30,8 @@ const SortOptions: React.FC<SortOptionsProps> = ({
         Sort By
       </Typography>
       <FormControl>
-        <RadioGroup 
-          defaultValue={defaultValue}
-          onChange={handleSortChange}
-        >
-          {MockedSearchFilters.sortOptions.map((option) => (
+        <RadioGroup defaultValue={defaultValue} onChange={handleSortChange}>
+          {SORT_OPTIONS.map((option) => (
             <FormControlLabel
               key={option.id}
               value={option.id}

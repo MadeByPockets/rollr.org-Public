@@ -6,69 +6,69 @@ import { generateTagsDisplay } from "@/components/shared/TagComponents";
 import {DMHighlightsCard, PlayerHighlightsCard} from "@/components/TablePage/players/PlayerHighlightsCard";
 import TableActionsBar from "@/components/TablePage/TableActionsBar";
 import {TableStatus} from "@/components/TablePage/types";
-import { TableFormat } from "@/mocks/Tables";
-import { TagsFormat } from "@/mocks/Tags";
-import {MockedPlayers, PlayerFormat} from "@/mocks/Players";
 import AutoResizingTextarea from "@/components/shared/AutoResizingTextarea";
+import type { TableFormat } from "@/types/table";
+import type { TagsFormat } from "@/types/tag";
+import type { PlayerFormat, WaitlistPlayer } from "@/types/player";
 
 export type TablePageLayoutProps = {
     table: TableFormat;
     allTags: TagsFormat[];
     players: PlayerFormat[];
     dungeonMaster: PlayerFormat;
-    tableStatus: TableStatus,
-    // waitList: PlayerFormat[];
+    tableStatus: TableStatus;
+    waitlistPlayers?: WaitlistPlayer[];
+    onDeleteTable?: () => void | Promise<void>;
+    onJoinWaitlist?: () => void | Promise<void>;
+    onLeaveTable?: () => void | Promise<void>;
 };
 
 export function TablePageLayout(props: TablePageLayoutProps) {
-    const { allTags, dungeonMaster, players, tableStatus, table } = props;
+    const {
+        allTags,
+        dungeonMaster,
+        onDeleteTable,
+        onJoinWaitlist,
+        onLeaveTable,
+        players,
+        table,
+        tableStatus,
+        waitlistPlayers = [],
+    } = props;
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
     const [isTableInEditMode, setIsTableInEditMode] = useState(false);
-
     const [temporaryGameTable, setTemporaryGameTable] = useState<TableFormat | null>(null);
-
-    // TODO: need to centralize the source of truth. Probably should not be using data from the context table
-    //  and data from the props passed in that are parsed from the table.
     const [currentDescription, setCurrentDescription] = useState(table.description);
     const [currentDungeonMaster, setCurrentDungeonMaster] = useState(dungeonMaster);
     const [currentPlayers, setCurrentPlayers] = useState(players);
     const [currentShortDescription, setCurrentShortDescription] = useState(table.shortDescription);
     const [currentTitle, setCurrentTitle] = useState(table.title);
     const [currentWaitlist, setCurrentWaitlist] = useState(table.waitlist);
+    const [currentWaitlistPlayers, setCurrentWaitlistPlayers] = useState(waitlistPlayers);
 
     const handleAssignToDungeonMaster = (newDungeonMaster: PlayerFormat) => {
         setCurrentDungeonMaster(newDungeonMaster);
-    }
+    };
 
     const handleRemovePlayerFromTable = (playerToRemove: PlayerFormat): void => {
         if (currentPlayers.includes(playerToRemove)) {
-            setCurrentPlayers((prevState) => prevState.filter(player => playerToRemove !== player));
+            setCurrentPlayers((prevState) => prevState.filter((player) => playerToRemove !== player));
         }
-    }
+    };
 
     const handleRemovePlayerFromWaitlist = (playerIdToRemoveFromWaitlist: number) => {
-        console.log("handleRemovePlayerFromWaitlist called with ", playerIdToRemoveFromWaitlist);
-        const foundPlayer = MockedPlayers.find(player => player.id === playerIdToRemoveFromWaitlist);
-
-        if (!foundPlayer) {
-            console.warn("Player not found in players list");
-            return;
-        }
+        const foundPlayer = currentWaitlistPlayers.find((player) => player.id === playerIdToRemoveFromWaitlist);
 
         setCurrentWaitlist((prevState) =>
-            prevState.filter(playerId =>
-                playerId !== playerIdToRemoveFromWaitlist
-            )
+            prevState.filter((playerId) => playerId !== playerIdToRemoveFromWaitlist)
         );
-        setCurrentPlayers((prevState => {
+        setCurrentWaitlistPlayers((prevState) => prevState.filter((player) => player.id !== playerIdToRemoveFromWaitlist));
 
-            console.log("found player = ", foundPlayer);
-            console.log("currentWaitlist = ", currentWaitlist);
-
-            return foundPlayer ? [...prevState, foundPlayer] : prevState;
-        }));
-    }
+        if (foundPlayer) {
+            setCurrentPlayers((prevState) => [...prevState, foundPlayer as PlayerFormat]);
+        }
+    };
 
     const handleSaveTable = () => {
         setTemporaryGameTable({
@@ -77,19 +77,17 @@ export function TablePageLayout(props: TablePageLayoutProps) {
             dungeonMaster: currentDungeonMaster.id,
             players: currentPlayers.map((player) => player.id),
             shortDescription: currentShortDescription,
-            title: currentTitle
-        })
-    }
+            title: currentTitle,
+            waitlist: currentWaitlist,
+        });
+    };
 
     useEffect(() => {
-        // NOTE: this hook is just for validation purposes presently.
-        // Maybe this is where the call to the backend API to update the table originates?
-        console.log('temporaryTable now equals: ',temporaryGameTable);
+        console.log('temporaryTable now equals: ', temporaryGameTable);
     }, [temporaryGameTable]);
 
     return (
         <>
-            {/* ----- Main Card --------- */}
             <Card
                 sx={{
                     backgroundColor: isTableInEditMode ? "lightsalmon" : "white",
@@ -98,9 +96,7 @@ export function TablePageLayout(props: TablePageLayoutProps) {
                     boxShadow: "0px 8px 15px rgba(25, 118, 210, 0.3)",
                 }}
             >
-                {/* --------------- START CONTENT ----------------- */}
                 <Grid container direction="column">
-                    {/* ---------------- HEADER ---------------- */}
                     <Grid
                         container
                         direction="column"
@@ -109,12 +105,10 @@ export function TablePageLayout(props: TablePageLayoutProps) {
                             px: 2,
                             py: 1.5,
                             borderRadius: 2,
-                            background:
-                                "linear-gradient(135deg, rgba(25,118,210,0.8), rgba(25,118,210,1))",
+                            background: "linear-gradient(135deg, rgba(25,118,210,0.8), rgba(25,118,210,1))",
                             textShadow:'4px 4px 6px rgba(0, 0, 0, 0.5)'
                         }}
                     >
-                        {/* ----------- title ------------ */}
                         <Box>
                             {isTableInEditMode ? (
                                 <input
@@ -138,7 +132,6 @@ export function TablePageLayout(props: TablePageLayoutProps) {
                             }
                         </Box>
 
-                        {/* ----------- Short Description -------- */}
                         {isTableInEditMode ? (
                             <input
                                 onChange={(e) => setCurrentShortDescription(e.target.value)}
@@ -152,24 +145,24 @@ export function TablePageLayout(props: TablePageLayoutProps) {
                                 {currentShortDescription}
                             </Typography>
                         )}
-                        {/* ---------------- Tags -------------- */}
                         <Grid container>{renderTags(table?.tags, allTags)}</Grid>
 
                         <TableActionsBar
                             enableEdits={setIsTableInEditMode}
                             isInEditMode={isTableInEditMode}
                             numPlayers={currentPlayers.length || 0}
+                            onDeleteTable={onDeleteTable}
+                            onJoinWaitlist={onJoinWaitlist}
+                            onLeaveTable={onLeaveTable}
                             removePlayerFromWaitlist={handleRemovePlayerFromWaitlist}
                             saveTableCallback={handleSaveTable}
                             slots={table?.capacity || 0}
                             tableStatus={tableStatus}
-                            waitlist={currentWaitlist}
+                            waitlistPlayers={currentWaitlistPlayers}
                         />
                     </Grid>
 
-                    {/* ------------ Main Body: Two Lanes ------------------- */}
                     <Grid container spacing={2} sx={{ mt: 2 }}>
-                        {/* Left Lane (larger) */}
                         <Grid size={{xs: 12, md:8}}>
                             <Card sx={{ height: "100%" }}>
                                 <CardContent>
@@ -188,34 +181,23 @@ export function TablePageLayout(props: TablePageLayoutProps) {
                             </Card>
                         </Grid>
 
-                        {/* Right Lane (smaller) */}
                         <Grid size={{xs: 12, md:4}}>
-
                             <DMHighlightsCard canEdit={isTableInEditMode} player={currentDungeonMaster} allTags={allTags} />
 
-                            {/* Player Cards */}
                             <Card sx={{ height: "100%" }}>
                                 <CardHeader slotProps={{title: {variant: "h4"}}} title="Players: "/>
                                 <CardContent>
-
-                                    {/* Replace this block with your actual player info content */}
-                                    {
-                                        currentPlayers.map(
-                                            (player) => {
-                                                return (
-                                                    <PlayerHighlightsCard
-                                                        allTags={allTags}
-                                                        canChangeDungeonMaster={tableStatus.isOwner || tableStatus.isDM}
-                                                        canEdit={isTableInEditMode}
-                                                        handleAssignToDungeonMaster={handleAssignToDungeonMaster}
-                                                        key={player.id}
-                                                        player={player}
-                                                        removeFromTable={handleRemovePlayerFromTable}
-                                                    />
-                                                    )
-                                            }
-                                        )
-                                    }
+                                    {currentPlayers.map((player) => (
+                                        <PlayerHighlightsCard
+                                            allTags={allTags}
+                                            canChangeDungeonMaster={tableStatus.isOwner || tableStatus.isDM}
+                                            canEdit={isTableInEditMode}
+                                            handleAssignToDungeonMaster={handleAssignToDungeonMaster}
+                                            key={player.id}
+                                            player={player}
+                                            removeFromTable={handleRemovePlayerFromTable}
+                                        />
+                                    ))}
                                 </CardContent>
                             </Card>
                         </Grid>

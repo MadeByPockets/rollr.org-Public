@@ -7,7 +7,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import PersonIcon from '@mui/icons-material/Person';
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import TableRestaurantIcon from '@mui/icons-material/TableRestaurant';
-import { SearchResultItem } from '@/mocks/SearchResults';
+import { SearchResultItem } from '@/types/search';
 import BaseSearchResultCard, { BaseSearchResultCardProps } from './BaseSearchResultCard';
 
 interface TableResultCardProps extends BaseSearchResultCardProps {

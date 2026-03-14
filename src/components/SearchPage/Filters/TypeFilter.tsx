@@ -3,28 +3,28 @@ import Typography from '@mui/material/Typography';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import { MockedSearchFilters } from '@/mocks/SearchResults';
+import type { SearchResultType } from '@/types/search';
 
 interface TypeFilterProps {
-  onChange?: (selectedTypes: string[]) => void;
+  onChange?: (selectedTypes: SearchResultType[]) => void;
 }
 
-/**
- * Component for filtering search results by type (player, event, guild)
- */
-const TypeFilter: React.FC<TypeFilterProps> = ({ onChange }) => {
-  const [selectedTypes, setSelectedTypes] = React.useState<string[]>([]);
+const FILTER_TYPES: Array<{ id: SearchResultType; label: string; disabled?: boolean }> = [
+  { id: 'player', label: 'Players' },
+  { id: 'event', label: 'Events', disabled: true },
+  { id: 'table', label: 'Tables', disabled: true },
+];
 
-  const handleTypeChange = (typeId: string) => {
+const TypeFilter: React.FC<TypeFilterProps> = ({ onChange }) => {
+  const [selectedTypes, setSelectedTypes] = React.useState<SearchResultType[]>([]);
+
+  const handleTypeChange = (typeId: SearchResultType) => {
     const newSelectedTypes = selectedTypes.includes(typeId)
-      ? selectedTypes.filter(id => id !== typeId)
+      ? selectedTypes.filter((id) => id !== typeId)
       : [...selectedTypes, typeId];
-    
+
     setSelectedTypes(newSelectedTypes);
-    
-    if (onChange) {
-      onChange(newSelectedTypes);
-    }
+    onChange?.(newSelectedTypes);
   };
 
   return (
@@ -33,14 +33,14 @@ const TypeFilter: React.FC<TypeFilterProps> = ({ onChange }) => {
         Type
       </Typography>
       <FormGroup>
-        {MockedSearchFilters.types.map((type) => (
+        {FILTER_TYPES.map((type) => (
           <FormControlLabel
             key={type.id}
             control={
-              <Checkbox 
+              <Checkbox
                 checked={selectedTypes.includes(type.id)}
                 onChange={() => handleTypeChange(type.id)}
-                disabled={type.id === 'event' || type.id === 'table'}
+                disabled={type.disabled}
               />
             }
             label={type.label}

@@ -1,8 +1,8 @@
 "use client"
 import React from 'react';
 import ScrollableResultsList from './ScrollableResultsList';
-import { SearchResultItem } from '@/mocks/SearchResults';
-import { TagsFormat } from '@/mocks/Tags';
+import { SearchResultItem } from '@/types/search';
+import { TagsFormat } from '@/types/tag';
 
 export interface TablesScrollableListProps {
   results: SearchResultItem[];
