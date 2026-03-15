@@ -2,7 +2,7 @@
 
 import React from "react";
 import type { Tag } from "@/types";
-import TagEditor from "@/components/shared/TagEditor";
+import { TagEditor } from "@/components/shared/TagEditor";
 
 export default function PlayerTagsEdit(props: {
   PlayerTags: Tag[];

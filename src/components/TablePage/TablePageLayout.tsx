@@ -234,7 +234,7 @@ const renderEditableTags = function (
         <Grid size={{ xs: 12 }} sx={{ pb: 1.5 }}>
             <TagEditor
                 title="Table Tags"
-                possibleTags={allTags.filter((tag) => tag.appliesTo.tables)}
+                possibleTags={allTags.filter((tag) => tag.appliesTo?.tables)}
                 selectedTags={selectedTags}
                 onToggleTag={onToggleTag}
             />

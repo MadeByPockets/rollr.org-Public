@@ -17,7 +17,7 @@ export interface TagEditorProps {
   onToggleTag: (id: number) => void;
 }
 
-export default function TagEditor({
+export function TagEditor({
   title = "Tags",
   selectedTags,
   possibleTags,
