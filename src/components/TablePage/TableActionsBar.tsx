@@ -1,60 +1,54 @@
-"use client"
-import {Dispatch, SetStateAction} from "react";
-import {Grid, Typography, CardHeader} from "@mui/material";
+"use client";
+
+import type { ReactNode } from "react";
+import Image from "next/image";
 import Button from "@mui/material/Button";
+import CardHeader from "@mui/material/CardHeader";
+import { Grid, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import ListIcon from "@mui/icons-material/List";
 import SaveIcon from "@mui/icons-material/Save";
-import Image from "next/image";
-import {TableStatus} from "@/components/TablePage/types";
 import { useModal } from "@/components/TablePage/ModalProvider/ModalContext";
-import type { WaitlistPlayer } from "@/types/player";
+import type { Player } from "@/types";
+import type { TableStatus } from "@/components/TablePage/types";
 
 export interface TableActionProps {
-    enableEdits: Dispatch<SetStateAction<boolean>>;
     isInEditMode: boolean;
     numPlayers: number;
-    removePlayerFromWaitlist: (playerId: number) => void;
-    saveTableCallback: () => void;
-    slots: number;
-    tableStatus: TableStatus;
-    waitlistPlayers?: WaitlistPlayer[];
     onDeleteTable?: () => void | Promise<void>;
+    onEditModeChange: (nextValue: boolean) => void;
     onJoinWaitlist?: () => void | Promise<void>;
     onLeaveTable?: () => void | Promise<void>;
+    onPromoteWaitlistPlayer?: (playerId: number) => void;
+    onSave: () => void;
+    slots: number;
+    tableStatus: TableStatus;
+    waitlistPlayers: Player[];
 }
 
 export default function TableActionsBar(props: TableActionProps) {
     const { hideModal, showModal } = useModal();
     const {
-        enableEdits,
         isInEditMode,
         numPlayers,
-        removePlayerFromWaitlist,
-        slots,
-        saveTableCallback,
-        tableStatus,
-        waitlistPlayers = [],
         onDeleteTable,
+        onEditModeChange,
         onJoinWaitlist,
         onLeaveTable,
+        onPromoteWaitlistPlayer,
+        onSave,
+        slots,
+        tableStatus,
+        waitlistPlayers,
     } = props;
     const {isOwner, isPlayer, isDM, onWaitlist} = tableStatus;
 
-    const handleEnableEditMode = () => {
-        enableEdits((prevState) => !prevState);
-    };
-
-    const handleSaveTable = () => {
-        saveTableCallback();
-        enableEdits((prevState) => !prevState);
-    };
-
     const canEditTable = isOwner && !isInEditMode;
     const canSaveTable = isOwner && isInEditMode;
+    const canViewWaitlist = isOwner || isDM || waitlistPlayers.length > 0;
 
-    const renderPlayerWaitlistModalContent = (canMovePlayersToTable?: boolean) => {
+    const renderPlayerWaitlistModalContent = (canMovePlayersToTable?: boolean): ReactNode => {
         if (waitlistPlayers.length === 0) {
             return <p>Waitlist is empty!</p>;
         }
@@ -65,15 +59,15 @@ export default function TableActionsBar(props: TableActionProps) {
                 <ul className="gap-8">
                     {waitlistPlayers.map((player) => (
                         <li
-                            className={`${canMovePlayersToTable ? 'bg-amber-100' : 'bg-gray-200'} mb-8 flex flex-row flex-start space-between justify-center items-center`}
+                            className={`${canMovePlayersToTable ? 'bg-amber-100 cursor-pointer' : 'bg-gray-200'} mb-8 flex flex-row flex-start space-between justify-center items-center gap-3 p-2 rounded`}
                             key={player.id}
-                            onClick={() => canMovePlayersToTable ? removePlayerFromWaitlist(player.id) : undefined}
+                            onClick={() => canMovePlayersToTable ? onPromoteWaitlistPlayer?.(player.id) : undefined}
                             tabIndex={0}
                         >
                             <Image
                                 alt={player.username + "'s profile pic"}
                                 height={64}
-                                src={player.miniPic || "/quick-PFP.png"}
+                                src={player.miniPic || ""}
                                 width={64}
                             />
                             <div>{player.username}</div>
@@ -83,7 +77,7 @@ export default function TableActionsBar(props: TableActionProps) {
                 <button onClick={() => hideModal()}>close modal</button>
             </div>
         )
-    };
+    }
 
     return (
         <Grid container direction="column" spacing={1}>
@@ -102,31 +96,36 @@ export default function TableActionsBar(props: TableActionProps) {
 
                 {!isOwner && (isPlayer || onWaitlist) && (
                     <Button onClick={() => onLeaveTable?.()} sx={buttonStyle}>
-                        Leave Table
+                        {onWaitlist ? "Leave Waitlist" : "Leave Table"}
                     </Button>
                 )}
 
                 { canEditTable ? (
                     <>
-                        <Button onClick={handleEnableEditMode} sx={buttonStyle} endIcon={<EditIcon/>}>
+                        <Button onClick={() => onEditModeChange(true)} sx={buttonStyle} endIcon={<EditIcon/>}>
                             Edit
                         </Button>
-                        <Button
-                            endIcon={<ListIcon />}
-                            onClick={() => showModal(renderPlayerWaitlistModalContent(canEditTable))}
-                            sx={buttonStyle}
-                        >
-                            View Waitlist
-                        </Button>
+                        {canViewWaitlist ? (
+                            <Button
+                                endIcon={<ListIcon />}
+                                onClick={() => showModal(renderPlayerWaitlistModalContent(false))}
+                                sx={buttonStyle}
+                            >
+                                View Waitlist
+                            </Button>
+                        ) : null}
                     </>
                 ) : canSaveTable ? (
                     <>
-                        <Button onClick={handleSaveTable} sx={buttonStyle} endIcon={<SaveIcon/>}>
+                        <Button onClick={onSave} sx={buttonStyle} endIcon={<SaveIcon/>}>
                             Save
+                        </Button>
+                        <Button onClick={() => onEditModeChange(false)} sx={buttonStyle}>
+                            Cancel
                         </Button>
                         <Button
                             endIcon={<ListIcon />}
-                            onClick={() => showModal(renderPlayerWaitlistModalContent(canSaveTable))}
+                            onClick={() => showModal(renderPlayerWaitlistModalContent(true))}
                             sx={buttonStyle}
                         >
                             Edit Waitlist

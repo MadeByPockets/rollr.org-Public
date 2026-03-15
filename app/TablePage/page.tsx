@@ -1,34 +1,81 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import TablePageLayout from "@/components/TablePage/TablePageLayout";
-import { MockedTables } from "@/mocks/Tables";
-import { PlayerFormat, MockedPlayers } from "@/mocks/Players";
-import { MockedTags } from "@/mocks/Tags";
-import { TableStatus } from "@/components/TablePage/types";
 import ModalProvider from "@/components/TablePage/ModalProvider/ModalProvider";
+import type { TableStatus } from "@/components/TablePage/types";
+import { MockedPlayers } from "@/mocks/Players";
+import { MockedTables } from "@/mocks/Tables";
+import { MockedTags } from "@/mocks/Tags";
+import type { Player, TableRecord } from "@/types";
+
+const currentUser = MockedPlayers[0];
 
 const TablePage = () => {
-    const tableStatus = getTableStatus();
+    const [table, setTable] = useState<TableRecord>(MockedTables[0]);
+
+    const playersById = useMemo(() => {
+        return new Map(MockedPlayers.map((player) => [player.id, player]));
+    }, []);
+
+    const tablePlayers = useMemo(() => getPlayersFromIds(table.players, playersById), [playersById, table.players]);
+    const waitlistPlayers = useMemo(() => getPlayersFromIds(table.waitlist ?? [], playersById), [playersById, table.waitlist]);
+    const dungeonMaster = playersById.get(table.dungeonMaster) ?? MockedPlayers[0];
+    const tableStatus = getTableStatus(table, currentUser.id);
+
+    const handleSaveDraft = (nextTable: TableRecord) => {
+        setTable(nextTable);
+        console.log("table draft saved", nextTable);
+    };
+
+    const handleJoinWaitlist = () => {
+        setTable((prevState) => {
+            if (prevState.waitlist.includes(currentUser.id) || prevState.players.includes(currentUser.id)) {
+                return prevState;
+            }
+            return {
+                ...prevState,
+                waitlist: [...prevState.waitlist, currentUser.id],
+            };
+        });
+    };
+
+    const handleLeaveTable = () => {
+        setTable((prevState) => ({
+            ...prevState,
+            players: prevState.players.filter((playerId) => playerId !== currentUser.id),
+            waitlist: prevState.waitlist.filter((playerId) => playerId !== currentUser.id),
+        }));
+    };
+
+    const handleDeleteTable = () => {
+        console.log("delete table requested", table.id);
+        alert(`Pretend delete for table ${table.id}`);
+    };
 
     return (
         <ModalProvider>
             <TablePageLayout
-                table={MockedTables[0]}
+                table={table}
                 allTags={MockedTags}
-                dungeonMaster={getDM(MockedPlayers[0].id)}
-                players={getPlayers(MockedTables[0].players)}
+                dungeonMaster={dungeonMaster}
+                onDeleteTable={handleDeleteTable}
+                onJoinWaitlist={handleJoinWaitlist}
+                onLeaveTable={handleLeaveTable}
+                onSaveDraft={handleSaveDraft}
+                players={tablePlayers}
                 tableStatus={tableStatus}
-                waitlistPlayers={getPlayers(MockedTables[0].waitlist ?? [])}
+                waitlistPlayers={waitlistPlayers}
             />
         </ModalProvider>
     );
 };
 
-function getTableStatus(): TableStatus {
-    const isOwner = MockedTables[0].owner === MockedPlayers[0].id;
-    const isPlayer = MockedTables[0].players.includes(MockedPlayers[0].id);
-    const isDM = MockedTables[0].dungeonMaster === MockedPlayers[0].id;
-    const onWaitlist = (MockedTables[0].waitlist ?? []).includes(MockedPlayers[0].id);
+function getTableStatus(table: TableRecord, viewerId: number): TableStatus {
+    const isOwner = table.owner === viewerId;
+    const isPlayer = table.players.includes(viewerId);
+    const isDM = table.dungeonMaster === viewerId;
+    const onWaitlist = table.waitlist.includes(viewerId);
 
     return {
         isOwner,
@@ -38,15 +85,10 @@ function getTableStatus(): TableStatus {
     };
 }
 
-const getPlayers = function (players: number[]): PlayerFormat[] {
-    return players
-        .map((id) => MockedPlayers.find((player) => player.id === id) || null)
-        .filter((player) => player !== null) as PlayerFormat[];
-};
-
-const getDM = function (id: number) {
-    const result = MockedPlayers.find((player) => player.id === id);
-    return result ? result : MockedPlayers[0];
-};
+function getPlayersFromIds(playerIds: number[], playersById: Map<number, Player>): Player[] {
+    return playerIds
+        .map((id) => playersById.get(id) || null)
+        .filter((player): player is Player => player !== null);
+}
 
 export default TablePage;

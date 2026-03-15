@@ -1,21 +1,19 @@
 import Image from "next/image";
+import Button from "@mui/material/Button";
 import {Card, CardContent, CardHeader, Typography} from "@mui/material";
 import Grid from "@mui/material/Grid";
-import {PlayerFormat} from "@/types/player";
-import {TagsFormat} from "@/types/tag";
 import {renderTagsFromIds} from "@/components/shared/TagComponents";
-import Button from "@mui/material/Button";
-
+import type { Player, Tag } from "@/types";
 
 export type PlayerHighlightsCardProps = {
-    addToTable?: (player: PlayerFormat) => void;
-    allTags: TagsFormat[];
+    addToTable?: (player: Player) => void;
+    allTags: Tag[];
     canChangeDungeonMaster: boolean;
     canEdit: boolean;
-    handleAssignToDungeonMaster: (player: PlayerFormat) => void;
+    handleAssignToDungeonMaster: (player: Player) => void;
     isWaitList?: boolean;
-    player: PlayerFormat;
-    removeFromTable: (player: PlayerFormat) => void;
+    player: Player;
+    removeFromTable: (player: Player) => void;
 }
 
 export const PlayerHighlightsCard = function(props: PlayerHighlightsCardProps) {
@@ -30,45 +28,23 @@ export const PlayerHighlightsCard = function(props: PlayerHighlightsCardProps) {
     } = props;
 
     return (
-        <Card
-            elevation={3}
-            sx={{
-                backgroundColor: canEdit ? "#fffbea" : "#f5f9fa",
-                marginBottom:"6px"
-            }}
-        >
+        <Card elevation={3} sx={{ backgroundColor: canEdit ? "#fffbea" : "#f5f9fa", marginBottom:"6px" }}>
             <CardContent>
                 <Grid container spacing={2} direction="column">
                     <Grid container direction="row">
                         <Grid>
-                            <Image
-                                alt={player.username + "'s profile pic"}
-                                height={64}
-                                src={player.miniPic}
-                                width={64}
-                            />
+                            <Image alt={player.username + "'s profile pic"} height={64} src={player.miniPic} width={64} />
                         </Grid>
                         <Grid>
-                            <Typography variant="h5">
-                                {player.username}
-                            </Typography>
+                            <Typography variant="h5">{player.username}</Typography>
                         </Grid>
                     </Grid>
-                    <Grid>
-                        {
-                            renderTagsFromIds(player.tags, allTags)
-                        }
-                    </Grid>
+                    <Grid>{renderTagsFromIds(player.tags, allTags)}</Grid>
                 </Grid>
                 {canEdit && (
                     <Grid>
                         <Button onClick={() => removeFromTable(player)}>
-                            { isWaitList && (
-                                <p>Deny Player</p>
-                            ) || (
-                                <p>Remove Player</p>
-                            )
-                            }
+                            { isWaitList ? <p>Deny Player</p> : <p>Remove Player</p> }
                         </Button>
                         {canChangeDungeonMaster && (
                             <Button onClick={() => {
@@ -85,43 +61,24 @@ export const PlayerHighlightsCard = function(props: PlayerHighlightsCardProps) {
     )
 }
 
-export const DMHighlightsCard = function({canEdit, player, allTags}:{canEdit: boolean, player: PlayerFormat, allTags:TagsFormat[]}) {
+export const DMHighlightsCard = function({canEdit, player, allTags}:{canEdit: boolean, player: Player, allTags:Tag[]}) {
     return (
-        <Card
-        elevation={3}
-        sx={{
-            backgroundColor: "#f5f9fa",
-            marginBottom:"6px"
-        }}
-        >
+        <Card elevation={3} sx={{ backgroundColor: "#f5f9fa", marginBottom:"6px" }}>
             <CardHeader slotProps={{title: { variant: "h4"}}} title="Game Master"/>
             <CardContent sx={{ backgroundColor: canEdit ? '#fffbea' : 'inherit' }}>
                 <Grid container spacing={2} direction="column">
-
                     <Grid>
-                        <Typography variant="h5">
-                            {player.username}
-                        </Typography>
+                        <Typography variant="h5">{player.username}</Typography>
                     </Grid>
                     <Grid container direction="row">
                         <Grid>
-                            <Image
-                                alt={player.username + "'s profile pic"}
-                                height={120}
-                                src={player.imageUrl ? player.imageUrl : ""}
-                                width={256}
-                            />
+                            <Image alt={player.username + "'s profile pic"} height={120} src={player.imageUrl ? player.imageUrl : ""} width={256} />
                         </Grid>
-
-                        <Grid>
-                            {
-                                renderTagsFromIds(player.tags, allTags)
-                            }
-                        </Grid>
+                        <Grid>{renderTagsFromIds(player.tags, allTags)}</Grid>
                         <Typography>{player.description}</Typography>
                     </Grid>
                 </Grid>
             </CardContent>
         </Card>
-        )
+    )
 }
