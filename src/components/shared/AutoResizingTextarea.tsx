@@ -5,7 +5,7 @@ import React, {Dispatch, SetStateAction, useEffect} from 'react';
 interface IAutoResizingTextareaProps {
     isInEditMode: boolean;
     onChange: Dispatch<SetStateAction<string>>;
-    textareaRef: React.RefObject<HTMLTextAreaElement>;
+    textareaRef: React.RefObject<HTMLTextAreaElement | null>;
     value: string;
 }
 
