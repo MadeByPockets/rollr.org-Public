@@ -37,6 +37,7 @@ export * from "./shared";
 export * from "./shared/AutoResizingTextarea";
 export * from "./shared/Modal";
 export * from "./shared/TagComponents";
+export * from "./shared/TagEditor";
 export * from "./TablePage";
 export * from "./TablePage/GameTableProvider";
 export * from "./TablePage/GameTableProvider/GameTableContext";

@@ -7,4 +7,4 @@
 export * from "./AutoResizingTextarea";
 export * from "./Modal";
 export * from "./TagComponents";
-export { default as TagEditor } from "./TagEditor";
+export * from "./TagEditor";
