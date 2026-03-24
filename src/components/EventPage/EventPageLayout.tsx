@@ -3,7 +3,6 @@ import Grid from "@mui/material/Grid";
 import EventBasicInfo from "@/components/EventPage/EventBasicInfo";
 import EventTablesCard from "@/components/EventPage/EventTablesCard";
 import type { EventDB } from "@/types/event";
-import type { SearchResultItem } from "@/types/search";
 import type { TagsFormat } from "@/types/tag";
 
 export type EventPageProps = {

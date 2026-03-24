@@ -1,5 +1,3 @@
-import {PlayerFormat} from "@/mocks/Players";
-
 /**
  * Represents the format and structure of a table entity.
  * Used to define the properties and information relevant to a table.
