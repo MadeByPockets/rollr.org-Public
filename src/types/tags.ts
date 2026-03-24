@@ -3,7 +3,8 @@ export interface Tag {
   label: string;
   color?: string;
   image?: string;
-  appliesTo?: {
+  alternate_title?: string[] | null;
+  appliesTo: {
     players: boolean;
     events: boolean;
     tables: boolean;

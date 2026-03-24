@@ -20,7 +20,7 @@ const TablePage = () => {
 
     const tablePlayers = useMemo(() => getPlayersFromIds(table.players, playersById), [playersById, table.players]);
     const waitlistPlayers = useMemo(() => getPlayersFromIds(table.waitlist ?? [], playersById), [playersById, table.waitlist]);
-    const dungeonMaster = playersById.get(table.dungeonMaster) ?? MockedPlayers[0];
+    const dungeonMaster = playersById.get(Number(table.dungeonMaster)) ?? MockedPlayers[0];
     const tableStatus = getTableStatus(table, currentUser.id);
 
     const handleSaveDraft = (nextTable: TableRecord) => {
@@ -74,7 +74,7 @@ const TablePage = () => {
 function getTableStatus(table: TableRecord, viewerId: number): TableStatus {
     const isOwner = table.owner === viewerId;
     const isPlayer = table.players.includes(viewerId);
-    const isDM = table.dungeonMaster === viewerId;
+    const isDM = Number(table.dungeonMaster) === viewerId;
     const onWaitlist = table.waitlist.includes(viewerId);
 
     return {

@@ -9,4 +9,6 @@ export interface Player {
   joinDate?: string;
   miniPic: string;
   discordId?: number;
+  role?: string;
+  isHost?: boolean;
 }

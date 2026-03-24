@@ -10,8 +10,8 @@ export type EventPageProps = {
     event: EventDB;
     attendees: number;
     numGames: number;
-    tables: SearchResultItem[];
-    players: SearchResultItem[];
+    tables: any[];
+    players: any[];
     allTags: TagsFormat[];
 };
 
@@ -26,7 +26,7 @@ export default function EventPageLayout({event, attendees, numGames, tables, pla
                     <EventBasicInfo description={event.description} locationId={event.location || "0"} startingDate={event.startingDate} timeInfo={event.date} endingDate={event.endingDate}/>
                 </Grid>
                 <Grid size={{xs:12, md:8}} spacing={3} padding={3}>
-                    <EventTablesCard tables={tables.filter((item): item is SearchResultItem & { type: 'table' } => item.type === 'table')} tags={allTags}/>
+                    <EventTablesCard tables={tables} tags={allTags}/>
                 </Grid>
             </Grid>
             <Grid />

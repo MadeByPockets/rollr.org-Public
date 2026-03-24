@@ -1,9 +1,9 @@
 export interface TableFormat {
   availability?: string;
-  capacity?: number;
+  capacity: number;
   communicationPreferences: string;
   description: string;
-  dungeonMaster: number;
+  dungeonMaster?: string;
   features?: string[];
   id: number;
   imageUrl?: string;
@@ -14,4 +14,7 @@ export interface TableFormat {
   title: string;
   waitlist: number[];
   tags?: number[];
+  numPlayers: number;
+  hasDM: boolean;
+  nextGameTime?: Date | string;
 }

@@ -5,8 +5,8 @@ import Grid from "@mui/material/Grid";
 export type EventBasicInfoProps = {
     description: string,
     locationId: string,
-    startingDate?: Date,
-    endingDate?: Date,
+    startingDate?: Date | string,
+    endingDate?: Date | string,
     timeInfo: string
 }
 export default function EventBasicInfo({description, locationId, startingDate, endingDate, timeInfo} : EventBasicInfoProps) {
@@ -32,9 +32,10 @@ export default function EventBasicInfo({description, locationId, startingDate, e
 }
 
 
-const generateTimeInfo = function (timeInfo: string, startingDate?: Date, endingDate?: Date ){
+const generateTimeInfo = function (timeInfo: string, startingDate?: Date | string, endingDate?: Date | string) {
 
-    const formatDateTime = (d: Date) => {
+    const formatDateTime = (dateInput: Date | string) => {
+        const d = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
         const month = d.toLocaleString(undefined, { month: 'short' });
         const day = d.getDate();
         const year = d.getFullYear();

@@ -1,11 +1,8 @@
 import React from 'react';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
+import { Card, CardContent, Typography, Box } from '@mui/material';
+import { TagsFormat } from '@/types/tag';
 import { SearchResultItem } from '@/types/search';
-import {TagsFormat} from '@/types/tag';
-import {generateTagsDisplay} from "@/components/shared/TagComponents";
+import { generateTagsDisplay } from "@/components/shared/TagComponents";
 
 export interface BaseSearchResultCardProps {
   result: SearchResultItem;
@@ -18,7 +15,7 @@ export interface BaseSearchResultCardProps {
 /**
  * Base component for displaying search results with common functionality
  */
-const BaseSearchResultCard: React.FC<BaseSearchResultCardProps> = ({ 
+export const BaseSearchResultCard: React.FC<BaseSearchResultCardProps> = ({ 
   result,
   onClick,
   children,
@@ -73,13 +70,14 @@ const BaseSearchResultCard: React.FC<BaseSearchResultCardProps> = ({
                 display: 'block',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
-                textOverflow: 'clip'
+                textOverflow: 'clip',
+                pl: 0.5 // Add some padding to prevent clipping of the leftmost tag
               }}>
                 {(() => {
                   const MAX_VISIBLE = 5; // heuristic: show up to 5 tags on one line
                   const tagObjs = result.tags
                     .map((tagId) => tags.find((t) => t.id === tagId))
-                    .filter((t): t is NonNullable<typeof t> => Boolean(t));
+                    .filter((t): t is TagsFormat => Boolean(t));
                   const visible = tagObjs.slice(0, MAX_VISIBLE);
                   const hiddenCount = Math.max(tagObjs.length - visible.length, 0);
                   return (

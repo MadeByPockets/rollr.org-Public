@@ -15,4 +15,5 @@ export interface SearchResultItem {
   hasDM?: boolean;
   location?: string;
   organizer?: string;
+  dungeonMaster?: string;
 }

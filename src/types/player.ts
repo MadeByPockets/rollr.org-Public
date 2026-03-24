@@ -11,6 +11,8 @@ export interface Player {
   discordId?: number;
   preferredPronouns?: string | null;
   bio?: string | null;
+  role?: string;
+  isHost?: boolean;
 }
 
 export type PlayerFormat = Player;

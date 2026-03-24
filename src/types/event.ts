@@ -19,12 +19,14 @@ export interface EventDetails {
   organizer?: string;
   tags?: number[];
   imageUrl?: string;
-  eventTag: Tag;
   bannerUrl: EventBannerImage;
   links: EventLink[];
-  startingDate?: Date;
-  endingDate?: Date;
+  eventTag: Tag;
+  owner: number;
+  active: boolean;
+  startingDate?: Date | string;
+  endingDate?: Date | string;
 }
 
 export type EventDB = EventDetails;
-export type EventResult = Pick<EventDetails, "id" | "title" | "description" | "date" | "location" | "organizer" | "tags" | "imageUrl">;
+export type EventResult = EventDetails;

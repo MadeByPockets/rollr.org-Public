@@ -9,7 +9,7 @@ import { TagsFormat } from '@/types/tag';
 import {SearchResultItem} from "@/types/search";
 
 export interface EventTablesCardProps {
-  tables: SearchResultItem[];
+  tables: any[];
   tags: TagsFormat[];
   maxHeight?: number | string;
   onTableClick?: (id: number) => void;

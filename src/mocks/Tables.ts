@@ -18,10 +18,10 @@ import {PlayerFormat} from "@/mocks/Players";
  */
 export interface TableFormat {
     availability?: string;
-    capacity?: number;
+    capacity: number;
     communicationPreferences: string;
     description: string;
-    dungeonMaster: number;
+    dungeonMaster?: string;
     features?: string[];
     id: number;
     imageUrl?: string;
@@ -32,6 +32,9 @@ export interface TableFormat {
     title: string;
     waitlist: number[];
     tags?: number[];
+    numPlayers: number;
+    hasDM: boolean;
+    nextGameTime?: Date | string;
 }
 
 export const MockedTables: TableFormat[] = [
@@ -80,10 +83,12 @@ export const MockedTables: TableFormat[] = [
         imageUrl: '/images/tables/table1.jpg',
         availability: 'Weekends only',
         communicationPreferences: "",
-        dungeonMaster: 1,
+        dungeonMaster: "1",
         players: [2, 3, 4],
         owner: 1,
-        waitlist: [5, 6]
+        waitlist: [5, 6],
+        numPlayers: 3,
+        hasDM: true
     },
     {
         id: 2,
@@ -97,10 +102,12 @@ export const MockedTables: TableFormat[] = [
         imageUrl: '/images/tables/table2.jpg',
         availability: 'Daily',
         communicationPreferences: "",
-        dungeonMaster: 1,
+        dungeonMaster: "1",
         players: [],
         owner: 2,
-        waitlist: []
+        waitlist: [],
+        numPlayers: 0,
+        hasDM: true
     },
     {
         id: 3,
@@ -114,10 +121,12 @@ export const MockedTables: TableFormat[] = [
         imageUrl: '/images/tables/table3.jpg',
         availability: 'Weekdays after 5pm, all day weekends',
         communicationPreferences: "",
-        dungeonMaster: 2,
+        dungeonMaster: "2",
         players: [],
         owner: 3,
-        waitlist: []
+        waitlist: [],
+        numPlayers: 0,
+        hasDM: true
     },
     {
         id: 4,
@@ -131,10 +140,12 @@ export const MockedTables: TableFormat[] = [
         imageUrl: '/images/tables/table4.jpg',
         availability: 'By reservation only',
         communicationPreferences: "",
-        dungeonMaster: 1,
+        dungeonMaster: "1",
         players: [],
         owner: 4,
-        waitlist: []
+        waitlist: [],
+        numPlayers: 0,
+        hasDM: true
     },
     {
         id: 5,
@@ -148,9 +159,11 @@ export const MockedTables: TableFormat[] = [
         imageUrl: '/images/tables/table5.jpg',
         availability: 'Daily 10am-10pm',
         communicationPreferences: "",
-        dungeonMaster: 3,
+        dungeonMaster: "3",
         players: [],
         owner: 5,
-        waitlist: []
+        waitlist: [],
+        numPlayers: 0,
+        hasDM: true
     }
 ];

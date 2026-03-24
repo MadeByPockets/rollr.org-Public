@@ -70,7 +70,7 @@ export function TablePageLayout(props: TablePageLayoutProps) {
         const nextDraft: TableRecord = {
             ...table,
             description: currentDescription,
-            dungeonMaster: currentDungeonMaster.id,
+            dungeonMaster: String(currentDungeonMaster.id),
             players: currentPlayers.map((player) => player.id),
             shortDescription: currentShortDescription,
             tags: currentTagIds,
