@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import EmotionRegistry from "@/lib/EmotionRegistry";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -52,7 +53,9 @@ export default function RootLayout({
             </ul>
           </nav>
         </header>
-        {children}
+        <EmotionRegistry>
+          {children}
+        </EmotionRegistry>
       </body>
     </html>
   );

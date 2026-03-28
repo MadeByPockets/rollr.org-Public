@@ -36,17 +36,18 @@ const generateTimeInfo = function (timeInfo: string, startingDate?: Date | strin
 
     const formatDateTime = (dateInput: Date | string) => {
         const d = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
-        const month = d.toLocaleString(undefined, { month: 'short' });
-        const day = d.getDate();
-        const year = d.getFullYear();
-        let hours = d.getHours();
-        const minutesNum = d.getMinutes();
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const month = monthNames[d.getUTCMonth()];
+        const day = d.getUTCDate();
+        const year = d.getUTCFullYear();
+        let hours = d.getUTCHours();
+        const minutesNum = d.getUTCMinutes();
         const minutes = String(minutesNum).padStart(2, '0');
         const ampm = hours >= 12 ? 'pm' : 'am';
         hours = hours % 12;
         if (hours === 0) hours = 12;
         const timeStr = minutes === '00' ? `${hours}${ampm}` : `${hours}:${minutes}${ampm}`;
-        return `${month} ${day}, ${year} @ ${timeStr}`;
+        return `${month} ${day}, ${year} @ ${timeStr} UTC`;
     }
 
     let rangeText: string | null = null;
