@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Button from "@mui/material/Button";
 import {Card, CardContent, CardHeader, Typography} from "@mui/material";

@@ -3,222 +3,319 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 function toPosix(p) {
-  return p.split(path.sep).join('/');
+    return p.split(path.sep).join('/');
 }
 
 function isTsLike(file) {
-  const ext = path.extname(file);
-  return ext === '.ts' || ext === '.tsx';
+    const ext = path.extname(file);
+    return ext === '.ts' || ext === '.tsx';
 }
 
-function shouldSkipFile(fileBase, fileName) {
-  // Skip declaration files and common non-source files
-  if (fileName.endsWith('.d.ts')) return true;
-  if (/\.(test|spec|stories)\.(ts|tsx)$/.test(fileName)) return true;
-  if (fileName.startsWith('.')) return true;
-  return false;
+function shouldSkipFile(_fileBase, fileName) {
+    if (fileName.endsWith('.d.ts')) return true;
+    if (/\.(test|spec|stories)\.(ts|tsx)$/.test(fileName)) return true;
+    if (fileName.startsWith('.')) return true;
+    return false;
+}
+
+function stripBom(text) {
+    if (!text) return text;
+    return text.charCodeAt(0) === 0xfeff ? text.slice(1) : text;
 }
 
 function hasUseClientDirective(text) {
-  if (!text) return false;
-  // Strip UTF-8 BOM if present
-  if (text.charCodeAt(0) === 0xfeff) text = text.slice(1);
-  // Remove leading comments and whitespace
-  const stripped = text.replace(/^\s*(\/\/.*\n|\/\*[\s\S]*?\*\/\s*)*/g, '');
-  if (/^["']use client["']\s*;?/.test(stripped)) return true;
-  // Also support Next helper that marks a module as client-only
-  if (/^\s*import\s+["']client-only["']\s*;?/m.test(text)) return true;
-  return false;
+    if (!text) return false;
+    text = stripBom(text);
+    const stripped = text.replace(/^\s*(\/\/.*\n|\/\*[\s\S]*?\*\/\s*)*/g, '');
+    if (/^["']use client["']\s*;?/.test(stripped)) return true;
+    if (/^\s*import\s+["']client-only["']\s*;?/m.test(text)) return true;
+    return false;
+}
+
+function hasDefaultExport(text) {
+    if (!text) return false;
+    return /^\s*export\s+default\s+/m.test(text);
+}
+
+function shouldForceUseClient(absFilePath) {
+    const normalized = toPosix(absFilePath);
+    return normalized.includes('/src/components/');
+}
+
+function ensureUseClientDirective(text) {
+    text = stripBom(text || '');
+
+    if (hasUseClientDirective(text)) {
+        return text;
+    }
+
+    return `"use client";\n\n${text}`;
+}
+
+function maybeAddUseClientToModule(absFilePath) {
+    if (!shouldForceUseClient(absFilePath)) return false;
+    if (!fs.existsSync(absFilePath)) return false;
+
+    let original;
+    try {
+        original = fs.readFileSync(absFilePath, 'utf8');
+    } catch {
+        return false;
+    }
+
+    if (hasUseClientDirective(original)) return false;
+
+    const updated = ensureUseClientDirective(original);
+    if (updated === original) return false;
+
+    fs.writeFileSync(absFilePath, updated, 'utf8');
+    console.log(
+        `[update-barrels] Added "use client" to ${toPosix(
+            path.relative(process.cwd(), absFilePath)
+        )}`
+    );
+    return true;
 }
 
 function walkCollectModules(dir) {
-  const outMap = new Map(); // relNoExt -> { rel, abs, ext, isClient }
-  function walk(currentDir) {
-    const items = fs.readdirSync(currentDir, { withFileTypes: true });
-    for (const d of items) {
-      const full = path.join(currentDir, d.name);
-      if (d.isDirectory()) {
-        // Skip node_modules and hidden dirs
-        if (d.name === 'node_modules' || d.name.startsWith('.')) continue;
-        walk(full);
-      } else if (d.isFile() && isTsLike(d.name)) {
-        const ext = path.extname(d.name);
-        const base = path.basename(d.name, ext);
-        if (shouldSkipFile(base, d.name)) continue;
-        let relNoExt = toPosix(path.relative(dir, full)).replace(/\.(ts|tsx)$/i, '');
-        // Skip the root index file itself if encountered
-        if (relNoExt === 'index') continue;
-        // If file is .../index.ts, treat it as the folder export
-        if (relNoExt.endsWith('/index')) relNoExt = relNoExt.slice(0, -('/index'.length));
-        const rec = { rel: relNoExt, abs: full, ext, isClient: false };
-        try {
-          const text = fs.readFileSync(full, 'utf8');
-          rec.isClient = hasUseClientDirective(text);
-        } catch {}
-        const existing = outMap.get(relNoExt);
-        if (!existing) {
-          outMap.set(relNoExt, rec);
-        } else {
-          // Prefer .tsx over .ts if both exist for the same rel path
-          const prefer = existing.ext === '.tsx' ? existing : rec.ext === '.tsx' ? rec : existing;
-          outMap.set(relNoExt, prefer);
+    const outMap = new Map(); // relNoExt -> { rel, abs, ext, isClient, isDefault, name }
+
+    function walk(currentDir) {
+        const items = fs.readdirSync(currentDir, { withFileTypes: true });
+
+        for (const d of items) {
+            const full = path.join(currentDir, d.name);
+
+            if (d.isDirectory()) {
+                if (d.name === 'node_modules' || d.name.startsWith('.')) continue;
+                walk(full);
+            } else if (d.isFile() && isTsLike(d.name)) {
+                const ext = path.extname(d.name);
+                const base = path.basename(d.name, ext);
+                if (shouldSkipFile(base, d.name)) continue;
+
+                let relNoExt = toPosix(path.relative(dir, full)).replace(/\.(ts|tsx)$/i, '');
+
+                if (relNoExt === 'index') continue;
+                if (relNoExt.endsWith('/index')) relNoExt = relNoExt.slice(0, -('/index'.length));
+
+                try {
+                    maybeAddUseClientToModule(full);
+                } catch (err) {
+                    console.warn(
+                        `[update-barrels] Failed to update ${toPosix(
+                            path.relative(process.cwd(), full)
+                        )}: ${err?.message || err}`
+                    );
+                }
+
+                const rec = {
+                    rel: relNoExt,
+                    abs: full,
+                    ext,
+                    isClient: false,
+                    isDefault: false,
+                    name: base,
+                };
+
+                try {
+                    const text = fs.readFileSync(full, 'utf8');
+                    rec.isClient = hasUseClientDirective(text);
+                    rec.isDefault = hasDefaultExport(text);
+                } catch {}
+
+                const existing = outMap.get(relNoExt);
+                if (!existing) {
+                    outMap.set(relNoExt, rec);
+                } else {
+                    const prefer =
+                        existing.ext === '.tsx' ? existing : rec.ext === '.tsx' ? rec : existing;
+                    outMap.set(relNoExt, prefer);
+                }
+            }
         }
-      }
     }
-  }
-  walk(dir);
-  // De-duplicate and sort by rel (stable-ish)
-  return Array.from(outMap.values()).sort((a, b) => a.rel.localeCompare(b.rel));
+
+    walk(dir);
+    return Array.from(outMap.values()).sort((a, b) => a.rel.localeCompare(b.rel));
 }
 
-function generateBarrelContent(modules, rootDirLabel) {
-  const hasClient = modules.some(m => m.isClient);
-  const lines = [];
-  if (hasClient) {
-    // Must be the very first statement
-    lines.push('"use client"');
+function shouldBarrelUseClient(targetDir) {
+    const normalized = toPosix(path.resolve(process.cwd(), targetDir));
+    return normalized.includes('/src/components');
+}
+
+function generateBarrelContent(modules, rootDirLabel, forceUseClient = false) {
+    const hasClient = forceUseClient || modules.some((m) => m.isClient);
+    const lines = [];
+
+    if (hasClient) {
+        lines.push('"use client";');
+        lines.push('');
+    }
+
+    lines.push('// AUTO-GENERATED FILE. DO NOT EDIT.');
+    lines.push('// Generated by scripts/update-barrels.mjs');
+    lines.push(`// Barrel for ${rootDirLabel} — exports all .ts/.tsx (excluding tests, stories, .d.ts)`);
     lines.push('');
-  }
-  lines.push('// AUTO-GENERATED FILE. DO NOT EDIT.');
-  lines.push('// Generated by scripts/update-barrels.mjs');
-  lines.push(`// Barrel for ${rootDirLabel} — exports all .ts/.tsx (excluding tests, stories, .d.ts)`);
-  lines.push('');
-  for (const m of modules) {
-    lines.push(`export * from "./${m.rel}";`);
-  }
-  lines.push('');
-  return lines.join('\n');
+
+    for (const m of modules) {
+        lines.push(`export * from "./${m.rel}";`);
+        if (m.isDefault && m.name !== 'index') {
+            lines.push(`export { default as ${m.name} } from "./${m.rel}";`);
+        }
+    }
+
+    lines.push('');
+    return lines.join('\n');
 }
 
 function writeBarrel(targetDir) {
-  const absDir = path.resolve(process.cwd(), targetDir);
-  if (!fs.existsSync(absDir)) {
-    console.error(`[update-barrels] Skip: ${targetDir} does not exist.`);
-    return false;
-  }
-  const modules = walkCollectModules(absDir);
-  const content = generateBarrelContent(modules, targetDir);
-  const outPathTs = path.join(absDir, 'index.ts');
-  const outPathTsx = path.join(absDir, 'index.tsx');
-
-  // If there is a hand-written TSX index, do not shadow it with a generated TS barrel
-  if (fs.existsSync(outPathTsx)) {
-    if (fs.existsSync(outPathTs)) {
-      const current = fs.readFileSync(outPathTs, 'utf8');
-      if (current.startsWith('// AUTO-GENERATED FILE. DO NOT EDIT.')) {
-        try {
-          fs.unlinkSync(outPathTs);
-          console.log(`[update-barrels] Removed auto-generated index.ts in ${targetDir} to defer to existing index.tsx`);
-        } catch {}
-      }
+    const absDir = path.resolve(process.cwd(), targetDir);
+    if (!fs.existsSync(absDir)) {
+        console.error(`[update-barrels] Skip: ${targetDir} does not exist.`);
+        return false;
     }
-    console.log(`[update-barrels] Found existing index.tsx in ${targetDir}; skipping generation of index.ts`);
-    return false;
-  }
 
-  // If no modules to export, avoid creating an empty barrel. Remove stale auto-generated barrel if present.
-  if (modules.length === 0) {
-    if (fs.existsSync(outPathTs)) {
-      const current = fs.readFileSync(outPathTs, 'utf8');
-      if (current.startsWith('// AUTO-GENERATED FILE. DO NOT EDIT.')) {
-        try {
-          fs.unlinkSync(outPathTs);
-          console.log(`[update-barrels] Removed empty auto-generated index.ts in ${targetDir}`);
-        } catch {}
-      }
+    const modules = walkCollectModules(absDir);
+    const forceUseClient = shouldBarrelUseClient(targetDir);
+    const content = generateBarrelContent(modules, targetDir, forceUseClient);
+
+    const outPathTs = path.join(absDir, 'index.ts');
+    const outPathTsx = path.join(absDir, 'index.tsx');
+
+    if (fs.existsSync(outPathTsx)) {
+        if (fs.existsSync(outPathTs)) {
+            const current = fs.readFileSync(outPathTs, 'utf8');
+            if (current.startsWith('// AUTO-GENERATED FILE. DO NOT EDIT.')) {
+                try {
+                    fs.unlinkSync(outPathTs);
+                    console.log(
+                        `[update-barrels] Removed auto-generated index.ts in ${targetDir} to defer to existing index.tsx`
+                    );
+                } catch {}
+            }
+        }
+        console.log(`[update-barrels] Found existing index.tsx in ${targetDir}; skipping generation of index.ts`);
+        return false;
     }
-    return false;
-  }
 
-  fs.writeFileSync(outPathTs, content, 'utf8');
-  console.log(`[update-barrels] Wrote ${path.relative(process.cwd(), outPathTs)} with ${modules.length} export lines.`);
-  return true;
+    if (modules.length === 0) {
+        if (fs.existsSync(outPathTs)) {
+            const current = fs.readFileSync(outPathTs, 'utf8');
+            if (current.startsWith('// AUTO-GENERATED FILE. DO NOT EDIT.')) {
+                try {
+                    fs.unlinkSync(outPathTs);
+                    console.log(`[update-barrels] Removed empty auto-generated index.ts in ${targetDir}`);
+                } catch {}
+            }
+        }
+        return false;
+    }
+
+    fs.writeFileSync(outPathTs, content, 'utf8');
+    console.log(
+        `[update-barrels] Wrote ${path.relative(process.cwd(), outPathTs)} with ${modules.length} export lines.`
+    );
+    return true;
 }
 
 function listAllDirs(root) {
-  const out = [];
-  function walk(dir) {
-    out.push(dir);
-    const items = fs.readdirSync(dir, { withFileTypes: true });
-    for (const d of items) {
-      if (d.isDirectory()) {
-        if (d.name === 'node_modules' || d.name.startsWith('.')) continue;
-        walk(path.join(dir, d.name));
-      }
+    const out = [];
+
+    function walk(dir) {
+        out.push(dir);
+        const items = fs.readdirSync(dir, { withFileTypes: true });
+        for (const d of items) {
+            if (d.isDirectory()) {
+                if (d.name === 'node_modules' || d.name.startsWith('.')) continue;
+                walk(path.join(dir, d.name));
+            }
+        }
     }
-  }
-  if (fs.existsSync(root)) walk(root);
-  return out;
+
+    if (fs.existsSync(root)) walk(root);
+    return out;
 }
 
 function cleanAutoGeneratedBarrels(targetDir) {
-  const abs = path.resolve(process.cwd(), targetDir);
-  if (!fs.existsSync(abs)) return 0;
-  let removed = 0;
-  const dirs = listAllDirs(abs);
-  for (const d of dirs) {
-    const tsPath = path.join(d, 'index.ts');
-    const tsxPath = path.join(d, 'index.tsx');
-    try {
-      // Never touch hand-written TSX barrels
-      if (fs.existsSync(tsxPath)) continue;
-      if (fs.existsSync(tsPath)) {
-        const text = fs.readFileSync(tsPath, 'utf8');
-        if (text.startsWith('// AUTO-GENERATED FILE. DO NOT EDIT.')) {
-          fs.unlinkSync(tsPath);
-          removed++;
-          console.log(`[update-barrels] Deleted prior auto-generated barrel: ${toPosix(path.relative(process.cwd(), tsPath))}`);
+    const abs = path.resolve(process.cwd(), targetDir);
+    if (!fs.existsSync(abs)) return 0;
+
+    let removed = 0;
+    const dirs = listAllDirs(abs);
+
+    for (const d of dirs) {
+        const tsPath = path.join(d, 'index.ts');
+        const tsxPath = path.join(d, 'index.tsx');
+
+        try {
+            if (fs.existsSync(tsxPath)) continue;
+            if (fs.existsSync(tsPath)) {
+                const text = fs.readFileSync(tsPath, 'utf8');
+                if (text.startsWith('// AUTO-GENERATED FILE. DO NOT EDIT.')) {
+                    fs.unlinkSync(tsPath);
+                    removed++;
+                    console.log(
+                        `[update-barrels] Deleted prior auto-generated barrel: ${toPosix(
+                            path.relative(process.cwd(), tsPath)
+                        )}`
+                    );
+                }
+            }
+        } catch (e) {
+            console.warn(
+                `[update-barrels] Failed to inspect/delete ${toPosix(
+                    path.relative(process.cwd(), tsPath)
+                )}: ${e?.message || e}`
+            );
         }
-      }
-    } catch (e) {
-      console.warn(`[update-barrels] Failed to inspect/delete ${toPosix(path.relative(process.cwd(), tsPath))}: ${e?.message || e}`);
     }
-  }
-  return removed;
+
+    return removed;
 }
 
 function writeBarrelsRecursively(targetDir) {
-  const abs = path.resolve(process.cwd(), targetDir);
-  if (!fs.existsSync(abs)) {
-    console.error(`[update-barrels] Skip: ${targetDir} does not exist.`);
-    return false;
-  }
-  const allDirs = listAllDirs(abs)
-    .map(d => toPosix(path.relative(process.cwd(), d)))
-    // Process deepest paths first so children are cleaned/generated before parents
-    .sort((a, b) => (b.split('/').length - a.split('/').length));
-  let any = false;
-  for (const rel of allDirs) {
-    any = writeBarrel(rel) || any;
-  }
-  return any;
+    const abs = path.resolve(process.cwd(), targetDir);
+    if (!fs.existsSync(abs)) {
+        console.error(`[update-barrels] Skip: ${targetDir} does not exist.`);
+        return false;
+    }
+
+    const allDirs = listAllDirs(abs)
+        .map((d) => toPosix(path.relative(process.cwd(), d)))
+        .sort((a, b) => b.split('/').length - a.split('/').length);
+
+    let any = false;
+    for (const rel of allDirs) {
+        any = writeBarrel(rel) || any;
+    }
+    return any;
 }
 
 function main() {
-  // Default targets
-  const targets = process.argv.slice(2).length ? process.argv.slice(2) : [
-    'src/components',
-    'src/mocks',
-    'src/types',
-  ];
-  let wroteAny = false;
-  for (const t of targets) {
-    // First, remove any prior auto-generated barrels under this target
-    const removed = cleanAutoGeneratedBarrels(t);
-    if (removed > 0) {
-      console.log(`[update-barrels] Cleaned ${removed} auto-generated barrel(s) under ${t}`);
+    const targets = process.argv.slice(2).length
+        ? process.argv.slice(2)
+        : ['src/components', 'src/mocks', 'src/types'];
+
+    let wroteAny = false;
+
+    for (const t of targets) {
+        const removed = cleanAutoGeneratedBarrels(t);
+        if (removed > 0) {
+            console.log(`[update-barrels] Cleaned ${removed} auto-generated barrel(s) under ${t}`);
+        }
+        wroteAny = writeBarrelsRecursively(t) || wroteAny;
     }
-    // Then (re)generate barrels deepest-first
-    wroteAny = writeBarrelsRecursively(t) || wroteAny;
-  }
-  if (!wroteAny) {
-    process.exitCode = 1;
-  }
+
+    if (!wroteAny) {
+        process.exitCode = 1;
+    }
 }
 
 try {
-  main();
+    main();
 } catch (err) {
-  console.error('[update-barrels] Failed:', err?.message || err);
-  process.exit(1);
+    console.error('[update-barrels] Failed:', err?.message || err);
+    process.exit(1);
 }

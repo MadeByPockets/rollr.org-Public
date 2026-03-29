@@ -1,3 +1,4 @@
+"use client"
 import React from 'react';
 import { BaseSearchResultCard } from './BaseSearchResultCard';
 import { Box, Typography, LinearProgress, Chip } from '@mui/material';

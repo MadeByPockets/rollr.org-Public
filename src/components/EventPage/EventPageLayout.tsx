@@ -1,3 +1,4 @@
+"use client"
 import EventBanner from "@/components/EventPage/EventBanner";
 import Grid from "@mui/material/Grid";
 import EventBasicInfo from "@/components/EventPage/EventBasicInfo";

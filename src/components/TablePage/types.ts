@@ -1,3 +1,5 @@
+"use client";
+
 import type { Player, TableRecord, Tag } from "@/types";
 
 export interface UpdatableValues {

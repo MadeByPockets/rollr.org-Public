@@ -1,3 +1,4 @@
+"use client"
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';

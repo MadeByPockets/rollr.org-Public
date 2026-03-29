@@ -1,3 +1,5 @@
+"use client";
+
 import React, { ReactNode, useState } from "react";
 import { ModalContext } from './ModalContext';
 import Modal from "@/components/shared/Modal";

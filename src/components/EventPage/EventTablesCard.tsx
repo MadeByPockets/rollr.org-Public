@@ -6,7 +6,6 @@ import CardHeader from '@mui/material/CardHeader';
 import Divider from '@mui/material/Divider';
 import TablesScrollableList from '@/components/SearchPage/TablesScrollableList';
 import { Tag } from '@/types/tag';
-import {SearchResultItem} from "@/types/search";
 
 export interface EventTablesCardProps {
   tables: any[];
