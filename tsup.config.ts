@@ -99,6 +99,10 @@ function discoverEntries() {
   addDirDeep('src/components', 'shared-ui/components', extsAll);
   addFolderIndexEntries('src/components', 'shared-ui/components', aliasComponents);
 
+  // 3) Types — publish under dist/shared-ui/types (recursive per-file) and folder-level entries
+  addDirDeep('src/types', 'shared-ui/types', extsAll);
+  addFolderIndexEntries('src/types', 'shared-ui/types');
+
   return entries;
 }
 

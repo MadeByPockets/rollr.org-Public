@@ -8,7 +8,7 @@ import { useMediaQuery, useTheme } from '@mui/material';
 import FiltersContainer from './FiltersContainer';
 import ResultsContainer from './ResultsContainer';
 import { SearchResultItem } from '@/types/search';
-import {TagsFormat} from '@/types/tag'
+import {Tag} from '@/types/tag'
 
 interface SearchPageLayoutProps {
   /**
@@ -34,8 +34,8 @@ interface SearchPageLayoutProps {
     mustNotHave: number[];
     shouldHaveAtLeastOne: number[];
   }) => void;
-  allTags: TagsFormat[];
-  validTags: TagsFormat[];
+  allTags: Tag[];
+  validTags: Tag[];
   
   /**
    * Optional callback for when the search button is clicked

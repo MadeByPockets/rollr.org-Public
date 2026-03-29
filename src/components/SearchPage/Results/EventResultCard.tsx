@@ -4,13 +4,13 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import EventIcon from '@mui/icons-material/Event';
 import BaseSearchResultCard from './BaseSearchResultCard';
-import { TagsFormat } from '@/types/tag';
+import { Tag } from '@/types/tag';
 import { SearchResultItem } from '@/types/search';
 
 interface EventResultCardProps {
   result: SearchResultItem;
   onClick?: (id: number) => void;
-  tags: TagsFormat[];
+  tags: Tag[];
 }
 
 const EventResultCard: React.FC<EventResultCardProps> = ({

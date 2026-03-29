@@ -3,7 +3,7 @@ import Grid from "@mui/material/Grid";
 import EventBasicInfo from "@/components/EventPage/EventBasicInfo";
 import EventTablesCard from "@/components/EventPage/EventTablesCard";
 import type { EventDB } from "@/types/event";
-import type { TagsFormat } from "@/types/tag";
+import type { Tag } from "@/types/tag";
 
 export type EventPageProps = {
     event: EventDB;
@@ -11,7 +11,7 @@ export type EventPageProps = {
     numGames: number;
     tables: any[];
     players: any[];
-    allTags: TagsFormat[];
+    allTags: Tag[];
 };
 
 export default function EventPageLayout({event, attendees, numGames, tables, players, allTags}: EventPageProps) {

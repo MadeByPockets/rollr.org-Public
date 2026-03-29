@@ -199,6 +199,7 @@ function main() {
   const targets = process.argv.slice(2).length ? process.argv.slice(2) : [
     'src/components',
     'src/mocks',
+    'src/types',
   ];
   let wroteAny = false;
   for (const t of targets) {

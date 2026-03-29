@@ -33,7 +33,7 @@ export const PlayerHighlightsCard = function(props: PlayerHighlightsCardProps) {
                 <Grid container spacing={2} direction="column">
                     <Grid container direction="row">
                         <Grid>
-                            <Image alt={player.username + "'s profile pic"} height={64} src={player.miniPic} width={64} />
+                            <Image alt={player.username + "'s profile pic"} height={64} src={player.miniPic || ""} width={64} />
                         </Grid>
                         <Grid>
                             <Typography variant="h5">{player.username}</Typography>

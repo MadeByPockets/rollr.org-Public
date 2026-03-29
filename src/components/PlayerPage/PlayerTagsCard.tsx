@@ -1,10 +1,10 @@
-import {TagsFormat} from "@/types/tag";
+import {Tag} from "@/types/tag";
 import Grid from "@mui/material/Grid"
 import Card from "@mui/material/Card"
 import CardHeader from "@mui/material/CardHeader"
 import CardContent from "@mui/material/CardContent"
 
-export default function PlayerTagsCard(props : {PlayerTags: TagsFormat[]}) {
+export default function PlayerTagsCard(props : {PlayerTags: Tag[]}) {
     return (
       <Grid container>
       <Grid size={{xs:12, md:3}}>
@@ -25,7 +25,7 @@ export default function PlayerTagsCard(props : {PlayerTags: TagsFormat[]}) {
     )
 }
 
-const renderLabels = (tags:TagsFormat[]) => {
+const renderLabels = (tags:Tag[]) => {
 
   return (
   <div className="mt-2 flex flex-wrap gap-2">
@@ -34,7 +34,7 @@ const renderLabels = (tags:TagsFormat[]) => {
 )
 }
 
-const generateLabel = (tag:TagsFormat) => {
+const generateLabel = (tag:Tag) => {
 
   let color = "#bfbcbb"
   if (tag.color) color = tag.color

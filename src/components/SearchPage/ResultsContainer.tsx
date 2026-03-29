@@ -4,12 +4,12 @@ import { SearchResultItem } from '@/types/search';
 import PlayerResultCard from './Results/PlayerResultCard';
 import TableResultCard from './Results/TableResultCard';
 import EventResultCard from './Results/EventResultCard';
-import { TagsFormat } from '@/types/tag';
+import { Tag } from '@/types/tag';
 
 interface ResultsContainerProps {
   results: SearchResultItem[];
   onResultClick?: (id: number, type: "player" | "event" | "table") => void;
-  tags: TagsFormat[]
+  tags: Tag[]
 }
 
 /**

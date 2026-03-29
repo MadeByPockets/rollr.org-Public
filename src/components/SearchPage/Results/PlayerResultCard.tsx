@@ -1,13 +1,13 @@
 import React from 'react';
 import Avatar from '@mui/material/Avatar';
 import BaseSearchResultCard from './BaseSearchResultCard';
-import { TagsFormat } from "@/types/tag";
+import { Tag } from "@/types/tag";
 import { SearchResultItem } from '@/types/search';
 
 interface PlayerResultCardProps {
   result: SearchResultItem;
   onClick?: (id: number) => void;
-  tags: TagsFormat[];
+  tags: Tag[];
 }
 
 /**

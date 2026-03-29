@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent, Typography, Box } from '@mui/material';
-import { TagsFormat } from '@/types/tag';
+import { Tag } from '@/types/tag';
 import { SearchResultItem } from '@/types/search';
 import { generateTagsDisplay } from "@/components/shared/TagComponents";
 
@@ -9,7 +9,7 @@ export interface BaseSearchResultCardProps {
   onClick?: (id: number) => void;
   icon?: React.ReactNode;
   children?: React.ReactNode;
-  tags: TagsFormat[];
+  tags: Tag[];
 }
 
 /**
@@ -77,7 +77,7 @@ export const BaseSearchResultCard: React.FC<BaseSearchResultCardProps> = ({
                   const MAX_VISIBLE = 5; // heuristic: show up to 5 tags on one line
                   const tagObjs = result.tags
                     .map((tagId) => tags.find((t) => t.id === tagId))
-                    .filter((t): t is TagsFormat => Boolean(t));
+                    .filter((t): t is Tag => Boolean(t));
                   const visible = tagObjs.slice(0, MAX_VISIBLE);
                   const hiddenCount = Math.max(tagObjs.length - visible.length, 0);
                   return (

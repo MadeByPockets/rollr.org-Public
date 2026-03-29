@@ -2,13 +2,13 @@
 import { Box } from "@mui/material"
 import Grid from "@mui/material/Grid";
 import {generateTagsDisplay} from "@/components/shared/TagComponents";
-import {TagsFormat} from "@/types/tag";
+import {Tag} from "@/types/tag";
 
 export type EventBannerProps = {
     attendees: number,
     numGames: number,
     title: string,
-    eventTag: TagsFormat,
+    eventTag: Tag,
     bannerUrl: {
         desktop: string,
         mobile?: string,

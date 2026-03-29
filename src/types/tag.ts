@@ -10,5 +10,3 @@ export interface Tag {
     tables: boolean;
   };
 }
-
-export type TagsFormat = Tag;

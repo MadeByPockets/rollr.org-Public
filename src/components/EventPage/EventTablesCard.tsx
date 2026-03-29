@@ -5,12 +5,12 @@ import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Divider from '@mui/material/Divider';
 import TablesScrollableList from '@/components/SearchPage/TablesScrollableList';
-import { TagsFormat } from '@/types/tag';
+import { Tag } from '@/types/tag';
 import {SearchResultItem} from "@/types/search";
 
 export interface EventTablesCardProps {
   tables: any[];
-  tags: TagsFormat[];
+  tags: Tag[];
   maxHeight?: number | string;
   onTableClick?: (id: number) => void;
 }

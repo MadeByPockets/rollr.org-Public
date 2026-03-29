@@ -1,11 +1,11 @@
 import React from 'react';
 import BaseSearchResultCard from './BaseSearchResultCard';
-import { TagsFormat } from '@/types/tag';
+import { Tag } from '@/types/tag';
 
 interface SearchResultCardProps {
   result: any;
   onClick?: (id: number) => void;
-  tags: TagsFormat[];
+  tags: Tag[];
 }
 
 /**

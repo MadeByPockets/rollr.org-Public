@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import Popper, { PopperProps } from '@mui/material/Popper';
-import {TagsFormat} from '@/types/tag';
+import {Tag} from '@/types/tag';
 import Divider from '@mui/material/Divider';
 
 interface TagsFilterProps {
@@ -13,7 +13,7 @@ interface TagsFilterProps {
     mustNotHave: number[];
     shouldHaveAtLeastOne: number[];
   }) => void;
-  tags: TagsFormat[];
+  tags: Tag[];
 }
 
 type TagCategory = 'mustHave' | 'mustNotHave' | 'shouldHaveAtLeastOne';
@@ -83,7 +83,7 @@ const TagsFilter: React.FC<TagsFilterProps> = ({
 
   // Render selected tags as labels with remove buttons
   const renderSelectedTags = (selectedTags: number[], category: TagCategory) => {
-    const tagValues: TagsFormat[] = [];
+    const tagValues: Tag[] = [];
 
     if (!Tags || Tags.length == 0 || !Tags.map) return null;
     Tags.forEach((tag) => {

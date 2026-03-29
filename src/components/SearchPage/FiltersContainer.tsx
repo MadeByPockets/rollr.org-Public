@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import SearchIcon from '@mui/icons-material/Search';
 import TypeFilter from './Filters/TypeFilter';
 import TagsFilter from './Filters/TagsFilter';
-import {TagsFormat} from '@/types/tag';
+import {Tag} from '@/types/tag';
 
 interface FiltersContainerProps {
   onTypeChange?: (selectedTypes: string[]) => void;
@@ -15,7 +15,7 @@ interface FiltersContainerProps {
     shouldHaveAtLeastOne: number[];
   }) => void;
   onSubmit?: () => void;
-  tags: TagsFormat[];
+  tags: Tag[];
 }
 
 /**

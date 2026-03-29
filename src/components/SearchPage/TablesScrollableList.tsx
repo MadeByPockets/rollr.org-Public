@@ -2,11 +2,11 @@
 import React from 'react';
 import ScrollableResultsList from './ScrollableResultsList';
 import { SearchResultItem } from '@/types/search';
-import { TagsFormat } from '@/types/tag';
+import { Tag } from '@/types/tag';
 
 export interface TablesScrollableListProps {
   results: SearchResultItem[];
-  tags: TagsFormat[];
+  tags: Tag[];
   maxHeight?: number | string;
   onResultClick?: (id: number) => void;
   sortBy?: 'none' | 'availability';

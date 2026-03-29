@@ -2,12 +2,12 @@ import React from 'react';
 import { BaseSearchResultCard } from './BaseSearchResultCard';
 import { Box, Typography, LinearProgress, Chip } from '@mui/material';
 import CasinoIcon from '@mui/icons-material/Casino';
-import { TagsFormat } from '@/types/tag';
+import { Tag } from '@/types/tag';
 import { SearchResultItem } from '@/types/search';
 
 interface TableResultCardProps {
   result: SearchResultItem;
-  tags: TagsFormat[];
+  tags: Tag[];
   onClick?: (id: number) => void;
 }
 

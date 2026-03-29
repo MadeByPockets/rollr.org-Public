@@ -1,4 +1,6 @@
-export const MockedTags: TagsFormat[] = [
+import { Tag } from "../types/tag";
+
+export const MockedTags: Tag[] = [
   // Game tags
   {
     id: 1,
@@ -132,17 +134,4 @@ export const MockedTags: TagsFormat[] = [
             tables: true,
         }
     }
-]
-
-
-export interface TagsFormat {
-  id: number,
-  label: string,
-  color?: string,
-  image?: string,
-  appliesTo: {
-    players: boolean,
-    events: boolean,
-    tables: boolean
-  }
-}
+];

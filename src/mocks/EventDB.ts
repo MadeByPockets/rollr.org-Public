@@ -1,4 +1,5 @@
-import {MockedTags, TagsFormat} from "@/mocks/Tags";
+import {MockedTags} from "@/mocks/Tags";
+import {Tag} from "@/types/tag";
 
 export interface EventDB {
     id: number;
@@ -12,7 +13,7 @@ export interface EventDB {
     date: string;
     location?: string;
     organizer?: string;
-    eventTag: TagsFormat
+    eventTag: Tag
     tags?: number[];
     imageUrl?: string;
     startingDate?: Date,
