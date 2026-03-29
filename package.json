@@ -12,10 +12,25 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
-    "./*": {
-      "types": "./dist/*.d.ts",
-      "import": "./dist/*.mjs",
-      "require": "./dist/*.cjs"
+    "./EventPage": {
+      "types": "./dist/EventPage/index.d.ts",
+      "import": "./dist/EventPage/index.mjs",
+      "require": "./dist/EventPage/index.cjs"
+    },
+    "./SearchPage": {
+      "types": "./dist/SearchPage/index.d.ts",
+      "import": "./dist/SearchPage/index.mjs",
+      "require": "./dist/SearchPage/index.cjs"
+    },
+    "./TablePage": {
+      "types": "./dist/TablePage/index.d.ts",
+      "import": "./dist/TablePage/index.mjs",
+      "require": "./dist/TablePage/index.cjs"
+    },
+    "./shared": {
+      "types": "./dist/shared/index.d.ts",
+      "import": "./dist/shared/index.mjs",
+      "require": "./dist/shared/index.cjs"
     }
   },
   "files": [

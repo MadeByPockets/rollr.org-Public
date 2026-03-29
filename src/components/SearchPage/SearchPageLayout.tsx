@@ -66,6 +66,7 @@ export default function SearchPageLayout({
   validTags,
   allTags
 }: SearchPageLayoutProps) {
+    "use client"
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   

@@ -27,9 +27,7 @@ function hasUseClientDirective(text) {
     if (!text) return false;
     text = stripBom(text);
     const stripped = text.replace(/^\s*(\/\/.*\n|\/\*[\s\S]*?\*\/\s*)*/g, '');
-    if (/^["']use client["']\s*;?/.test(stripped)) return true;
-    if (/^\s*import\s+["']client-only["']\s*;?/m.test(text)) return true;
-    return false;
+    return /^["']use client["']\s*;?/.test(stripped);
 }
 
 function hasDefaultExport(text) {
@@ -37,44 +35,14 @@ function hasDefaultExport(text) {
     return /^\s*export\s+default\s+/m.test(text);
 }
 
-function shouldForceUseClient(absFilePath) {
-    const normalized = toPosix(absFilePath);
+function shouldDirectoryBeClientBarrel(targetDir) {
+    const normalized = toPosix(path.resolve(process.cwd(), targetDir));
     return normalized.includes('/src/components/');
 }
 
-function ensureUseClientDirective(text) {
-    text = stripBom(text || '');
-
-    if (hasUseClientDirective(text)) {
-        return text;
-    }
-
-    return `"use client";\n\n${text}`;
-}
-
-function maybeAddUseClientToModule(absFilePath) {
-    if (!shouldForceUseClient(absFilePath)) return false;
-    if (!fs.existsSync(absFilePath)) return false;
-
-    let original;
-    try {
-        original = fs.readFileSync(absFilePath, 'utf8');
-    } catch {
-        return false;
-    }
-
-    if (hasUseClientDirective(original)) return false;
-
-    const updated = ensureUseClientDirective(original);
-    if (updated === original) return false;
-
-    fs.writeFileSync(absFilePath, updated, 'utf8');
-    console.log(
-        `[update-barrels] Added "use client" to ${toPosix(
-            path.relative(process.cwd(), absFilePath)
-        )}`
-    );
-    return true;
+function isComponentsRoot(targetDir) {
+    const normalized = toPosix(path.resolve(process.cwd(), targetDir));
+    return normalized.endsWith('/src/components');
 }
 
 function walkCollectModules(dir) {
@@ -96,17 +64,12 @@ function walkCollectModules(dir) {
 
                 let relNoExt = toPosix(path.relative(dir, full)).replace(/\.(ts|tsx)$/i, '');
 
+                // Skip the barrel file itself
                 if (relNoExt === 'index') continue;
-                if (relNoExt.endsWith('/index')) relNoExt = relNoExt.slice(0, -('/index'.length));
 
-                try {
-                    maybeAddUseClientToModule(full);
-                } catch (err) {
-                    console.warn(
-                        `[update-barrels] Failed to update ${toPosix(
-                            path.relative(process.cwd(), full)
-                        )}: ${err?.message || err}`
-                    );
+                // If file is .../index.ts, treat it as the folder export
+                if (relNoExt.endsWith('/index')) {
+                    relNoExt = relNoExt.slice(0, -('/index'.length));
                 }
 
                 const rec = {
@@ -128,6 +91,7 @@ function walkCollectModules(dir) {
                 if (!existing) {
                     outMap.set(relNoExt, rec);
                 } else {
+                    // Prefer .tsx over .ts if both exist for the same rel path
                     const prefer =
                         existing.ext === '.tsx' ? existing : rec.ext === '.tsx' ? rec : existing;
                     outMap.set(relNoExt, prefer);
@@ -138,11 +102,6 @@ function walkCollectModules(dir) {
 
     walk(dir);
     return Array.from(outMap.values()).sort((a, b) => a.rel.localeCompare(b.rel));
-}
-
-function shouldBarrelUseClient(targetDir) {
-    const normalized = toPosix(path.resolve(process.cwd(), targetDir));
-    return normalized.includes('/src/components');
 }
 
 function generateBarrelContent(modules, rootDirLabel, forceUseClient = false) {
@@ -177,13 +136,20 @@ function writeBarrel(targetDir) {
         return false;
     }
 
+    // Never generate a root barrel for src/components itself
+    if (isComponentsRoot(targetDir)) {
+        console.log(`[update-barrels] Skipping root barrel for ${targetDir}`);
+        return false;
+    }
+
     const modules = walkCollectModules(absDir);
-    const forceUseClient = shouldBarrelUseClient(targetDir);
+    const forceUseClient = shouldDirectoryBeClientBarrel(targetDir);
     const content = generateBarrelContent(modules, targetDir, forceUseClient);
 
     const outPathTs = path.join(absDir, 'index.ts');
     const outPathTsx = path.join(absDir, 'index.tsx');
 
+    // If there is a hand-written TSX index, do not shadow it with a generated TS barrel
     if (fs.existsSync(outPathTsx)) {
         if (fs.existsSync(outPathTs)) {
             const current = fs.readFileSync(outPathTs, 'utf8');
@@ -200,6 +166,7 @@ function writeBarrel(targetDir) {
         return false;
     }
 
+    // If no modules to export, avoid creating an empty barrel
     if (modules.length === 0) {
         if (fs.existsSync(outPathTs)) {
             const current = fs.readFileSync(outPathTs, 'utf8');
@@ -215,7 +182,7 @@ function writeBarrel(targetDir) {
 
     fs.writeFileSync(outPathTs, content, 'utf8');
     console.log(
-        `[update-barrels] Wrote ${path.relative(process.cwd(), outPathTs)} with ${modules.length} export lines.`
+        `[update-barrels] Wrote ${toPosix(path.relative(process.cwd(), outPathTs))} with ${modules.length} export lines.`
     );
     return true;
 }
@@ -284,6 +251,7 @@ function writeBarrelsRecursively(targetDir) {
 
     const allDirs = listAllDirs(abs)
         .map((d) => toPosix(path.relative(process.cwd(), d)))
+        // deepest first
         .sort((a, b) => b.split('/').length - a.split('/').length);
 
     let any = false;
@@ -305,6 +273,7 @@ function main() {
         if (removed > 0) {
             console.log(`[update-barrels] Cleaned ${removed} auto-generated barrel(s) under ${t}`);
         }
+
         wroteAny = writeBarrelsRecursively(t) || wroteAny;
     }
 

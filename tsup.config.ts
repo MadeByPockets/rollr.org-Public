@@ -100,8 +100,7 @@ function discoverEntries() {
     return parts.join('/');
   };
 
-  addDirDeep('src/components', '', extsAll);
-  addFolderIndexEntries('src/components', '', aliasComponents);
+    addFolderIndexEntries('src/components', '', aliasComponents);
 
   // 3) Types — publish under dist/types (recursive per-file) and folder-level entries
   addDirDeep('src/types', 'types', extsAll);
