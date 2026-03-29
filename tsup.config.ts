@@ -40,7 +40,7 @@ function discoverEntries() {
           // Skip index files — they'll be represented by explicit folder-level entries
           const baseNoExt = relPath.replace(/\.(ts|tsx)$/i, '');
           if (/(^|\/)index$/i.test(baseNoExt)) continue;
-          const key = `${outPrefix}/${baseNoExt}`;
+          const key = outPrefix ? `${outPrefix}/${baseNoExt}` : baseNoExt;
           const val = toPosix(path.join(srcDir, relPath));
           entries[key] = val;
         }
@@ -62,12 +62,16 @@ function discoverEntries() {
       if (idx) {
         const relDir = rel; // '' for root folder itself
         const outRel = alias(relDir || '');
-        const outPathKey = outRel ? `${outBasePrefix}/${outRel}` : outBasePrefix;
-        const val = toPosix(idx.replace(path.resolve(process.cwd()) + path.sep, ''));
-        entries[outPathKey] = val;
-        // Also emit an explicit '/index' entry to satisfy tools/tests that resolve that path
-        if (outRel) {
-          entries[`${outPathKey}/index`] = val;
+        const outPathKey = outRel 
+          ? (outBasePrefix ? `${outBasePrefix}/${outRel}` : outRel)
+          : outBasePrefix;
+        if (outPathKey) {
+          const val = toPosix(idx.replace(path.resolve(process.cwd()) + path.sep, ''));
+          entries[outPathKey] = val;
+          // Also emit an explicit '/index' entry to satisfy tools/tests that resolve that path
+          if (outRel || outBasePrefix) {
+            entries[`${outPathKey}/index`] = val;
+          }
         }
       }
       const items = fs.readdirSync(curAbs, { withFileTypes: true });
@@ -81,14 +85,14 @@ function discoverEntries() {
     walk(absBase);
   };
 
-  // 1) Mocks — publish under dist/shared-ui/mocks (recursive per-file) and folder-level entries
-  addDirDeep('src/mocks', 'shared-ui/mocks', extsAll);
-  addFolderIndexEntries('src/mocks', 'shared-ui/mocks');
-  // For compatibility with tests expecting dist/shared-ui/mocks/index.*
-  entries['shared-ui/mocks/index'] = 'src/mocks/index.ts';
+  // 1) Mocks — publish under dist/mocks (recursive per-file) and folder-level entries
+  addDirDeep('src/mocks', 'mocks', extsAll);
+  addFolderIndexEntries('src/mocks', 'mocks');
+  // For compatibility with tests expecting dist/mocks/index.*
+  entries['mocks/index'] = 'src/mocks/index.ts';
 
-  // 2) Components — publish under dist/shared-ui/components/* (recursive per-file) and folder-level entries
-  // Special alias: components/shared -> components/common
+  // 2) Components — publish under dist/* (recursive per-file) and folder-level entries
+  // Special alias: components/shared -> common
   const aliasComponents = (relDir: string) => {
     if (!relDir) return '';
     const parts = relDir.split('/');
@@ -96,12 +100,12 @@ function discoverEntries() {
     return parts.join('/');
   };
 
-  addDirDeep('src/components', 'shared-ui/components', extsAll);
-  addFolderIndexEntries('src/components', 'shared-ui/components', aliasComponents);
+  addDirDeep('src/components', '', extsAll);
+  addFolderIndexEntries('src/components', '', aliasComponents);
 
-  // 3) Types — publish under dist/shared-ui/types (recursive per-file) and folder-level entries
-  addDirDeep('src/types', 'shared-ui/types', extsAll);
-  addFolderIndexEntries('src/types', 'shared-ui/types');
+  // 3) Types — publish under dist/types (recursive per-file) and folder-level entries
+  addDirDeep('src/types', 'types', extsAll);
+  addFolderIndexEntries('src/types', 'types');
 
   return entries;
 }
