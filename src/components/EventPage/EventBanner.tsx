@@ -210,6 +210,8 @@ const generateLink = function (link: { url: string, text: string }) {
         <Box
             component="a"
             href={link.url}
+            target="_blank"
+            rel="noopener noreferrer"
             key={link.text}
             sx={{
                 px: 1.5,

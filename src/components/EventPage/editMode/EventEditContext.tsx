@@ -8,6 +8,7 @@ import {EventEditContextValue } from "@/types/event";
 const defaultValue: EventEditContextValue = {
     isOwner: false,
     updateEvent: () => {},
+    updateImages: () => {},
 }
 
 /**
