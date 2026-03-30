@@ -49,6 +49,7 @@ export default function EventPageLayout({
                             startingDate={mergedEvent.startingDate}
                             timeInfo={mergedEvent.date}
                             endingDate={mergedEvent.endingDate}
+                            timezone={mergedEvent.timezone}
                         />
                     </Grid>
                     <Grid size={{ xs: 12, md: 8 }} spacing={3} padding={3}>

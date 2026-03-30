@@ -26,8 +26,9 @@ export const MockedEventObjects : EventDB[] = [
             "\n" +
             "Event times coming soon!",
         date: "Main Convention:\n\tThu - 5pm to 9pm\n\tFri & Sat - 10am to 9pm\n\tSun 10am to 2pm\nGaming Room Hours:\n\tThu - 6pm to 10pm\n\tFri & Sat - 10am to 1am\n\tSun - 10am to 4pm",
-        startingDate: new Date(2025, 9, 30, 10),
-        endingDate: new Date(2025, 10, 2, 7),
+        timezone: "America/New_York",
+        startingDate: "2025-10-30T15:00:00Z",
+        endingDate: "2025-11-02T12:00:00Z",
         active: true
     }
 ]

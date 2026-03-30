@@ -24,8 +24,9 @@ export interface EventDetails {
   links: EventLink[];
   eventTag: Tag;
   active: boolean;
-  startingDate?: Date;
-  endingDate?: Date;
+  timezone?: string;
+  startingDate?: Date | string;
+  endingDate?: Date | string;
 }
 
 export type EventEditContextValue = {
