@@ -24,7 +24,6 @@ export interface TableFormat {
     id: number;
     imageUrl?: string;
     location?: string;
-    owner: number;
     players: number[];
     shortDescription: string;
     title: string;
@@ -83,7 +82,6 @@ export const MockedTables: TableFormat[] = [
         communicationPreferences: "",
         dungeonMaster: "1",
         players: [2, 3, 4],
-        owner: 1,
         waitlist: [5, 6],
         numPlayers: 3,
         hasDM: true
@@ -102,7 +100,6 @@ export const MockedTables: TableFormat[] = [
         communicationPreferences: "",
         dungeonMaster: "1",
         players: [],
-        owner: 2,
         waitlist: [],
         numPlayers: 0,
         hasDM: true
@@ -121,7 +118,6 @@ export const MockedTables: TableFormat[] = [
         communicationPreferences: "",
         dungeonMaster: "2",
         players: [],
-        owner: 3,
         waitlist: [],
         numPlayers: 0,
         hasDM: true
@@ -140,7 +136,6 @@ export const MockedTables: TableFormat[] = [
         communicationPreferences: "",
         dungeonMaster: "1",
         players: [],
-        owner: 4,
         waitlist: [],
         numPlayers: 0,
         hasDM: true
@@ -159,7 +154,6 @@ export const MockedTables: TableFormat[] = [
         communicationPreferences: "",
         dungeonMaster: "3",
         players: [],
-        owner: 5,
         waitlist: [],
         numPlayers: 0,
         hasDM: true

@@ -72,7 +72,7 @@ const TablePage = () => {
 };
 
 function getTableStatus(table: TableRecord, viewerId: number): TableStatus {
-    const isOwner = table.owner === viewerId;
+    const isOwner = true; // Hardcoded for POC since we've removed the owner backend property
     const isPlayer = table.players.includes(viewerId);
     const isDM = Number(table.dungeonMaster) === viewerId;
     const onWaitlist = table.waitlist.includes(viewerId);

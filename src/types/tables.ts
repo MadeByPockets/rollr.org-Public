@@ -8,7 +8,6 @@ export interface TableRecord {
   id: number;
   imageUrl?: string;
   location?: string;
-  owner: number;
   players: number[];
   shortDescription: string;
   title: string;

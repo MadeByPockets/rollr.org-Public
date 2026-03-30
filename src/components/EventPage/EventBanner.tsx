@@ -1,28 +1,84 @@
-"use client"
-import { Box } from "@mui/material"
+import { useState } from "react";
+import { useEventEdit } from "./editMode/EventEditContext";
+import type { EventDB } from "../../types/event";
+import EventBannerEdit from "./editMode/EventBannerEdit";
+import { generateTagsDisplay } from "@/components/shared/TagComponents";
+import { Box, Button } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import {generateTagsDisplay} from "@/components/shared/TagComponents";
-import {Tag} from "@/types/tag";
 
 export type EventBannerProps = {
-    attendees: number,
-    numGames: number,
-    title: string,
-    eventTag: Tag,
-    bannerUrl: {
-        desktop: string,
-        mobile?: string,
-    },
-    links: { url: string, text: string }[],
-    bannerColor?: string,
+    bannerUrl: EventDB["bannerUrl"];
+    links: EventDB["links"];
+    title: EventDB["title"];
+    eventTag: EventDB["eventTag"];
+    attendees: number;
+    numGames: number;
+    bannerColor?: string;
+};
+
+export type EventBannerEditPayload = {
+    bannerUrl: EventDB["bannerUrl"];
+    bannerColor?: EventDB["bannerColor"];
+    links: EventDB["links"];
+    title: EventDB["title"];
+    eventTag: EventDB["eventTag"];
+};
+
+export default function EventBanner(props: EventBannerProps) {
+    const { isOwner, updateEvent } = useEventEdit();
+    const [isEditing, setIsEditing] = useState(false);
+
+    if (isEditing) {
+        return (
+            <EventBannerEdit
+                initialValue={{
+                    bannerUrl: props.bannerUrl,
+                    bannerColor: props.bannerColor,
+                    links: props.links,
+                    title: props.title,
+                    eventTag: props.eventTag,
+                }}
+                onCancel={() => setIsEditing(false)}
+                onSave={(payload) => {
+                    updateEvent(payload);
+                    setIsEditing(false);
+                }}
+            />
+        );
+    }
+
+    return (
+        <EventBannerView
+            {...props}
+            isOwner={isOwner}
+            onEdit={() => setIsEditing(true)}
+        />
+    );
 }
-export default function EventBanner({ bannerUrl, links, bannerColor, title, eventTag, attendees, numGames }: EventBannerProps) {
+
+type EventBannerViewProps = EventBannerProps & {
+    isOwner: boolean;
+    onEdit: () => void;
+};
+
+function EventBannerView({
+                             bannerUrl,
+                             links,
+                             bannerColor,
+                             title,
+                             eventTag,
+                             attendees,
+                             numGames,
+                             isOwner,
+                             onEdit,
+                         }: EventBannerViewProps) {
     const backgroundColor = bannerColor || "linear-gradient(135deg, rgba(25,118,210,0.8), rgba(25,118,210,1))";
     return (
         <Grid
             sx={{
                 background: backgroundColor,
                 paddingTop: "8px",
+                position: 'relative'
             }}
         >
             <Grid>
@@ -96,13 +152,10 @@ export default function EventBanner({ bannerUrl, links, bannerColor, title, even
                             backdropFilter: "blur(6px)",
                             fontWeight: 700,
                             letterSpacing: 0.2,
-                            alignItems:"center",
-                            justifyContent:"center"
+                            alignItems: "center",
+                            justifyContent: "center"
                         }}
-
                     >
-
-
                         {`${attendees} Players`}
                     </Box>
 
@@ -118,24 +171,41 @@ export default function EventBanner({ bannerUrl, links, bannerColor, title, even
                             backdropFilter: "blur(6px)",
                             fontWeight: 700,
                             letterSpacing: 0.2,
-                            alignItems:"center",
-                            justifyContent:"center"
+                            alignItems: "center",
+                            justifyContent: "center"
                         }}
-
                     >
                         {`${numGames} tables`}
                     </Box>
 
                     {generateTagsDisplay(eventTag)}
-                    {links.map( (link) =>
-                        generateLink(link))}
+                    {links.map((link) => generateLink(link))}
                 </Grid>
             </Grid>
+
+            {isOwner && (
+                <Button
+                    variant="contained"
+                    onClick={onEdit}
+                    sx={{
+                        position: 'absolute',
+                        top: 16,
+                        right: 16,
+                        bgcolor: 'rgba(255, 255, 255, 0.9)',
+                        color: 'primary.main',
+                        '&:hover': {
+                            bgcolor: 'white',
+                        }
+                    }}
+                >
+                    Edit
+                </Button>
+            )}
         </Grid>
     )
 }
 
-const generateLink = function (link: { url: string, text:string }) {
+const generateLink = function (link: { url: string, text: string }) {
     return (
         <Box
             component="a"
@@ -152,10 +222,13 @@ const generateLink = function (link: { url: string, text:string }) {
                 backdropFilter: "blur(6px)",
                 fontWeight: 700,
                 letterSpacing: 0.2,
-                alignItems:"center",
-                justifyContent:"center",
+                alignItems: "center",
+                justifyContent: "center",
+                textDecoration: 'none',
+                '&:hover': {
+                    bgcolor: "rgba(255,255,255,0.1)",
+                }
             }}
-
         >
             {link.text}
         </Box>

@@ -7,7 +7,6 @@ export interface UpdatableValues {
     shortDescription?: string;
     tags?: number[];
     communicationPrefs?: string;
-    owner?: string;
     dungeonMaster?: string;
 }
 

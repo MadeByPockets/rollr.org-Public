@@ -1,26 +1,5 @@
 import {MockedTags} from "@/mocks/Tags";
-import {Tag} from "@/types/tag";
-
-export interface EventDB {
-    id: number;
-    title: string;
-    bannerUrl: {
-        desktop: string,
-        mobile?: string,
-    };
-    links: { url: string, text: string }[]
-    description: string;
-    date: string;
-    location?: string;
-    organizer?: string;
-    eventTag: Tag
-    tags?: number[];
-    imageUrl?: string;
-    startingDate?: Date,
-    endingDate?: Date,
-    owner: number;
-    active: boolean;
-}
+import {EventDB} from "@/types/event";
 
 export const MockedEventObjects : EventDB[] = [
     {
@@ -49,7 +28,6 @@ export const MockedEventObjects : EventDB[] = [
         date: "Main Convention:\n\tThu - 5pm to 9pm\n\tFri & Sat - 10am to 9pm\n\tSun 10am to 2pm\nGaming Room Hours:\n\tThu - 6pm to 10pm\n\tFri & Sat - 10am to 1am\n\tSun - 10am to 4pm",
         startingDate: new Date(2025, 9, 30, 10),
         endingDate: new Date(2025, 10, 2, 7),
-        owner: 1,
         active: true
     }
 ]

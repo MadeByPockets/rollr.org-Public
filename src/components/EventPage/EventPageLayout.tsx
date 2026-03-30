@@ -1,13 +1,16 @@
 "use client"
+import React from "react";
 import EventBanner from "@/components/EventPage/EventBanner";
 import Grid from "@mui/material/Grid";
 import EventBasicInfo from "@/components/EventPage/EventBasicInfo";
 import EventTablesCard from "@/components/EventPage/EventTablesCard";
-import type { EventDB } from "@/types/event";
+import type { EventDB, EventEditContextValue } from "@/types/event";
 import type { Tag } from "@/types/tag";
+import { EventEditProvider } from "@/components/EventPage/editMode/EventEditContext";
 
 export type EventPageProps = {
-    event: EventDB;
+    mergedEvent: EventDB;
+    editContext: EventEditContextValue;
     attendees: number;
     numGames: number;
     tables: any[];
@@ -15,21 +18,45 @@ export type EventPageProps = {
     allTags: Tag[];
 };
 
-export default function EventPageLayout({event, attendees, numGames, tables, players, allTags}: EventPageProps) {
+export default function EventPageLayout({
+                                            mergedEvent,
+                                            editContext,
+                                            attendees,
+                                            numGames,
+                                            tables,
+                                            allTags,
+                                        }: EventPageProps) {
     return (
         <Grid container flexDirection="column">
-            <Grid>
-                <EventBanner bannerUrl={event.bannerUrl} links={event.links} title={event.title} eventTag={event.eventTag} attendees={attendees} numGames={numGames} />
-            </Grid>
-            <Grid container flexDirection="row" spacing={3} size={{xs:12, md:12}}>
-                <Grid size={{xs:12, md:4}} spacing={3} padding={3}>
-                    <EventBasicInfo description={event.description} locationId={event.location || "0"} startingDate={event.startingDate} timeInfo={event.date} endingDate={event.endingDate}/>
+            {/* 3. Context wiring */}
+            <EventEditProvider value={editContext}>
+                <Grid>
+                    <EventBanner
+                        bannerUrl={mergedEvent.bannerUrl}
+                        bannerColor={mergedEvent.bannerColor}
+                        links={mergedEvent.links}
+                        title={mergedEvent.title}
+                        eventTag={mergedEvent.eventTag}
+                        attendees={attendees}
+                        numGames={numGames}
+                    />
                 </Grid>
-                <Grid size={{xs:12, md:8}} spacing={3} padding={3}>
-                    <EventTablesCard tables={tables} tags={allTags}/>
+                <Grid container flexDirection="row" spacing={3} size={{ xs: 12, md: 12 }}>
+                    <Grid size={{ xs: 12, md: 4 }} spacing={3} padding={3}>
+                        <EventBasicInfo
+                            description={mergedEvent.description}
+                            locationId={mergedEvent.location || "0"}
+                            startingDate={mergedEvent.startingDate}
+                            timeInfo={mergedEvent.date}
+                            endingDate={mergedEvent.endingDate}
+                        />
+                    </Grid>
+                    <Grid size={{ xs: 12, md: 8 }} spacing={3} padding={3}>
+                        <EventTablesCard tables={tables} tags={allTags} />
+                    </Grid>
                 </Grid>
-            </Grid>
-            <Grid />
+                <Grid />
+            </EventEditProvider>
         </Grid>
-    )
+    );
 }

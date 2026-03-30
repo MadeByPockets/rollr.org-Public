@@ -20,13 +20,18 @@ export interface EventDetails {
   tags?: number[];
   imageUrl?: string;
   bannerUrl: EventBannerImage;
+  bannerColor?: string;
   links: EventLink[];
   eventTag: Tag;
-  owner: number;
   active: boolean;
-  startingDate?: Date | string;
-  endingDate?: Date | string;
+  startingDate?: Date;
+  endingDate?: Date;
 }
+
+export type EventEditContextValue = {
+  isOwner: boolean;
+  updateEvent: (patch: Partial<EventDB>) => void;
+};
 
 export type EventDB = EventDetails;
 export type EventResult = EventDetails;
