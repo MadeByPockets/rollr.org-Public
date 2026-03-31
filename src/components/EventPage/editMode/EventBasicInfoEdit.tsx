@@ -123,7 +123,7 @@ export default function EventBasicInfoEdit({
                         Event Dates & Times:
                     </Typography>
                     <Grid container spacing={2}>
-                        <Grid item xs={12} sm={4}>
+                        <Grid size={{ xs: 12, sm: 4 }}>
                             <TextField
                                 fullWidth
                                 label="Starting Date"
@@ -134,7 +134,7 @@ export default function EventBasicInfoEdit({
                                 InputLabelProps={{ shrink: true }}
                             />
                         </Grid>
-                        <Grid item xs={12} sm={4}>
+                        <Grid size={{ xs: 12, sm: 4 }}>
                             <TextField
                                 fullWidth
                                 label="Ending Date"
@@ -145,7 +145,7 @@ export default function EventBasicInfoEdit({
                                 InputLabelProps={{ shrink: true }}
                             />
                         </Grid>
-                        <Grid item xs={12} sm={4}>
+                        <Grid size={{ xs: 12, sm: 4 }}>
                             <FormControl fullWidth size="small">
                                 <InputLabel>Display Timezone</InputLabel>
                                 <Select
