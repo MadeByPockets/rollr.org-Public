@@ -64,11 +64,9 @@ const EventPage = () => {
         <>
             <EventPageLayout
                 mergedEvent={mergedEvent}
-                editContext={{
-                    isOwner: true,
-                    updateEvent,
-                    updateImages: () => console.log("Update Images requested")
-                }}
+                isOwner={true}
+                updateEvent={updateEvent}
+                updateImages={() => console.log("Update Images requested")}
                 attendees={MockedSearchResultsPlayersOnly.length}
                 numGames={MockedSearchResultsTablesOnly.length}
                 tables={MockedSearchResultsTablesOnly}

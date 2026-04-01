@@ -10,7 +10,9 @@ import { EventEditProvider } from "@/components/EventPage/editMode/EventEditCont
 
 export type EventPageProps = {
     mergedEvent: EventDB;
-    editContext: EventEditContextValue;
+    isOwner: boolean;
+    updateEvent?: (patch: Partial<EventDB>) => void;
+    updateImages?: () => void;
     attendees: number;
     numGames: number;
     tables: any[];
@@ -20,7 +22,9 @@ export type EventPageProps = {
 
 export default function EventPageLayout({
                                             mergedEvent,
-                                            editContext,
+                                            isOwner,
+                                            updateEvent,
+                                            updateImages,
                                             attendees,
                                             numGames,
                                             tables,
@@ -29,7 +33,7 @@ export default function EventPageLayout({
     return (
         <Grid container flexDirection="column">
             {/* 3. Context wiring */}
-            <EventEditProvider value={editContext}>
+            <EventEditProvider value={{ isOwner, updateEvent, updateImages }}>
                 <Grid>
                     <EventBanner
                         bannerUrl={mergedEvent.bannerUrl}
