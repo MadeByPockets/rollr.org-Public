@@ -12,7 +12,8 @@ import {
     Dialog, 
     DialogTitle, 
     DialogContent, 
-    DialogActions 
+    DialogActions,
+    CircularProgress 
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -23,7 +24,7 @@ import { generateTagsDisplay } from "@/components/shared/TagComponents";
 type EventBannerEditProps = {
     initialValue: EventBannerEditPayload;
     onCancel: () => void;
-    onSave: (payload: Partial<EventBannerEditPayload>) => void;
+    onSave: (payload: Partial<EventBannerEditPayload>) => Promise<void> | void;
 };
 
 type LinkEditState = {
@@ -44,44 +45,48 @@ export default function EventBannerEdit({
     const [mobileBanner, setMobileBanner] = useState(initialValue.bannerUrl.mobile || "");
     const [links, setLinks] = useState(initialValue.links);
     const [linkToEdit, setLinkToEdit] = useState<LinkEditState>(null);
+    const [isSaving, setIsSaving] = useState(false);
 
     const backgroundColor = bannerColor || "linear-gradient(135deg, rgba(25,118,210,0.8), rgba(25,118,210,1))";
 
-    const handleSave = () => {
-        const patch: Partial<EventBannerEditPayload> = {};
+    const handleSave = async () => {
+        setIsSaving(true);
+        try {
+            const patch: Partial<EventBannerEditPayload> = {};
 
-        if (title !== initialValue.title) {
-            patch.title = title;
-        }
+            if (title !== initialValue.title) {
+                patch.title = title;
+            }
 
-        const currentBannerColor = bannerColor || undefined;
-        const initialBannerColor = initialValue.bannerColor || undefined;
-        if (currentBannerColor !== initialBannerColor) {
-            patch.bannerColor = currentBannerColor;
-        }
+            const currentBannerColor = bannerColor || undefined;
+            const initialBannerColor = initialValue.bannerColor || undefined;
+            if (currentBannerColor !== initialBannerColor) {
+                patch.bannerColor = currentBannerColor;
+            }
 
-        const currentMobile = mobileBanner || undefined;
-        const initialMobile = initialValue.bannerUrl.mobile || undefined;
-        if (desktopBanner !== initialValue.bannerUrl.desktop || currentMobile !== initialMobile) {
-            patch.bannerUrl = {
-                desktop: desktopBanner,
-                mobile: currentMobile,
-            };
-        }
+            const currentMobile = mobileBanner || undefined;
+            const initialMobile = initialValue.bannerUrl.mobile || undefined;
+            if (desktopBanner !== initialValue.bannerUrl.desktop || currentMobile !== initialMobile) {
+                patch.bannerUrl = {
+                    desktop: desktopBanner,
+                    mobile: currentMobile,
+                };
+            }
 
-        // Deep comparison for links
-        if (JSON.stringify(links) !== JSON.stringify(initialValue.links)) {
-            patch.links = links;
-        }
+            // Deep comparison for links
+            if (JSON.stringify(links) !== JSON.stringify(initialValue.links)) {
+                patch.links = links;
+            }
 
-        // eventTag is not edited here but included in initialValue
-        // We'll skip it unless it was somehow changed. 
-        // Based on the code, it's not changed in this component.
-
-        if (Object.keys(patch).length > 0) {
-            onSave(patch);
-        } else {
-            onCancel(); // Nothing changed
+            if (Object.keys(patch).length > 0) {
+                await onSave(patch);
+            } else {
+                onCancel(); // Nothing changed
+            }
+        } catch (error) {
+            console.error("Failed to save banner changes", error);
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -288,8 +293,16 @@ export default function EventBannerEdit({
 
             {/* ACTION BUTTONS */}
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 2 }}>
-                <Button onClick={onCancel} color="inherit">Cancel</Button>
-                <Button onClick={handleSave} variant="contained" color="primary">Save Changes</Button>
+                <Button onClick={onCancel} color="inherit" disabled={isSaving}>Cancel</Button>
+                <Button 
+                    onClick={handleSave} 
+                    variant="contained" 
+                    color="primary" 
+                    disabled={isSaving}
+                    startIcon={isSaving ? <CircularProgress size={20} color="inherit" /> : null}
+                >
+                    {isSaving ? "Saving..." : "Save Changes"}
+                </Button>
             </Box>
 
             {/* LINK EDIT DIALOG */}

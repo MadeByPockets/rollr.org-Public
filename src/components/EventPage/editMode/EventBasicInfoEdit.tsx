@@ -1,6 +1,21 @@
 "use client"
 import React, { useState } from "react";
-import { Box, Button, TextField, Grid, Card, CardContent, Typography, IconButton, Tooltip, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { 
+    Box, 
+    Button, 
+    TextField, 
+    Grid, 
+    Card, 
+    CardContent, 
+    Typography, 
+    IconButton, 
+    Tooltip, 
+    Select, 
+    MenuItem, 
+    FormControl, 
+    InputLabel,
+    CircularProgress 
+} from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { CANDIDATE_TIMEZONES } from "../EventBasicInfo";
@@ -16,7 +31,7 @@ export type EventBasicInfoEditPayload = {
 type EventBasicInfoEditProps = {
     initialValue: EventBasicInfoEditPayload;
     onCancel: () => void;
-    onSave: (payload: Partial<EventBasicInfoEditPayload>) => void;
+    onSave: (payload: Partial<EventBasicInfoEditPayload>) => Promise<void> | void;
 };
 
 export default function EventBasicInfoEdit({
@@ -74,26 +89,34 @@ export default function EventBasicInfoEdit({
     const [startingDate, setStartingDate] = useState(toWallTimeISO(initialValue.startingDate, initialValue.timezone));
     const [endingDate, setEndingDate] = useState(toWallTimeISO(initialValue.endingDate, initialValue.timezone));
     const [timeInfo, setTimeInfo] = useState(initialValue.date);
+    const [isSaving, setIsSaving] = useState(false);
 
-    const handleSave = () => {
-        const patch: Partial<EventBasicInfoEditPayload> = {};
+    const handleSave = async () => {
+        setIsSaving(true);
+        try {
+            const patch: Partial<EventBasicInfoEditPayload> = {};
 
-        if (description !== initialValue.description) patch.description = description;
-        if (timeInfo !== initialValue.date) patch.date = timeInfo;
-        if (timezone !== initialValue.timezone) patch.timezone = timezone;
+            if (description !== initialValue.description) patch.description = description;
+            if (timeInfo !== initialValue.date) patch.date = timeInfo;
+            if (timezone !== initialValue.timezone) patch.timezone = timezone;
 
-        if (startingDate !== toWallTimeISO(initialValue.startingDate, timezone) || timezone !== initialValue.timezone) {
-            patch.startingDate = toUTCISOString(startingDate, timezone);
-        }
+            if (startingDate !== toWallTimeISO(initialValue.startingDate, timezone) || timezone !== initialValue.timezone) {
+                patch.startingDate = toUTCISOString(startingDate, timezone);
+            }
 
-        if (endingDate !== toWallTimeISO(initialValue.endingDate, timezone) || timezone !== initialValue.timezone) {
-            patch.endingDate = toUTCISOString(endingDate, timezone);
-        }
+            if (endingDate !== toWallTimeISO(initialValue.endingDate, timezone) || timezone !== initialValue.timezone) {
+                patch.endingDate = toUTCISOString(endingDate, timezone);
+            }
 
-        if (Object.keys(patch).length > 0) {
-            onSave(patch);
-        } else {
-            onCancel();
+            if (Object.keys(patch).length > 0) {
+                await onSave(patch);
+            } else {
+                onCancel();
+            }
+        } catch (error) {
+            console.error("Failed to save basic info changes", error);
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -107,13 +130,13 @@ export default function EventBasicInfoEdit({
             <CardContent sx={{ position: 'relative' }}>
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1, gap: 1 }}>
                     <Tooltip title="Cancel">
-                        <IconButton size="small" onClick={onCancel} color="error">
+                        <IconButton size="small" onClick={onCancel} color="error" disabled={isSaving}>
                             <CancelIcon />
                         </IconButton>
                     </Tooltip>
                     <Tooltip title="Apply Changes">
-                        <IconButton size="small" onClick={handleSave} color="primary">
-                            <CheckCircleIcon />
+                        <IconButton size="small" onClick={handleSave} color="primary" disabled={isSaving}>
+                            {isSaving ? <CircularProgress size={24} /> : <CheckCircleIcon />}
                         </IconButton>
                     </Tooltip>
                 </Box>

@@ -31,7 +31,7 @@ export interface EventDetails {
 
 export type EventEditContextValue = {
   isOwner: boolean;
-  updateEvent: (patch: Partial<EventDB>) => void;
+  updateEvent: (patch: Partial<EventDB>) => Promise<boolean> | void | boolean;
   updateImages?: () => void;
 };
 

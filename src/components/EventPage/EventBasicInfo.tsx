@@ -7,11 +7,11 @@ import { useEventEdit } from "./editMode/EventEditContext";
 import EventBasicInfoEdit from "./editMode/EventBasicInfoEdit";
 
 export type EventBasicInfoProps = {
-    description: string,
     locationId: string,
+    description?: string,
     startingDate?: Date | string,
     endingDate?: Date | string,
-    timeInfo: string,
+    timeInfo?: string,
     timezone?: string
 }
 
@@ -27,23 +27,32 @@ export const CANDIDATE_TIMEZONES = [
 ];
 
 export default function EventBasicInfo(props: EventBasicInfoProps) {
-    const { isOwner, updateEvent } = useEventEdit();
+    const { isOwner, updateEvent, event } = useEventEdit();
     const [isEditing, setIsEditing] = useState(false);
+
+    // Fallback to context if props are not provided
+    const description = props.description ?? event?.description ?? "";
+    const startingDate = props.startingDate ?? event?.startingDate;
+    const endingDate = props.endingDate ?? event?.endingDate;
+    const timeInfo = props.timeInfo ?? event?.date ?? "";
+    const timezone = props.timezone ?? event?.timezone ?? "UTC";
 
     if (isEditing) {
         return (
             <EventBasicInfoEdit
                 initialValue={{
-                    description: props.description,
-                    startingDate: typeof props.startingDate === 'string' ? props.startingDate : props.startingDate?.toISOString(),
-                    endingDate: typeof props.endingDate === 'string' ? props.endingDate : props.endingDate?.toISOString(),
-                    date: props.timeInfo,
-                    timezone: props.timezone || "UTC"
+                    description: description,
+                    startingDate: typeof startingDate === 'string' ? startingDate : startingDate?.toISOString(),
+                    endingDate: typeof endingDate === 'string' ? endingDate : endingDate?.toISOString(),
+                    date: timeInfo,
+                    timezone: timezone
                 }}
                 onCancel={() => setIsEditing(false)}
-                onSave={(payload) => {
-                    updateEvent(payload);
-                    setIsEditing(false);
+                onSave={async (payload) => {
+                    const success = await updateEvent(payload);
+                    if (success) {
+                        setIsEditing(false);
+                    }
                 }}
             />
         );
@@ -52,13 +61,24 @@ export default function EventBasicInfo(props: EventBasicInfoProps) {
     return (
         <EventBasicInfoView
             {...props}
+            description={description}
+            startingDate={startingDate}
+            endingDate={endingDate}
+            timeInfo={timeInfo}
+            timezone={timezone}
             isOwner={isOwner}
             onEdit={() => setIsEditing(true)}
         />
     );
 }
 
-type EventBasicInfoViewProps = EventBasicInfoProps & {
+type EventBasicInfoViewProps = {
+    locationId: string;
+    description: string;
+    startingDate?: Date | string;
+    endingDate?: Date | string;
+    timeInfo: string;
+    timezone: string;
     isOwner: boolean;
     onEdit: () => void;
 };

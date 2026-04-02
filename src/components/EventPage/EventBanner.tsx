@@ -7,12 +7,13 @@ import { Box, Button } from "@mui/material";
 import Grid from "@mui/material/Grid";
 
 export type EventBannerProps = {
-    bannerUrl: EventDB["bannerUrl"];
-    links: EventDB["links"];
-    title: EventDB["title"];
-    eventTag: EventDB["eventTag"];
     attendees: number;
     numGames: number;
+    // These are now optional as they are taken from context if not provided
+    bannerUrl?: EventDB["bannerUrl"];
+    links?: EventDB["links"];
+    title?: EventDB["title"];
+    eventTag?: EventDB["eventTag"];
     bannerColor?: string;
 };
 
@@ -25,23 +26,36 @@ export type EventBannerEditPayload = {
 };
 
 export default function EventBanner(props: EventBannerProps) {
-    const { isOwner, updateEvent } = useEventEdit();
+    const { isOwner, updateEvent, event } = useEventEdit();
     const [isEditing, setIsEditing] = useState(false);
+
+    if (!event && !props.bannerUrl) return null;
+
+    // Use context values if available, otherwise fallback to props
+    const bannerUrl = props.bannerUrl || event?.bannerUrl;
+    const links = props.links || event?.links || [];
+    const title = props.title || event?.title || "";
+    const eventTag = props.eventTag || event?.eventTag;
+    const bannerColor = props.bannerColor || event?.bannerColor;
+
+    if (!bannerUrl || !eventTag) return null;
 
     if (isEditing) {
         return (
             <EventBannerEdit
                 initialValue={{
-                    bannerUrl: props.bannerUrl,
-                    bannerColor: props.bannerColor,
-                    links: props.links,
-                    title: props.title,
-                    eventTag: props.eventTag,
+                    bannerUrl,
+                    bannerColor,
+                    links,
+                    title,
+                    eventTag,
                 }}
                 onCancel={() => setIsEditing(false)}
-                onSave={(payload) => {
-                    updateEvent(payload);
-                    setIsEditing(false);
+                onSave={async (payload) => {
+                    const success = await updateEvent(payload);
+                    if (success) {
+                        setIsEditing(false);
+                    }
                 }}
             />
         );
@@ -50,13 +64,25 @@ export default function EventBanner(props: EventBannerProps) {
     return (
         <EventBannerView
             {...props}
+            bannerUrl={bannerUrl}
+            links={links}
+            title={title}
+            eventTag={eventTag}
+            bannerColor={bannerColor}
             isOwner={isOwner}
             onEdit={() => setIsEditing(true)}
         />
     );
 }
 
-type EventBannerViewProps = EventBannerProps & {
+type EventBannerViewProps = {
+    bannerUrl: EventDB["bannerUrl"];
+    links: EventDB["links"];
+    bannerColor?: string;
+    title: string;
+    eventTag: EventDB["eventTag"];
+    attendees: number;
+    numGames: number;
     isOwner: boolean;
     onEdit: () => void;
 };

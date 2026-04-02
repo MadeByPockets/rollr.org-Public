@@ -33,14 +33,9 @@ export default function EventPageLayout({
     return (
         <Grid container flexDirection="column">
             {/* 3. Context wiring */}
-            <EventEditProvider value={{ isOwner, updateEvent, updateImages }}>
+            <EventEditProvider initialEvent={mergedEvent} value={{ isOwner, updateEvent, updateImages }}>
                 <Grid>
                     <EventBanner
-                        bannerUrl={mergedEvent.bannerUrl}
-                        bannerColor={mergedEvent.bannerColor}
-                        links={mergedEvent.links}
-                        title={mergedEvent.title}
-                        eventTag={mergedEvent.eventTag}
                         attendees={attendees}
                         numGames={numGames}
                     />
@@ -48,12 +43,7 @@ export default function EventPageLayout({
                 <Grid container flexDirection="row" spacing={3} size={{ xs: 12, md: 12 }}>
                     <Grid size={{ xs: 12, md: 4 }} spacing={3} padding={3}>
                         <EventBasicInfo
-                            description={mergedEvent.description}
                             locationId={mergedEvent.location || "0"}
-                            startingDate={mergedEvent.startingDate}
-                            timeInfo={mergedEvent.date}
-                            endingDate={mergedEvent.endingDate}
-                            timezone={mergedEvent.timezone}
                         />
                     </Grid>
                     <Grid size={{ xs: 12, md: 8 }} spacing={3} padding={3}>
