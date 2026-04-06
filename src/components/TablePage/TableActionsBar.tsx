@@ -10,7 +10,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import ListIcon from "@mui/icons-material/List";
 import SaveIcon from "@mui/icons-material/Save";
 import { useModal } from "@/components/TablePage/ModalProvider/ModalContext";
-import type { Player } from "@/types";
+import type { Player } from "@/types/player";
 import type { TableStatus } from "@/components/TablePage/types";
 
 export interface TableActionProps {

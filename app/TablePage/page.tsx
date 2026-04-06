@@ -7,7 +7,8 @@ import type { TableStatus } from "@/components/TablePage/types";
 import { MockedPlayers } from "@/mocks/Players";
 import { MockedTables } from "@/mocks/Tables";
 import { MockedTags } from "@/mocks/Tags";
-import type { Player, TableRecord } from "@/types";
+import type { Player } from "@/types/player";
+import type { TableRecord } from "@/types/tables";
 
 const currentUser = MockedPlayers[0];
 

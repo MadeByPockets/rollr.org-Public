@@ -7,3 +7,4 @@ export * from "./ProfilePage";
 export * from "./SearchPage";
 export * from "./TablePage";
 export * from "./shared";
+export * from "./types";

@@ -8,7 +8,7 @@ import CardHeader from "@mui/material/CardHeader";
 import Grid from "@mui/material/Grid";
 import Popper, { PopperProps } from "@mui/material/Popper";
 import TextField from "@mui/material/TextField";
-import type { Tag } from "@/types";
+import type { Tag } from "@/types/tag";
 
 export interface TagEditorProps {
   title?: string;

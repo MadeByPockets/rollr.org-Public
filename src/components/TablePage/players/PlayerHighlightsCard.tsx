@@ -5,7 +5,8 @@ import Button from "@mui/material/Button";
 import {Card, CardContent, CardHeader, Typography} from "@mui/material";
 import Grid from "@mui/material/Grid";
 import {renderTagsFromIds} from "@/components/shared/TagComponents";
-import type { Player, Tag } from "@/types";
+import type { Player } from "@/types/player";
+import type { Tag } from "@/types/tag";
 
 export type PlayerHighlightsCardProps = {
     addToTable?: (player: Player) => void;

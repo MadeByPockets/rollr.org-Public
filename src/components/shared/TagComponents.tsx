@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import type { Tag } from "@/types";
+import type { Tag } from "@/types/tag";
 
 export function generateTagsDisplay(tag: Tag) {
     return (

@@ -7,7 +7,9 @@ import AutoResizingTextarea from "@/components/shared/AutoResizingTextarea";
 import { TagEditor, generateTagsDisplay } from "@/components/shared";
 import { DMHighlightsCard, PlayerHighlightsCard } from "@/components/TablePage/players/PlayerHighlightsCard";
 import TableActionsBar from "@/components/TablePage/TableActionsBar";
-import type { Player, TableRecord, Tag } from "@/types";
+import type { Player } from "@/types/player";
+import type { TableRecord } from "@/types/tables";
+import type { Tag } from "@/types/tag";
 import type { TablePageLayoutProps } from "@/components/TablePage/types";
 
 export function TablePageLayout(props: TablePageLayoutProps) {

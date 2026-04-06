@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import type { Tag } from "@/types";
+import type { Tag } from "@/types/tag";
 import { TagEditor } from "@/components/shared/TagEditor";
 
 export default function PlayerTagsEdit(props: {
