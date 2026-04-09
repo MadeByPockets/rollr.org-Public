@@ -9,6 +9,7 @@ import Grid from "@mui/material/Grid";
 import Popper, { PopperProps } from "@mui/material/Popper";
 import TextField from "@mui/material/TextField";
 import type { Tag } from "@/types/tag";
+import Chip from "@/components/shared/Chip";
 
 export interface TagEditorProps {
   title?: string;
@@ -47,24 +48,11 @@ export function TagEditor({
           <CardContent>
             <div className="mt-2 flex flex-wrap gap-2">
               {selectedTags.map((tag) => (
-                <span
+                <Chip
                   key={tag.id}
-                  className="inline-block text-sm px-3 py-1 rounded-full outline-black outline-2 font-outlined"
-                  style={{
-                    background: tag.color || "#bfbcbb",
-                    color: "white",
-                    textShadow: "black 0.2em 0.2em 0.4em",
-                  }}
-                >
-                  {tag.label}
-                  <button
-                    type="button"
-                    onClick={() => onToggleTag(tag.id)}
-                    className="ml-2 text-red-500 bg-white bg-opacity-50 rounded-full outline-black outline-2 font-outlined"
-                  >
-                    &times;
-                  </button>
-                </span>
+                  tag={tag}
+                  removeCallback={() => onToggleTag(tag.id)}
+                />
               ))}
             </div>
             <Grid container spacing={3}>
