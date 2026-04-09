@@ -5,6 +5,7 @@ import Grid from "@mui/material/Grid"
 import Card from "@mui/material/Card"
 import CardHeader from "@mui/material/CardHeader"
 import CardContent from "@mui/material/CardContent"
+import Chip from "@/components/shared/Chip";
 
 export default function PlayerTagsCard(props : {PlayerTags: Tag[]}) {
     return (
@@ -28,30 +29,9 @@ export default function PlayerTagsCard(props : {PlayerTags: Tag[]}) {
 }
 
 const renderLabels = (tags:Tag[]) => {
-
   return (
-  <div className="mt-2 flex flex-wrap gap-2">
-    { tags.map((tag) => generateLabel(tag))}
-  </div>
-)
-}
-
-const generateLabel = (tag:Tag) => {
-
-  let color = "#bfbcbb"
-  if (tag.color) color = tag.color
-
-    return (
-      <span
-        key={tag.id}
-        className="inline-block text-sm px-3 py-1 rounded-full outline-black outline-2 font-outlined"
-        style={{background:color,
-          color:"white",
-          textShadow: "black 0.2em 0.2em 0.4em"
-        }}
-      >
-      {tag.label}
-      </span>
-    )
-
+    <div className="mt-2 flex flex-wrap gap-2">
+      { tags.map((tag) => <Chip key={tag.id} tag={tag} />) }
+    </div>
+  )
 }
