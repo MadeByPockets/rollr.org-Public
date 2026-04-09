@@ -69,6 +69,7 @@
     "**/*.css"
   ],
   "scripts": {
+    "start": "npm run dev",
     "dev": "next dev",
     "build": "node scripts/update-barrels.mjs && tsup && node scripts/fix-use-client.mjs && node scripts/fix-dts-extensions.mjs",
     "prepublishOnly": "npm run build",

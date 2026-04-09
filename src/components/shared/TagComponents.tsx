@@ -2,23 +2,11 @@
 
 import React from "react";
 import type { Tag } from "@/types/tag";
+import Chip from "@/components/shared/Chip";
 
 export function generateTagsDisplay(tag: Tag) {
     return (
-        <span
-            key={tag.id}
-            className="inline-block text-sm px-3 py-1 rounded-full outline-black outline-2 font-outlined"
-            style={{
-                marginTop:"6px",
-                marginRight: "6px",
-                marginBottom: "6px",
-                background: tag.color || '#bfbcbb',
-                color: "white",
-                textShadow: "black 0.2em 0.2em 0.4em"
-            }}
-        >
-            {tag.label}
-        </span>
+        <Chip tag={tag} key={tag.id} />
     )
 }
 
