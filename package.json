@@ -1,7 +1,6 @@
 {
-  "name": "@pockets/shared-ui",
-  "version": "0.1.17-canary.34",
-  "private": true,
+  "name": "@mbpockets/shared-ui",
+  "version": "0.1.18",
   "type": "module",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
