@@ -59,7 +59,7 @@ export default function TableActionsBar(props: TableActionProps) {
                 <ul className="gap-8 px-6">
                     {waitlistPlayers.map((player) => (
                         <li
-                            className={`${canMovePlayersToTable ? 'bg-amber-100 cursor-pointer' : 'bg-gray-200'} mb-8 flex flex-row flex-start space-between justify-center items-center gap-3 p-2 rounded`}
+                            className={`${canMovePlayersToTable ? 'bg-amber-100 cursor-pointer' : 'bg-gray-200'} mb-8 flex flex-row flex-start space-between items-center gap-3 p-2 rounded`}
                             key={player.id}
                             onClick={() => canMovePlayersToTable ? onPromoteWaitlistPlayer?.(player.id) : undefined}
                             tabIndex={0}
