@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 import Button from "@mui/material/Button";
-import CardHeader from "@mui/material/CardHeader";
+import DialogActions from "@mui/material/DialogActions";
 import { Grid, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -12,6 +12,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import { useModal } from "@/components/TablePage/ModalProvider/ModalContext";
 import type { Player } from "@/types/player";
 import type { TableStatus } from "@/components/TablePage/types";
+import { DEFAULT_PROFILE_PIC } from "@/data/values";
 
 export interface TableActionProps {
     isInEditMode: boolean;
@@ -54,12 +55,11 @@ export default function TableActionsBar(props: TableActionProps) {
         }
 
         return (
-            <div className="flex flex-col items-center">
-                <CardHeader slotProps={{title: {variant: "h4"}}} title="Waitlist Players: "/>
-                <ul className="gap-8">
+            <>
+                <ul className="gap-8 px-6">
                     {waitlistPlayers.map((player) => (
                         <li
-                            className={`${canMovePlayersToTable ? 'bg-amber-100 cursor-pointer' : 'bg-gray-200'} mb-8 flex flex-row flex-start space-between justify-center items-center gap-3 p-2 rounded`}
+                            className={`${canMovePlayersToTable ? 'bg-amber-100 cursor-pointer' : 'bg-gray-200'} mb-8 flex flex-row flex-start space-between items-center gap-3 p-2 rounded`}
                             key={player.id}
                             onClick={() => canMovePlayersToTable ? onPromoteWaitlistPlayer?.(player.id) : undefined}
                             tabIndex={0}
@@ -67,15 +67,17 @@ export default function TableActionsBar(props: TableActionProps) {
                             <Image
                                 alt={player.username + "'s profile pic"}
                                 height={64}
-                                src={player.miniPic || ""}
+                                src={player.miniPic || DEFAULT_PROFILE_PIC}
                                 width={64}
                             />
                             <div>{player.username}</div>
                         </li>
                     ))}
                 </ul>
-                <button onClick={() => hideModal()}>close modal</button>
-            </div>
+                <DialogActions>
+                    <Button onClick={() => hideModal()}>Close</Button>
+                </DialogActions>
+            </>
         )
     }
 
@@ -108,7 +110,7 @@ export default function TableActionsBar(props: TableActionProps) {
                         {canViewWaitlist ? (
                             <Button
                                 endIcon={<ListIcon />}
-                                onClick={() => showModal(renderPlayerWaitlistModalContent(false))}
+                                onClick={() => showModal(renderPlayerWaitlistModalContent(false), "Waitlist Players:")}
                                 sx={buttonStyle}
                             >
                                 View Waitlist
@@ -125,7 +127,7 @@ export default function TableActionsBar(props: TableActionProps) {
                         </Button>
                         <Button
                             endIcon={<ListIcon />}
-                            onClick={() => showModal(renderPlayerWaitlistModalContent(true))}
+                            onClick={() => showModal(renderPlayerWaitlistModalContent(true), "Waitlist Players:")}
                             sx={buttonStyle}
                         >
                             Edit Waitlist
@@ -134,7 +136,15 @@ export default function TableActionsBar(props: TableActionProps) {
                 ) : null}
 
                 { isOwner && (
-                    <Button onClick={() => onDeleteTable?.()} sx={buttonStyle} endIcon={<DeleteIcon/>}>
+                    <Button
+                        onClick={() => showModal(
+                            <Typography>Are you sure you want to delete this table? This action cannot be undone.</Typography>,
+                            "Delete Table",
+                            { acceptText: "Delete", onAccept: () => onDeleteTable?.() }
+                        )}
+                        sx={buttonStyle}
+                        endIcon={<DeleteIcon/>}
+                    >
                         Delete Table
                     </Button>
                 )}
