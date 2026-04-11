@@ -5,7 +5,8 @@
 
 export * from "./AutoResizingTextarea";
 export { default as AutoResizingTextarea } from "./AutoResizingTextarea";
-export * from "./Modal";
+export * from "./Chip";
+export { default as Chip } from "./Chip";
 export * from "./NextGameCountdown";
 export * from "./TagComponents";
 export * from "./TagEditor";

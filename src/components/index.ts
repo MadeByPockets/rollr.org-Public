@@ -64,7 +64,8 @@ export { default as TablesScrollableList } from "./SearchPage/TablesScrollableLi
 export * from "./shared";
 export * from "./shared/AutoResizingTextarea";
 export { default as AutoResizingTextarea } from "./shared/AutoResizingTextarea";
-export * from "./shared/Modal";
+export * from "./shared/Chip";
+export { default as Chip } from "./shared/Chip";
 export * from "./shared/NextGameCountdown";
 export * from "./shared/TagComponents";
 export * from "./shared/TagEditor";

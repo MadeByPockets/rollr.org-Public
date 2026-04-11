@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { Card, CardMedia, CardContent, Typography } from "@mui/material";
-import {ProfilePictureSettings} from "../../data/values";
+import {DEFAULT_PROFILE_PIC, ProfilePictureSettings} from "../../data/values";
 
 const {aspectRatio} = ProfilePictureSettings;
 
@@ -18,13 +18,13 @@ const PlayerDisplayCard: React.FC<PlayerDisplayProps> = ({
                                                              bio,
                                                              preferredPronouns,
                                                          }) => {
-    const [imageSrc, setImageSrc] = useState<string>("/man-walking-silhouette-clipart.jpg");
+    const [imageSrc, setImageSrc] = useState<string>(DEFAULT_PROFILE_PIC);
 
     useEffect(() => {
         async function validateImage() {
-            const newImage = profilePicture || "/man-walking-silhouette-clipart.jpg";
+            const newImage = profilePicture || DEFAULT_PROFILE_PIC;
             if (!profilePicture) {
-                setImageSrc("/man-walking-silhouette-clipart.jpg");
+                setImageSrc(DEFAULT_PROFILE_PIC);
                 return;
             }
 
@@ -36,7 +36,7 @@ const PlayerDisplayCard: React.FC<PlayerDisplayProps> = ({
             };
 
             img.onerror = () => {
-                setImageSrc("/man-walking-silhouette-clipart.jpg");
+                setImageSrc(DEFAULT_PROFILE_PIC);
             };
         }
 
