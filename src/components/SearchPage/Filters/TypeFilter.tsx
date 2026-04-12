@@ -1,32 +1,38 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Typography from '@mui/material/Typography';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import type { SearchResultType } from '@/types/search';
 
 interface TypeFilterProps {
-  onChange?: (selectedTypes: SearchResultType[]) => void;
+  types: { id: string; label: string }[];
+  initialSelectedTypes?: string[];
+  onChange?: (selectedTypes: string[]) => void;
 }
 
-const FILTER_TYPES: Array<{ id: SearchResultType; label: string; disabled?: boolean }> = [
-  { id: 'player', label: 'Players' },
-  { id: 'event', label: 'Events', disabled: true },
-  { id: 'table', label: 'Tables', disabled: true },
-];
+/**
+ * Component for filtering search results by type (player, event, table)
+ */
+const TypeFilter: React.FC<TypeFilterProps> = ({ types, initialSelectedTypes = [], onChange }) => {
+  const [selectedTypes, setSelectedTypes] = React.useState<string[]>(initialSelectedTypes);
 
-const TypeFilter: React.FC<TypeFilterProps> = ({ onChange }) => {
-  const [selectedTypes, setSelectedTypes] = React.useState<SearchResultType[]>([]);
+  // Update state when initialSelectedTypes changes
+  useEffect(() => {
+    setSelectedTypes(initialSelectedTypes);
+  }, [initialSelectedTypes]);
 
-  const handleTypeChange = (typeId: SearchResultType) => {
+  const handleTypeChange = (typeId: string) => {
     const newSelectedTypes = selectedTypes.includes(typeId)
-      ? selectedTypes.filter((id) => id !== typeId)
+      ? selectedTypes.filter(id => id !== typeId)
       : [...selectedTypes, typeId];
 
     setSelectedTypes(newSelectedTypes);
-    onChange?.(newSelectedTypes);
+
+    if (onChange) {
+      onChange(newSelectedTypes);
+    }
   };
 
   return (
@@ -35,14 +41,15 @@ const TypeFilter: React.FC<TypeFilterProps> = ({ onChange }) => {
         Type
       </Typography>
       <FormGroup>
-        {FILTER_TYPES.map((type) => (
+        {types.map((type) => (
           <FormControlLabel
             key={type.id}
             control={
-              <Checkbox
+              <Checkbox 
                 checked={selectedTypes.includes(type.id)}
                 onChange={() => handleTypeChange(type.id)}
-                disabled={type.disabled}
+                disabled={type.id === 'event'}
+                title={type.id === 'event' ? 'Coming soon! Currently only player and table search are supported.' : ''}
               />
             }
             label={type.label}

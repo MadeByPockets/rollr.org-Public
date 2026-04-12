@@ -1,9 +1,12 @@
-"use client"
 import React from 'react';
-import { Card, CardContent, Typography, Box } from '@mui/material';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 import { Tag } from '@/types/tag';
 import { SearchResultItem } from '@/types/search';
-import { generateTagsDisplay } from "@/components/shared/TagComponents";
+import NextGameLabel from "@/components/TablePage/NextGameLabel";
+import { renderTagsFromIds } from "@/components/shared/TagComponents";
 
 export interface BaseSearchResultCardProps {
   result: SearchResultItem;
@@ -16,16 +19,29 @@ export interface BaseSearchResultCardProps {
 /**
  * Base component for displaying search results with common functionality
  */
-export const BaseSearchResultCard: React.FC<BaseSearchResultCardProps> = ({ 
+const BaseSearchResultCard: React.FC<BaseSearchResultCardProps> = ({ 
   result,
   onClick,
   children,
   icon,
   tags
 }) => {
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
     if (onClick) {
-      onClick(result.id);
+      // If modifier key is pressed, let the browser handle the navigation behavior
+      if (e.ctrlKey || e.metaKey || e.shiftKey) {
+        // Prevent the default onClick behavior
+        e.stopPropagation();
+
+        // Get the URL that would be navigated to
+        const url = `/${result.type}/${result.id}`;
+
+        // Open in new tab/window based on the modifier key
+        window.open(url, '_blank');
+      } else {
+        // Normal click - use the provided onClick handler
+        onClick(result.id);
+      }
     }
   };
 
@@ -42,7 +58,7 @@ export const BaseSearchResultCard: React.FC<BaseSearchResultCardProps> = ({
         },
         marginBottom: 2
       }}
-      onClick={handleClick}
+      onClick={(e) => handleClick(e)}
     >
       <CardContent sx={{ display: 'flex', alignItems: 'flex-start' }}>
         {/* Icon on the left */}
@@ -51,58 +67,44 @@ export const BaseSearchResultCard: React.FC<BaseSearchResultCardProps> = ({
             {icon}
           </Box>
         )}
-        
+
         {/* Content on the right */}
         <Box sx={{ flex: 1 }}>
           <Typography variant="h6" sx={{ mb: 1 }}>
             {result.title}
           </Typography>
-          
+          {/* show Next Game Time if available */}
+          {result.nextGameTime  && (
+            <NextGameLabel nextGameTime={result.nextGameTime}/>
+          )}
+          {/* Show short description above player info for tables */}
+          {result.type === 'table' && result.shortDescription ? (
+            <Typography variant="body2" sx={{ mb: 1 }}>
+              {result.shortDescription}
+            </Typography>
+          ) : null}
+
           {/* Specialized content will be inserted here */}
           {children}
-          
-          <Typography variant="body1">
-            {result.description}
-          </Typography>
-          
+
+          {/* Description: for tables show trimmed full description below players; otherwise show the default description */}
+          {result.type === 'table' ? (
+            <Typography variant="body1">
+              {(() => {
+                const full = result.fullDescription ?? result.description ?? '';
+                const text = full || '';
+                return text.length > 200 ? `${text.slice(0, 200).trimEnd()}...` : text;
+              })()}
+            </Typography>
+          ) : (
+            <Typography variant="body1">
+              {result.description}
+            </Typography>
+          )}
+
           {result.tags && result.tags.length > 0 && (
-            <Box sx={{ mt: 1 }}>
-              <Box sx={{
-                display: 'block',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'clip',
-                pl: 0.5 // Add some padding to prevent clipping of the leftmost tag
-              }}>
-                {(() => {
-                  const MAX_VISIBLE = 5; // heuristic: show up to 5 tags on one line
-                  const tagObjs = result.tags
-                    .map((tagId) => tags.find((t) => t.id === tagId))
-                    .filter((t): t is Tag => Boolean(t));
-                  const visible = tagObjs.slice(0, MAX_VISIBLE);
-                  const hiddenCount = Math.max(tagObjs.length - visible.length, 0);
-                  return (
-                    <>
-                      {visible.map((tag) => generateTagsDisplay(tag))}
-                      {hiddenCount > 0 && (
-                        <span
-                          className="inline-block text-sm px-3 py-1 rounded-full outline-black outline-2 font-outlined"
-                          style={{
-                            marginTop: '6px',
-                            marginRight: '6px',
-                            marginBottom: '6px',
-                            background: '#9e9e9e',
-                            color: 'white',
-                            textShadow: 'black 0.2em 0.2em 0.4em'
-                          }}
-                        >
-                          +{hiddenCount} more
-                        </span>
-                      )}
-                    </>
-                  );
-                })()}
-              </Box>
+            <Box sx={{ mt: 1, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+              {renderTagsFromIds(result.tags, tags)}
             </Box>
           )}
         </Box>

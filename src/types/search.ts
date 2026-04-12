@@ -16,4 +16,28 @@ export interface SearchResultItem {
   location?: string;
   organizer?: string;
   dungeonMaster?: string;
+  shortDescription?: string;
+  fullDescription?: string;
+  nextGameTime?: string | Date;
+}
+
+export interface SearchCriteria {
+  selectedTypes: string[];
+  selectedTags: {
+    mustHave: number[];
+    mustNotHave: number[];
+    shouldHaveAtLeastOne: number[];
+  };
+  textSearch: {
+    query: string;
+    titleOnly: boolean;
+  };
+  includeExpiredTables: boolean;
+}
+
+export interface PaginationData {
+  currentPacket: number;
+  totalPackets: number;
+  totalResults: number;
+  packetSize: number;
 }

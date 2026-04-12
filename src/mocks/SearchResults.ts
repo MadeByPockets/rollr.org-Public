@@ -1,19 +1,4 @@
-export interface SearchResultItem {
-  id: number;
-  title: string;
-  description: string;
-  type: 'player' | 'event' | 'table';
-  tags?: number[];
-  imageUrl?: string;
-  date?: string;
-  // Optional metrics for events and tables
-  numTables?: number; // events only
-  numPlayers?: number; // events and tables
-  // Table-specific optional fields
-  capacity?: number;
-  waitlistCount?: number;
-  hasDM?: boolean;
-}
+import { SearchResultItem } from '@/types/search';
 
 export const MockedSearchResults: SearchResultItem[] = [
   {
@@ -40,7 +25,9 @@ export const MockedSearchResults: SearchResultItem[] = [
     tags: [1, 5, 11],
     date: '2025-08-15',
     numTables: 12,
-    numPlayers: 96
+    numPlayers: 96,
+    location: 'Los Angeles Convention Center',
+    organizer: 'GameCon Events'
   },
   {
     id: 4,
@@ -52,7 +39,10 @@ export const MockedSearchResults: SearchResultItem[] = [
     capacity: 6,
     numPlayers: 4,
     waitlistCount: 1,
-    hasDM: true
+    hasDM: true,
+    shortDescription: 'Active weekly campaign',
+    fullDescription: 'We are playing a high-fantasy campaign set in the world of Exandria. Looking for reliable players who enjoy a mix of RP and combat.',
+    nextGameTime: '2025-04-20T18:00:00Z'
   },
   {
     id: 5,
@@ -70,7 +60,9 @@ export const MockedSearchResults: SearchResultItem[] = [
     tags: [2, 6, 9],
     date: '2025-07-30',
     numTables: 20,
-    numPlayers: 150
+    numPlayers: 150,
+    location: 'Chicago Expo Center',
+    organizer: 'Midwest Gaming Association'
   },
   {
     id: 7,
@@ -107,18 +99,18 @@ export const MockedSearchResults: SearchResultItem[] = [
   { id: 20, title: 'LightningLancer', description: 'Fast-paced melee with high mobility plays.', type: 'player', tags: [1, 2, 8], imageUrl: '/images/players/player16.jpg' },
 
   // Additional Events
-  { id: 21, title: 'Winter Clash Cup', description: 'Seasonal PvP event with elimination brackets.', type: 'event', tags: [1, 4, 9], date: '2025-12-10', numTables: 10, numPlayers: 80 },
-  { id: 22, title: 'Indie Dev Showcase', description: 'Spotlight on community-made modules and tools.', type: 'event', tags: [3, 6, 11], date: '2025-11-05', numTables: 6, numPlayers: 42 },
-  { id: 23, title: 'Dungeon Delvers Open', description: 'Open registration raid race with live commentary.', type: 'event', tags: [2, 5, 8], date: '2025-10-20', numTables: 12, numPlayers: 96 },
-  { id: 24, title: 'Spring Strategy Summit', description: 'Workshops on tactics, VOD reviews, and team building.', type: 'event', tags: [5, 7, 12], date: '2025-03-18', numTables: 8, numPlayers: 64 },
-  { id: 25, title: 'Speedrun Marathon', description: 'Charity marathon featuring top speedrunners.', type: 'event', tags: [2, 8, 10], date: '2025-09-01', numTables: 5, numPlayers: 30 },
-  { id: 26, title: 'Creators Con', description: 'Panels and meetups with content creators.', type: 'event', tags: [3, 9, 11], date: '2025-06-22', numTables: 14, numPlayers: 120 },
-  { id: 27, title: 'Arena Masters', description: 'Team-based arena battles with seasonal rewards.', type: 'event', tags: [1, 6, 12], date: '2025-05-12', numTables: 16, numPlayers: 128 },
-  { id: 28, title: 'Co-op Quest Fest', description: 'Casual co-op challenges and puzzle races.', type: 'event', tags: [4, 7, 10], date: '2025-04-08', numTables: 7, numPlayers: 49 },
-  { id: 29, title: 'VR Adventures Expo', description: 'Hands-on demos for upcoming VR titles.', type: 'event', tags: [2, 3, 9], date: '2025-08-05', numTables: 9, numPlayers: 72 },
-  { id: 30, title: 'Tactics League Finals', description: 'Grand finals for the national tactics league.', type: 'event', tags: [1, 5, 11], date: '2025-10-02', numTables: 10, numPlayers: 80 },
-  { id: 31, title: 'Guild Summit', description: 'Networking event for guild leaders and organizers.', type: 'event', tags: [6, 9, 12], date: '2025-07-12', numTables: 4, numPlayers: 28 },
-  { id: 32, title: 'Retro Games Carnival', description: 'Celebration of classic games with tournaments.', type: 'event', tags: [3, 4, 8], date: '2025-02-14', numTables: 6, numPlayers: 48 },
+  { id: 21, title: 'Winter Clash Cup', description: 'Seasonal PvP event with elimination brackets.', type: 'event', tags: [1, 4, 9], date: '2025-12-10', numTables: 10, numPlayers: 80, location: 'Denver Arena', organizer: 'Winter League' },
+  { id: 22, title: 'Indie Dev Showcase', description: 'Spotlight on community-made modules and tools.', type: 'event', tags: [3, 6, 11], date: '2025-11-05', numTables: 6, numPlayers: 42, location: 'San Jose Hall', organizer: 'DevCollective' },
+  { id: 23, title: 'Dungeon Delvers Open', description: 'Open registration raid race with live commentary.', type: 'event', tags: [2, 5, 8], date: '2025-10-20', numTables: 12, numPlayers: 96, location: 'Online', organizer: 'RaidMasters' },
+  { id: 24, title: 'Spring Strategy Summit', description: 'Workshops on tactics, VOD reviews, and team building.', type: 'event', tags: [5, 7, 12], date: '2025-03-18', numTables: 8, numPlayers: 64, location: 'Boston Center', organizer: 'StratLeague' },
+  { id: 25, title: 'Speedrun Marathon', description: 'Charity marathon featuring top speedrunners.', type: 'event', tags: [2, 8, 10], date: '2025-09-01', numTables: 5, numPlayers: 30, location: 'Online', organizer: 'SpeedRunners United' },
+  { id: 26, title: 'Creators Con', description: 'Panels and meetups with content creators.', type: 'event', tags: [3, 9, 11], date: '2025-06-22', numTables: 14, numPlayers: 120, location: 'Austin Expo', organizer: 'Creator Network' },
+  { id: 27, title: 'Arena Masters', description: 'Team-based arena battles with seasonal rewards.', type: 'event', tags: [1, 6, 12], date: '2025-05-12', numTables: 16, numPlayers: 128, location: 'Miami Stadium', organizer: 'ArenaPro' },
+  { id: 28, title: 'Co-op Quest Fest', description: 'Casual co-op challenges and puzzle races.', type: 'event', tags: [4, 7, 10], date: '2025-04-08', numTables: 7, numPlayers: 49, location: 'Portland Hub', organizer: 'QuestGivers' },
+  { id: 29, title: 'VR Adventures Expo', description: 'Hands-on demos for upcoming VR titles.', type: 'event', tags: [2, 3, 9], date: '2025-08-05', numTables: 9, numPlayers: 72, location: 'Seattle Tech Lab', organizer: 'VR Collective' },
+  { id: 30, title: 'Tactics League Finals', description: 'Grand finals for the national tactics league.', type: 'event', tags: [1, 5, 11], date: '2025-10-02', numTables: 10, numPlayers: 80, location: 'Las Vegas Arena', organizer: 'Tactics League' },
+  { id: 31, title: 'Guild Summit', description: 'Networking event for guild leaders and organizers.', type: 'event', tags: [6, 9, 12], date: '2025-07-12', numTables: 4, numPlayers: 28, location: 'Dallas Hall', organizer: 'GuildMasters' },
+  { id: 32, title: 'Retro Games Carnival', description: 'Celebration of classic games with tournaments.', type: 'event', tags: [3, 4, 8], date: '2025-02-14', numTables: 6, numPlayers: 48, location: 'Atlanta Expo', organizer: 'RetroGamer Society' },
 
   // Additional Tables
   { id: 33, title: 'Nebula Nexus Table', description: 'Sci-fi themed table with modular hex grid.', type: 'table', tags: [2, 4, 9], imageUrl: '/images/tables/table3.jpg', capacity: 6, numPlayers: 5, waitlistCount: 0, hasDM: false },

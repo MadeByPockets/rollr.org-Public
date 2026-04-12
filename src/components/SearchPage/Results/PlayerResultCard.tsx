@@ -1,19 +1,17 @@
-"use client"
 import React from 'react';
 import Avatar from '@mui/material/Avatar';
-import BaseSearchResultCard from './BaseSearchResultCard';
-import { Tag } from "@/types/tag";
 import { SearchResultItem } from '@/types/search';
+import BaseSearchResultCard, { BaseSearchResultCardProps } from './BaseSearchResultCard';
+import { Tag } from "@/types/tag";
 
-interface PlayerResultCardProps {
-  result: SearchResultItem;
-  onClick?: (id: number) => void;
+interface PlayerResultCardProps extends BaseSearchResultCardProps {
+  result: SearchResultItem & { type: 'player' }
   tags: Tag[];
 }
 
 /**
  * Component for displaying player search results
- * Displays player avatars with consistent color hashing/fallbacks
+ * Includes an avatar image or defaults to a MUI colored circle with a letter in it
  */
 const PlayerResultCard: React.FC<PlayerResultCardProps> = ({ 
   result,
@@ -32,6 +30,7 @@ const PlayerResultCard: React.FC<PlayerResultCardProps> = ({
       '#FFEB3B', '#FFC107', '#FF9800', '#FF5722'
     ];
     
+    // Simple hash function to get a consistent index
     let hash = 0;
     for (let i = 0; i < name.length; i++) {
       hash = name.charCodeAt(i) + ((hash << 5) - hash);
@@ -42,6 +41,7 @@ const PlayerResultCard: React.FC<PlayerResultCardProps> = ({
   
   const avatarColor = getAvatarColor(result.title);
   
+  // Create avatar for use as icon
   const playerIcon = (
     <Avatar 
       src={result.imageUrl} 
@@ -58,7 +58,7 @@ const PlayerResultCard: React.FC<PlayerResultCardProps> = ({
 
   return (
     <BaseSearchResultCard result={result} onClick={onClick} icon={playerIcon} tags={tags}>
-      {/* No additional content needed */}
+      {/* No additional content needed after removing join date */}
     </BaseSearchResultCard>
   );
 };
