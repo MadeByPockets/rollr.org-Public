@@ -42,7 +42,7 @@ const TagsFilter: React.FC<TagsFilterProps> = ({
   const tagOptions = React.useMemo(() => {
     console.log("available tags: " + JSON.stringify(Tags))
     console.log(!Tags)
-    if (!Tags || Tags.length == 0 || !Tags.map) return [];
+    if (!Tags || Tags.length === 0 || !Tags.map) return [];
     return Tags.map(tag => ({
       value: tag.id,
       label: tag.label
@@ -86,7 +86,7 @@ const TagsFilter: React.FC<TagsFilterProps> = ({
   const renderSelectedTags = (selectedTags: number[], category: TagCategory) => {
     const tagValues: Tag[] = [];
 
-    if (!Tags || Tags.length == 0 || !Tags.map) return null;
+    if (!Tags || Tags.length === 0 || !Tags.map) return null;
     Tags.forEach((tag) => {
       if (selectedTags.includes(tag.id)) {
         tagValues.push(tag);

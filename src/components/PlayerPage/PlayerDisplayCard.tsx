@@ -1,30 +1,26 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import { Card, CardMedia, CardContent, Typography } from "@mui/material";
-import {ProfilePictureSettings} from "../../data/values";
+import { ProfilePictureSettings } from "@/data/values";
 
-const {aspectRatio} = ProfilePictureSettings;
-
-type PlayerDisplayProps = {
+export type PlayerDisplayProps = {
     profilePicture: string | null;
     username: string;
     bio: string | null;
     preferredPronouns: string | null;
 };
 
-const PlayerDisplayCard: React.FC<PlayerDisplayProps> = ({
-                                                             profilePicture,
-                                                             username,
-                                                             bio,
-                                                             preferredPronouns,
-                                                         }) => {
-    const [imageSrc, setImageSrc] = useState<string>("/man-walking-silhouette-clipart.jpg");
+const PlayerDisplayCard: React.FC<PlayerDisplayProps> = ({ profilePicture, username, bio, preferredPronouns }) => {
+    const defaultImg = "/man-walking-silhouette-clipart.jpg";
+    const [imageSrc, setImageSrc] = useState<string>(defaultImg);
+    const { aspectRatio } = ProfilePictureSettings;
 
     useEffect(() => {
         async function validateImage() {
-            const newImage = profilePicture || "/man-walking-silhouette-clipart.jpg";
+            const newImage = profilePicture || defaultImg;
             if (!profilePicture) {
-                setImageSrc("/man-walking-silhouette-clipart.jpg");
+                setImageSrc(defaultImg);
                 return;
             }
 
@@ -36,7 +32,7 @@ const PlayerDisplayCard: React.FC<PlayerDisplayProps> = ({
             };
 
             img.onerror = () => {
-                setImageSrc("/man-walking-silhouette-clipart.jpg");
+                setImageSrc(defaultImg);
             };
         }
 
@@ -61,10 +57,10 @@ const PlayerDisplayCard: React.FC<PlayerDisplayProps> = ({
                 image={imageSrc}
                 alt={`${username}'s Profile Picture`}
                 sx={{
-                  aspectRatio: aspectRatio,
-                    height: "auto",// Updates to maintain aspect ratio and fill space nicely
+                    aspectRatio: aspectRatio,
+                    height: "auto", // Updates to maintain aspect ratio and fill space nicely
                     width: "100%",
-                    objectFit: "scale-down",
+                    objectFit: "cover",
                 }}
             />
 
