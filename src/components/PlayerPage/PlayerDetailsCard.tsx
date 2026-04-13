@@ -3,20 +3,21 @@
 import React from "react";
 import { Card, CardContent, Typography } from "@mui/material";
 
-type PlayerDetailsProps = {
+export type PlayerDetailsProps = {
     preferredPronouns: string | null;
     age: number | null;
     yearsPlaying: number | null;
     discordUsername: string | null;
-    preferredGames: string[] | null;
+    preferredGames: string[] | string | null;
 };
 
-const PlayerDetails: React.FC<PlayerDetailsProps> = ({
-                                                         age,
-                                                         yearsPlaying,
-                                                         discordUsername,
-                                                         preferredGames,
-                                                     }) => {
+const PlayerDetailsCard: React.FC<PlayerDetailsProps> = ({
+    preferredPronouns,
+    age,
+    yearsPlaying,
+    discordUsername,
+    preferredGames,
+}) => {
     return (
         <Card
             sx={{
@@ -52,6 +53,19 @@ const PlayerDetails: React.FC<PlayerDetailsProps> = ({
 
                 {/* Details Section */}
                 <div className="space-y-3">
+                    {preferredPronouns && (
+                        <Typography
+                            variant="body2"
+                            className="text-sm font-medium"
+                            sx={{
+                                color: "#FFFFFF",
+                                textShadow: "0px 2px 6px rgba(0, 0, 0, 0.5)",
+                                fontWeight: "bold",
+                            }}
+                        >
+                            <span className="font-extrabold text-cyan-300">Preferred Pronouns:</span> {preferredPronouns}
+                        </Typography>
+                    )}
                     {age !== null && (
                         <Typography
                             variant="body2"
@@ -91,7 +105,7 @@ const PlayerDetails: React.FC<PlayerDetailsProps> = ({
                             <span className="font-extrabold text-cyan-300">Discord Username:</span> {discordUsername}
                         </Typography>
                     )}
-                    {preferredGames && preferredGames.length > 0 && (
+                    {preferredGames && (
                         <Typography
                             variant="body2"
                             className="text-sm font-medium"
@@ -102,7 +116,7 @@ const PlayerDetails: React.FC<PlayerDetailsProps> = ({
                             }}
                         >
                             <span className="font-extrabold text-cyan-300">Preferred Games:</span>{" "}
-                            {preferredGames.join(", ")}
+                            {Array.isArray(preferredGames) ? preferredGames.join(", ") : preferredGames}
                         </Typography>
                     )}
                 </div>
@@ -125,5 +139,5 @@ const PlayerDetails: React.FC<PlayerDetailsProps> = ({
     );
 };
 
-export default PlayerDetails;
+export default PlayerDetailsCard;
 

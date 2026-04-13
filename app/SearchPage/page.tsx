@@ -1,98 +1,108 @@
 "use client"
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, Suspense, useMemo } from 'react';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import SearchPageLayout from '@/components/SearchPage/SearchPageLayout';
-import { MockedSearchResults, SearchResultItem } from '@/mocks/SearchResults';
+import { SearchResultItem, PaginationData, SearchCriteria } from '@/types/search';
 import { MockedTags } from '@/mocks/Tags';
+import { MockedSearchFilters } from '@/mocks/SearchResults';
+import { performSearchAction } from './actions';
+import { criteriaToSearchParams, searchParamsToCriteria } from '@/utils/searchUrl';
 
 /**
- * Search page component that serves as a shell to deliver the SearchPageLayout
+ * Search page content that uses search params
  */
-const SearchPage = () => {
-  // State to store current filter values
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-  const [selectedTags, setSelectedTags] = useState<{
-    mustHave: number[];
-    mustNotHave: number[];
-    shouldHaveAtLeastOne: number[];
-  }>({
-    mustHave: [],
-    mustNotHave: [],
-    shouldHaveAtLeastOne: []
-  });
+const SearchPageContent = () => {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // State to store results
+  const [results, setResults] = useState<SearchResultItem[]>([]);
   
-  // State to store filtered results
-  const [filteredResults, setFilteredResults] = useState<SearchResultItem[]>(MockedSearchResults);
+  // Loading state
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // Handler for type filter changes
-  const handleTypeChange = (types: string[]) => {
-    setSelectedTypes(types);
-    console.log('Selected types:', types);
+  // Pagination (Packet) state
+  const [pagination, setPagination] = useState<PaginationData>({
+    currentPacket: 1,
+    totalPackets: 1,
+    totalResults: 0,
+    packetSize: 20
+  });
+
+  // Track the criteria currently active on the server (for pagination)
+  const [activeCriteria, setActiveCriteria] = useState<SearchCriteria | null>(null);
+
+  /**
+   * Effect to load data when search params change
+   */
+  useEffect(() => {
+    const loadResults = async () => {
+      setIsLoading(true);
+      const { criteria, packet } = searchParamsToCriteria(searchParams);
+      
+      const response = await performSearchAction(criteria, packet);
+      setResults(response.results);
+      setPagination(response.pagination);
+      setActiveCriteria(criteria);
+      setIsLoading(false);
+    };
+    loadResults();
+  }, [searchParams]);
+
+  /**
+   * Handler for when a search is submitted
+   */
+  const handleSearch = (criteria: SearchCriteria) => {
+    const params = criteriaToSearchParams(criteria, 1);
+    router.push(`${pathname}?${params.toString()}`);
   };
 
-  // Handler for tag filter changes
-  const handleTagChange = (tags: {
-    mustHave: number[];
-    mustNotHave: number[];
-    shouldHaveAtLeastOne: number[];
-  }) => {
-    setSelectedTags(tags);
-    console.log('Must have tags:', tags.mustHave);
-    console.log('Must not have tags:', tags.mustNotHave);
-    console.log('Should contain at least one tag:', tags.shouldHaveAtLeastOne);
-  };
-
-  // Handler for search button click
-  const handleSubmit = () => {
-    console.log('Search button clicked');
-    console.log('Applying filters:', { selectedTypes, selectedTags });
-    
-    // Filter results based on selected types and tags
-    let results = [...MockedSearchResults];
-    
-    // Filter by type if any types are selected
-    if (selectedTypes.length > 0) {
-      results = results.filter(result => selectedTypes.includes(result.type));
-    }
-    
-    // Filter by "must have" tags
-    if (selectedTags.mustHave.length > 0) {
-      results = results.filter(result => 
-        result.tags && selectedTags.mustHave.every(tagId => result.tags!.includes(tagId))
-      );
-    }
-    
-    // Filter by "must not have" tags
-    if (selectedTags.mustNotHave.length > 0) {
-      results = results.filter(result => 
-        !result.tags || !selectedTags.mustNotHave.some(tagId => result.tags!.includes(tagId))
-      );
-    }
-    
-    // Filter by "should have at least one" tags
-    if (selectedTags.shouldHaveAtLeastOne.length > 0) {
-      results = results.filter(result => 
-        result.tags && selectedTags.shouldHaveAtLeastOne.some(tagId => result.tags!.includes(tagId))
-      );
-    }
-    
-    // Update filtered results
-    setFilteredResults(results);
-    console.log('Filtered results:', results);
+  /**
+   * Handler for packet changes
+   */
+  const handlePacketChange = (packet: number) => {
+    if (!activeCriteria) return;
+    const params = criteriaToSearchParams(activeCriteria, packet);
+    router.push(`${pathname}?${params.toString()}`);
   };
 
   const handleResultClick = (id: number) => {
     console.log('Result clicked:', id);
   };
 
+  // Get current criteria from search params for initial state of layout
+  const { criteria: currentCriteria } = useMemo(() => searchParamsToCriteria(searchParams), [searchParams]);
+
   return (
     <SearchPageLayout
         title="Search"
-        results={filteredResults}
-        onTypeChange={handleTypeChange}
-        onTagChange={handleTagChange}
-        onSubmit={handleSubmit}
-        onResultClick={handleResultClick} allTags={MockedTags} validTags={MockedTags}    />
+        results={results}
+        pagination={pagination}
+        onPacketChange={handlePacketChange}
+        isLoading={isLoading}
+        onSubmit={handleSearch}
+        onResultClick={handleResultClick} 
+        allTags={MockedTags} 
+        validTags={MockedTags}
+        searchTypes={MockedSearchFilters.types}
+        initialSelectedTypes={currentCriteria.selectedTypes}
+        initialSelectedTags={currentCriteria.selectedTags}
+        initialTextSearch={currentCriteria.textSearch}
+        includeExpiredTables={currentCriteria.includeExpiredTables}
+    />
+  );
+};
+
+/**
+ * Search page component that serves as a shell to deliver the SearchPageLayout
+ */
+const SearchPage = () => {
+  return (
+    <Suspense fallback={<div>Loading Search...</div>}>
+      <SearchPageContent />
+    </Suspense>
   );
 };
 

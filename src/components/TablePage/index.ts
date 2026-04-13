@@ -10,6 +10,8 @@ export * from "./ModalProvider";
 export * from "./ModalProvider/ModalContext";
 export * from "./ModalProvider/ModalProvider";
 export { default as ModalProvider } from "./ModalProvider/ModalProvider";
+export * from "./NextGameLabel";
+export { default as NextGameLabel } from "./NextGameLabel";
 export * from "./players";
 export * from "./players/PlayerHighlightsCard";
 export * from "./TableActionsBar";

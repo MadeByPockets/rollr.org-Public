@@ -28,7 +28,7 @@ const EventTablesCard: React.FC<EventTablesCardProps> = ({
       <CardHeader title="Tables" />
       <Divider />
       <CardContent>
-        <TablesScrollableList results={tables} tags={tags} maxHeight={maxHeight} onResultClick={onTableClick} sortBy={"availability"} />
+        <TablesScrollableList results={tables} tags={tags} maxHeight={maxHeight} onResultClick={onTableClick} />
       </CardContent>
     </Card>
   );

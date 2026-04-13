@@ -3,7 +3,6 @@
 
 export * from "./EventPage";
 export * from "./PlayerPage";
-export * from "./ProfilePage";
 export * from "./SearchPage";
 export * from "./TablePage";
 export * from "./shared";

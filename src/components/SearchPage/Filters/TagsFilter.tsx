@@ -7,8 +7,14 @@ import TextField from '@mui/material/TextField';
 import Popper, { PopperProps } from '@mui/material/Popper';
 import {Tag} from '@/types/tag';
 import Divider from '@mui/material/Divider';
+import Chip from "@/components/shared/Chip";
 
 interface TagsFilterProps {
+  initialSelectedTags?: {
+    mustHave: number[];
+    mustNotHave: number[];
+    shouldHaveAtLeastOne: number[];
+  };
   onChange?: (selectedTags: {
     mustHave: number[];
     mustNotHave: number[];
@@ -25,11 +31,21 @@ type TagCategory = 'mustHave' | 'mustNotHave' | 'shouldHaveAtLeastOne';
  * Provides three separate sections for tags: must haves, must not haves, and should contain at least one
  */
 const TagsFilter: React.FC<TagsFilterProps> = ({ 
-  onChange, tags: Tags = []
+  onChange, tags: Tags = [], initialSelectedTags
 }) => {
-  const [mustHaveTags, setMustHaveTags] = React.useState<number[]>([]);
-  const [mustNotHaveTags, setMustNotHaveTags] = React.useState<number[]>([]);
-  const [shouldHaveAtLeastOneTags, setShouldHaveAtLeastOneTags] = React.useState<number[]>([]);
+  const [mustHaveTags, setMustHaveTags] = React.useState<number[]>(initialSelectedTags?.mustHave || []);
+  const [mustNotHaveTags, setMustNotHaveTags] = React.useState<number[]>(initialSelectedTags?.mustNotHave || []);
+  const [shouldHaveAtLeastOneTags, setShouldHaveAtLeastOneTags] = React.useState<number[]>(initialSelectedTags?.shouldHaveAtLeastOne || []);
+
+  // Update state when initialSelectedTags changes
+  React.useEffect(() => {
+    if (initialSelectedTags) {
+      setMustHaveTags(initialSelectedTags.mustHave || []);
+      setMustNotHaveTags(initialSelectedTags.mustNotHave || []);
+      setShouldHaveAtLeastOneTags(initialSelectedTags.shouldHaveAtLeastOne || []);
+    }
+  }, [initialSelectedTags]);
+
   Tags = !!Tags ? Tags : [];
   
   const [inputValues, setInputValues] = React.useState({
@@ -98,24 +114,11 @@ const TagsFilter: React.FC<TagsFilterProps> = ({
     return (
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
         {tagValues.map((tag) => (
-          <span
+          <Chip
             key={tag.id}
-            className="inline-block text-sm px-3 py-1 rounded-full outline-black outline-2 font-outlined"
-            style={{
-              background: tag.color || '#bfbcbb',
-              color: "white",
-              textShadow: "black 0.2em 0.2em 0.4em"
-            }}
-          >
-            {tag.label}
-            <button 
-              type="button" 
-              onClick={() => handleTagChange(tag.id, category)}
-              className="ml-2 text-red-500 bg-white bg-opacity-50 rounded-full outline-black outline-2 font-outlined"
-            >
-              &times;
-            </button>
-          </span>
+            tag={tag}
+            removeCallback={(tagId) => handleTagChange(tagId, category)}
+          />
         ))}
       </Box>
     );
