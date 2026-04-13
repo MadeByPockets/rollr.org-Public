@@ -38,7 +38,7 @@ export const MockedTables: TableFormat[] = [
     {
         id: 1,
         title: 'Critical Hit Table',
-        shortDescription: 'description coming soon',
+        shortDescription: 'Time to start the adventure!',
         description: '**Welcome to the Mystical Realms Campaign!**\n' +
             'This D&D campaign is perfect for players who have already participated in a session zero. If you haven\'t had a session zero yet, feel free to reach out to us to schedule one!\n' +
             'In this campaign, you can chart the stars, salvage ships, or discover secrets on your base planet. This long-term adventure offers the progression and character development you desire, without the commitment of fixed schedules. There are no regular scheduled times, and the group membership is flexible—players can join or leave at any session.\n' +

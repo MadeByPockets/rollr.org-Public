@@ -11,29 +11,59 @@ import type { Player } from "@/types/player";
 import type { TableRecord } from "@/types/tables";
 import type { Tag } from "@/types/tag";
 import type { TablePageLayoutProps } from "@/components/TablePage/types";
+import {useModal} from "@/components";
+import TextField from "@mui/material/TextField";
+import EditIcon from '@mui/icons-material/Edit';
+import CasinoIcon from '@mui/icons-material/Casino';
+import {getRandomTagline, getRandomTitle} from "@/components/shared/NameGenerator";
 
 export function TablePageLayout(props: TablePageLayoutProps) {
-    const { allTags, dungeonMaster, onDeleteTable, onJoinWaitlist, onLeaveTable, onSaveDraft, players, table, tableStatus, waitlistPlayers } = props;
+    const { hideModal, showModal } = useModal();
+
+    const { allTags, dungeonMaster, onDeleteTable, onJoinWaitlist, onLeaveTable, onSaveDraft, players, table, tableStatus, waitlistPlayers, startWithEditTitle } = props;
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const [isTableInEditMode, setIsTableInEditMode] = useState(false);
 
+    const [currentTitle, setCurrentTitle] = useState(table.title);
+    const [currentSubtitle, setCurrentSubtitle] = useState(table.shortDescription);
     const [currentDescription, setCurrentDescription] = useState(table.description);
+    const pendingTitleEdits = useRef({ title: currentTitle, subtitle: currentSubtitle });
+
     const [currentDungeonMaster, setCurrentDungeonMaster] = useState(dungeonMaster);
     const [currentPlayers, setCurrentPlayers] = useState(players);
-    const [currentShortDescription, setCurrentShortDescription] = useState(table.shortDescription);
-    const [currentTitle, setCurrentTitle] = useState(table.title);
     const [currentWaitlistPlayers, setCurrentWaitlistPlayers] = useState(waitlistPlayers);
     const [currentTagIds, setCurrentTagIds] = useState<number[]>(table.tags ?? []);
 
+    const editTitleAndSubtitle = () => {
+        pendingTitleEdits.current = { title: currentTitle, subtitle: currentSubtitle };
+
+        const editContent = (
+            <EditTitleForm
+                initialTitle={currentTitle}
+                initialSubtitle={currentSubtitle}
+                onTitleChange={(t) => { pendingTitleEdits.current.title = t; }}
+                onSubtitleChange={(s) => { pendingTitleEdits.current.subtitle = s; }}
+            />
+        );
+
+        showModal(editContent, "Edit Title and Tagline", {
+            acceptText: "Save",
+            onAccept: () => {
+                setCurrentTitle(pendingTitleEdits.current.title);
+                setCurrentSubtitle(pendingTitleEdits.current.subtitle);
+                hideModal();
+            },
+            onCancel: () => {
+                hideModal();
+            }
+        });
+    }
+
     useEffect(() => {
-        setCurrentDescription(table.description);
-        setCurrentDungeonMaster(dungeonMaster);
-        setCurrentPlayers(players);
-        setCurrentShortDescription(table.shortDescription);
-        setCurrentTitle(table.title);
-        setCurrentWaitlistPlayers(waitlistPlayers);
-        setCurrentTagIds(table.tags ?? []);
-    }, [dungeonMaster, players, table, waitlistPlayers]);
+        if(startWithEditTitle) {
+            editTitleAndSubtitle();
+        }
+    });
 
     const currentTags = useMemo(
         () => allTags.filter((tag) => currentTagIds.includes(tag.id)),
@@ -74,7 +104,7 @@ export function TablePageLayout(props: TablePageLayoutProps) {
             description: currentDescription,
             dungeonMaster: String(currentDungeonMaster.id),
             players: currentPlayers.map((player) => player.id),
-            shortDescription: currentShortDescription,
+            shortDescription: currentSubtitle,
             tags: currentTagIds,
             title: currentTitle,
             waitlist: currentWaitlistPlayers.map((player) => player.id),
@@ -107,15 +137,11 @@ export function TablePageLayout(props: TablePageLayoutProps) {
                     }}
                 >
                     <Box>
-                        {isTableInEditMode ? (
-                            <input
-                                onChange={(e) => setCurrentTitle(e.target.value)}
-                                style={{ backgroundColor: '#fffbea' }}
-                                tabIndex={0}
-                                type="text"
-                                value={currentTitle}
-                            />
-                        ) : (
+                        <Box
+                            className={"flex items-center gap-1 cursor-pointer"}
+                            sx={{"&:hover .edit-icon": { opacity: 1 } }}
+                            onClick={editTitleAndSubtitle}
+                        >
                             <CardHeader
                                 title={currentTitle}
                                 sx={{
@@ -126,22 +152,21 @@ export function TablePageLayout(props: TablePageLayoutProps) {
                                     },
                                 }}
                             />
-                        )}
+                            <EditIcon className="edit-icon text-white" sx={{ opacity: 0, transition: "opacity 0.2s" }} />
+                        </Box>
                     </Box>
-
-                    {isTableInEditMode ? (
-                        <input
-                            onChange={(e) => setCurrentShortDescription(e.target.value)}
-                            style={{ backgroundColor: '#fffbea' }}
-                            tabIndex={0}
-                            type="text"
-                            value={currentShortDescription}
-                        />
-                    ) : (
-                        <Typography sx={{ color: "white", opacity: 0.95 }}>
-                            {currentShortDescription}
+                    <Box
+                        className={"flex items-center gap-1 cursor-pointer"}
+                        sx={{"&:hover .edit-icon": { opacity: 1 } }}
+                        onClick={editTitleAndSubtitle}
+                    >
+                        <Typography
+                            sx={{ color: "white", opacity: 0.95 }}
+                        >
+                            {currentSubtitle}
                         </Typography>
-                    )}
+                        <EditIcon className="edit-icon text-white" sx={{ opacity: 0, transition: "opacity 0.2s", fontSize: "medium" }} />
+                    </Box>
 
                     <Grid container>
                         {isTableInEditMode
@@ -245,3 +270,48 @@ const renderEditableTags = function (
 };
 
 export default TablePageLayout;
+
+function EditTitleForm({ initialTitle, initialSubtitle, onTitleChange, onSubtitleChange }: {
+    initialTitle: string;
+    initialSubtitle: string;
+    onTitleChange: (title: string) => void;
+    onSubtitleChange: (subtitle: string) => void;
+}) {
+    const [title, setTitle] = useState(initialTitle);
+    const [subtitle, setSubtitle] = useState(initialSubtitle);
+
+    const handleTitleChange = (newTitle: string) => {
+        setTitle(newTitle);
+        onTitleChange(newTitle);
+    };
+
+    const handleSubtitleChange = (newSubtitle: string) => {
+        setSubtitle(newSubtitle);
+        onSubtitleChange(newSubtitle);
+    };
+
+    return (
+        <Box className={"flex flex-col gap-4"}>
+            <Box className={"inline-flex"}>
+                <TextField
+                    sx={{minWidth: "400px"}}
+                    label="Title"
+                    onChange={(e) => handleTitleChange(e.target.value)}
+                    variant="filled"
+                    value={title}
+                />
+                <CasinoIcon sx={{ cursor: "pointer", alignSelf: "center", ml: 1 }} onClick={() => handleTitleChange(getRandomTitle())} />
+            </Box>
+            <Box className={"inline-flex min-w-96"}>
+                <TextField
+                    sx={{minWidth: "400px"}}
+                    label="Subtitle or Tagline"
+                    onChange={(e) => handleSubtitleChange(e.target.value)}
+                    variant="filled"
+                    value={subtitle}
+                />
+                <CasinoIcon sx={{ cursor: "pointer", alignSelf: "center", ml: 1 }} onClick={() => handleSubtitleChange(getRandomTagline())} />
+            </Box>
+        </Box>
+    );
+}

@@ -4,6 +4,7 @@ import { createContext, ReactNode, useContext } from "react";
 export type ModalOptions = {
   acceptText?: string;
   onAccept?: () => void;
+  onCancel?: () => void;
 }
 
 type ModalContextType = {

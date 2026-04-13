@@ -36,7 +36,7 @@ export const ModalProvider = ({ children }: ModalProviderProps) => {
       {children}
       <Dialog open={displayModal} onClose={hideModal}>
         <Box>
-          <DialogTitle>{title}</DialogTitle>
+          <DialogTitle sx={{marginRight: '20px', minWidth: '400px'}}>{title}</DialogTitle>
           <IconButton
             aria-label="close"
             onClick={hideModal}
@@ -45,15 +45,15 @@ export const ModalProvider = ({ children }: ModalProviderProps) => {
             <CloseIcon />
           </IconButton>
         </Box>
-        <DialogContent sx={{ pt: 5 }}>
+        <DialogContent>
           {modalContent}
         </DialogContent>
-        {options.acceptText && (
+        {(options.acceptText || options.onAccept) && (
           <DialogActions>
-            <Button variant="contained" onClick={() => {  hideModal(); options.onAccept?.(); }}>
-              {options.acceptText}
+            <Button variant="contained" onClick={() => { hideModal(); options.onAccept?.(); }}>
+              {options.acceptText ?? "OK"}
             </Button>
-            <Button onClick={hideModal}>Cancel</Button>
+            <Button onClick={() => { hideModal(); options.onCancel?.(); }}>Cancel</Button>
           </DialogActions>
         )}
       </Dialog>
