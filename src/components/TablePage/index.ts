@@ -17,3 +17,4 @@ export { default as TableActionsBar } from "./TableActionsBar";
 export * from "./TablePageLayout";
 export { default as TablePageLayout } from "./TablePageLayout";
 export * from "./types";
+export {EditTitleForm} from "@/components/TablePage/EditComponents/EditTitleForm";

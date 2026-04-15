@@ -1,26 +1,27 @@
 "use client";
 
-import { JSX, useEffect, useMemo, useRef, useState } from "react";
-import { Box, Card, CardContent, CardHeader, Typography } from "@mui/material";
+import React, {JSX, useEffect, useMemo, useRef, useState} from "react";
+import {Box, Button, Card, CardContent, CardHeader, Typography} from "@mui/material";
 import Grid from "@mui/material/Grid";
 import AutoResizingTextarea from "@/components/shared/AutoResizingTextarea";
-import { TagEditor, generateTagsDisplay } from "@/components/shared";
-import { DMHighlightsCard, PlayerHighlightsCard } from "@/components/TablePage/players/PlayerHighlightsCard";
+import {generateTagsDisplay, TagEditor} from "@/components/shared";
+import {DMHighlightsCard, PlayerHighlightsCard} from "@/components/TablePage/players/PlayerHighlightsCard";
 import TableActionsBar from "@/components/TablePage/TableActionsBar";
-import type { Player } from "@/types/player";
-import type { TableRecord } from "@/types/tables";
-import type { Tag } from "@/types/tag";
-import type { TablePageLayoutProps } from "@/components/TablePage/types";
+import type {Player} from "@/types/player";
+import type {TableRecord} from "@/types/tables";
+import type {Tag} from "@/types/tag";
+import type {TablePageLayoutProps} from "@/components/TablePage/types";
 import {useModal} from "@/components";
-import TextField from "@mui/material/TextField";
 import EditIcon from '@mui/icons-material/Edit';
-import CasinoIcon from '@mui/icons-material/Casino';
-import {getRandomTagline, getRandomTitle} from "@/components/shared/NameGenerator";
+import {EditTitleForm} from "@/components/TablePage/EditComponents/EditTitleForm";
+import {EditTagsForm} from "@/components/TablePage/EditComponents/EditTagsForm";
+import Chip from "../shared/Chip";
 
 export function TablePageLayout(props: TablePageLayoutProps) {
     const { hideModal, showModal } = useModal();
 
     const { allTags, dungeonMaster, onDeleteTable, onJoinWaitlist, onLeaveTable, onSaveDraft, players, table, tableStatus, waitlistPlayers, startWithEditTitle } = props;
+    const canEdit = tableStatus.isOwner;
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const [isTableInEditMode, setIsTableInEditMode] = useState(false);
 
@@ -28,13 +29,32 @@ export function TablePageLayout(props: TablePageLayoutProps) {
     const [currentSubtitle, setCurrentSubtitle] = useState(table.shortDescription);
     const [currentDescription, setCurrentDescription] = useState(table.description);
     const pendingTitleEdits = useRef({ title: currentTitle, subtitle: currentSubtitle });
+    const pendingTagEdits = useRef<number[]>([]);
 
     const [currentDungeonMaster, setCurrentDungeonMaster] = useState(dungeonMaster);
     const [currentPlayers, setCurrentPlayers] = useState(players);
     const [currentWaitlistPlayers, setCurrentWaitlistPlayers] = useState(waitlistPlayers);
     const [currentTagIds, setCurrentTagIds] = useState<number[]>(table.tags ?? []);
 
+    const handleSaveTable = (tableData: Partial<TableRecord> = {}) => {
+        const nextDraft: TableRecord = {
+            ...table,
+            description: currentDescription,
+            dungeonMaster: String(currentDungeonMaster.id),
+            players: currentPlayers.map((player) => player.id),
+            shortDescription: currentSubtitle,
+            tags: currentTagIds,
+            title: currentTitle,
+            waitlist: currentWaitlistPlayers.map((player) => player.id),
+            ...tableData,
+        };
+
+        void onSaveDraft?.(nextDraft);
+        setIsTableInEditMode(false);
+    };
+
     const editTitleAndSubtitle = () => {
+        if (!canEdit) { return }
         pendingTitleEdits.current = { title: currentTitle, subtitle: currentSubtitle };
 
         const editContent = (
@@ -51,10 +71,31 @@ export function TablePageLayout(props: TablePageLayoutProps) {
             onAccept: () => {
                 setCurrentTitle(pendingTitleEdits.current.title);
                 setCurrentSubtitle(pendingTitleEdits.current.subtitle);
-                hideModal();
-            },
-            onCancel: () => {
-                hideModal();
+                handleSaveTable({
+                    title: pendingTitleEdits.current.title,
+                    shortDescription: pendingTitleEdits.current.subtitle,
+                });
+            }
+        });
+    }
+
+    const editTags = () => {
+        if (!canEdit) { return }
+        pendingTagEdits.current = [...currentTagIds];
+
+        const editContent = (
+            <EditTagsForm
+                initialTagIDs={currentTagIds}
+                allTags={allTags}
+                onEditPendingTagIDs={tags => pendingTagEdits.current = tags}
+                showOnlyTableTags={true}
+            />)
+
+        showModal(editContent, "Edit Table Tags", {
+            acceptText: "Save",
+            onAccept: () => {
+                setCurrentTagIds(pendingTagEdits.current);
+                handleSaveTable({tags: pendingTagEdits.current });
             }
         });
     }
@@ -98,22 +139,6 @@ export function TablePageLayout(props: TablePageLayoutProps) {
         );
     };
 
-    const handleSaveTable = () => {
-        const nextDraft: TableRecord = {
-            ...table,
-            description: currentDescription,
-            dungeonMaster: String(currentDungeonMaster.id),
-            players: currentPlayers.map((player) => player.id),
-            shortDescription: currentSubtitle,
-            tags: currentTagIds,
-            title: currentTitle,
-            waitlist: currentWaitlistPlayers.map((player) => player.id),
-        };
-
-        void onSaveDraft?.(nextDraft);
-        setIsTableInEditMode(false);
-    };
-
     return (
         <Card
             sx={{
@@ -138,7 +163,7 @@ export function TablePageLayout(props: TablePageLayoutProps) {
                 >
                     <Box>
                         <Box
-                            className={"flex items-center gap-1 cursor-pointer"}
+                            className={`flex items-center gap-1 ${canEdit ? "cursor-pointer" : ""}`}
                             sx={{"&:hover .edit-icon": { opacity: 1 } }}
                             onClick={editTitleAndSubtitle}
                         >
@@ -152,11 +177,11 @@ export function TablePageLayout(props: TablePageLayoutProps) {
                                     },
                                 }}
                             />
-                            <EditIcon className="edit-icon text-white" sx={{ opacity: 0, transition: "opacity 0.2s" }} />
+                            {canEdit ? (<EditIcon className="edit-icon text-white" sx={{ opacity: 0, transition: "opacity 0.2s" }} />) : ""}
                         </Box>
                     </Box>
                     <Box
-                        className={"flex items-center gap-1 cursor-pointer"}
+                        className={`flex items-center gap-1 ${canEdit ? "cursor-pointer" : ""}`}
                         sx={{"&:hover .edit-icon": { opacity: 1 } }}
                         onClick={editTitleAndSubtitle}
                     >
@@ -165,13 +190,11 @@ export function TablePageLayout(props: TablePageLayoutProps) {
                         >
                             {currentSubtitle}
                         </Typography>
-                        <EditIcon className="edit-icon text-white" sx={{ opacity: 0, transition: "opacity 0.2s", fontSize: "medium" }} />
+                        {canEdit ? (<EditIcon className="edit-icon text-white" sx={{ opacity: 0, transition: "opacity 0.2s", fontSize: "medium" }} />) : ""}
                     </Box>
 
-                    <Grid container>
-                        {isTableInEditMode
-                            ? renderEditableTags(currentTags, allTags, handleToggleTag)
-                            : renderTags(currentTagIds, allTags)}
+                    <Grid container onClick={editTags} className={`${canEdit ? "cursor-pointer" : ""}`}>
+                        {renderTags(currentTagIds, allTags, canEdit)}
                     </Grid>
 
                     <TableActionsBar
@@ -237,7 +260,8 @@ export function TablePageLayout(props: TablePageLayoutProps) {
 
 const renderTags = function (
     tags: number[] | undefined,
-    allTags: Tag[] | undefined
+    allTags: Tag[] | undefined,
+    canEdit: boolean
 ): JSX.Element {
     if (!tags || !allTags) {
         return <></>;
@@ -246,8 +270,18 @@ const renderTags = function (
         <Grid container spacing={1} sx={{ pb: 1.5 }}>
             {tags.map((tagId) => {
                 const tag = allTags.find((potentialTag) => tagId === potentialTag.id);
-                return tag ? generateTagsDisplay(tag) : <></>;
+                return tag ? <Chip tag={tag} key={tag.id}  /> : <></>;
             })}
+            {(canEdit ? <Button variant={"text"}
+                    className="inline-block text-sm px-3 py-1font-outlined m-0.5 font-stretch-105% font-sans"
+                    sx={{
+                        color: "white",
+                        textShadow: "black 1.5px 1px 1.5px",
+                        '&:hover': {
+                            background: '#889'
+                        }
+                    }}>Edit Tags...</Button>
+                : "")}
         </Grid>
     );
 };
@@ -271,47 +305,3 @@ const renderEditableTags = function (
 
 export default TablePageLayout;
 
-function EditTitleForm({ initialTitle, initialSubtitle, onTitleChange, onSubtitleChange }: {
-    initialTitle: string;
-    initialSubtitle: string;
-    onTitleChange: (title: string) => void;
-    onSubtitleChange: (subtitle: string) => void;
-}) {
-    const [title, setTitle] = useState(initialTitle);
-    const [subtitle, setSubtitle] = useState(initialSubtitle);
-
-    const handleTitleChange = (newTitle: string) => {
-        setTitle(newTitle);
-        onTitleChange(newTitle);
-    };
-
-    const handleSubtitleChange = (newSubtitle: string) => {
-        setSubtitle(newSubtitle);
-        onSubtitleChange(newSubtitle);
-    };
-
-    return (
-        <Box className={"flex flex-col gap-4"}>
-            <Box className={"inline-flex"}>
-                <TextField
-                    sx={{minWidth: "400px"}}
-                    label="Title"
-                    onChange={(e) => handleTitleChange(e.target.value)}
-                    variant="filled"
-                    value={title}
-                />
-                <CasinoIcon sx={{ cursor: "pointer", alignSelf: "center", ml: 1 }} onClick={() => handleTitleChange(getRandomTitle())} />
-            </Box>
-            <Box className={"inline-flex min-w-96"}>
-                <TextField
-                    sx={{minWidth: "400px"}}
-                    label="Subtitle or Tagline"
-                    onChange={(e) => handleSubtitleChange(e.target.value)}
-                    variant="filled"
-                    value={subtitle}
-                />
-                <CasinoIcon sx={{ cursor: "pointer", alignSelf: "center", ml: 1 }} onClick={() => handleSubtitleChange(getRandomTagline())} />
-            </Box>
-        </Box>
-    );
-}

@@ -26,7 +26,7 @@ export interface TablePageLayoutProps {
   dungeonMaster: Player;
   waitlistPlayers: Player[];
   tableStatus: TableStatus;
-  startWithEditTitle: boolean;
+  startWithEditTitle?: boolean;
   onSaveDraft?: (draft: TableRecord) => void | Promise<void>;
   onJoinWaitlist?: () => void | Promise<void>;
   onLeaveTable?: () => void | Promise<void>;

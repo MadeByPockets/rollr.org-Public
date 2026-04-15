@@ -19,7 +19,7 @@ export interface TagEditorProps {
 }
 
 export function TagEditor({
-  title = "Tags",
+  title,
   selectedTags,
   possibleTags,
   onToggleTag,
@@ -36,7 +36,7 @@ export function TagEditor({
     <Grid container>
       <Grid size={{ xs: 12 }}>
         <Card>
-          <CardHeader
+          {title ? (<CardHeader
             title={title}
             style={{
               background: "linear-gradient(135deg, rgba(25, 118, 210, 0.8), rgba(25, 118, 210, 1))",
@@ -44,7 +44,7 @@ export function TagEditor({
               fontSize: "1.5rem",
               textShadow: "0px 3px 6px rgba(0, 0, 0, 0.5)",
             }}
-          />
+          />) : ""}
           <CardContent>
             <div className="mt-2 flex flex-wrap gap-2">
               {selectedTags.map((tag) => (

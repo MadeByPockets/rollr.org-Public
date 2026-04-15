@@ -34,7 +34,7 @@ export const ModalProvider = ({ children }: ModalProviderProps) => {
   return (
     <ModalContext.Provider value={{ showModal, hideModal }}>
       {children}
-      <Dialog open={displayModal} onClose={hideModal}>
+      <Dialog open={displayModal} onClose={hideModal} sx={{height: "85%"}}>
         <Box>
           <DialogTitle sx={{marginRight: '20px', minWidth: '400px'}}>{title}</DialogTitle>
           <IconButton
