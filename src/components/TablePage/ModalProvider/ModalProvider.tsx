@@ -45,7 +45,7 @@ export const ModalProvider = ({ children }: ModalProviderProps) => {
             <CloseIcon />
           </IconButton>
         </Box>
-        <DialogContent>
+        <DialogContent sx={{paddingTop: 0}}>
           {modalContent}
         </DialogContent>
         {(options.acceptText || options.onAccept) && (

@@ -13,8 +13,7 @@ import type {Tag} from "@/types/tag";
 import type {TablePageLayoutProps} from "@/components/TablePage/types";
 import {useModal} from "@/components";
 import EditIcon from '@mui/icons-material/Edit';
-import {EditTitleForm} from "@/components/TablePage/EditComponents/EditTitleForm";
-import {EditTagsForm} from "@/components/TablePage/EditComponents/EditTagsForm";
+import {EditTableDetailsForm} from "@/components/TablePage/EditComponents/EditTableDetailsForm";
 import Chip from "../shared/Chip";
 
 export function TablePageLayout(props: TablePageLayoutProps) {
@@ -28,13 +27,13 @@ export function TablePageLayout(props: TablePageLayoutProps) {
     const [currentTitle, setCurrentTitle] = useState(table.title);
     const [currentSubtitle, setCurrentSubtitle] = useState(table.shortDescription);
     const [currentDescription, setCurrentDescription] = useState(table.description);
-    const pendingTitleEdits = useRef({ title: currentTitle, subtitle: currentSubtitle });
-    const pendingTagEdits = useRef<number[]>([]);
 
     const [currentDungeonMaster, setCurrentDungeonMaster] = useState(dungeonMaster);
     const [currentPlayers, setCurrentPlayers] = useState(players);
     const [currentWaitlistPlayers, setCurrentWaitlistPlayers] = useState(waitlistPlayers);
     const [currentTagIds, setCurrentTagIds] = useState<number[]>(table.tags ?? []);
+
+    const pendingEdits = useRef({ title: currentTitle, subtitle: currentSubtitle, tags: currentTagIds });
 
     const handleSaveTable = (tableData: Partial<TableRecord> = {}) => {
         const nextDraft: TableRecord = {
@@ -53,56 +52,45 @@ export function TablePageLayout(props: TablePageLayoutProps) {
         setIsTableInEditMode(false);
     };
 
-    const editTitleAndSubtitle = () => {
+    const clean = (text: string) => text.replaceAll(
+        /\b(n[i1!]g+(er|a|e)s?|f[a@]g|f[a@]g+[o0]ts?|k[i1!]k[e3]s?|ch[i1!]nks?|w[e3]tb[a@]cks?|r[a@]gh[e3][a@]ds?|t[o0]w[e3]lh[e3][a@]ds?|r[e3]t[a@]rd(ed|s)?|c[o0][o0]ns?|tr[a@]nn(y|i[e3]s?)|g[o0][o0]ks?)\b/gi,
+        "dudes");
+
+    const editTableDetails = () => {
         if (!canEdit) { return }
-        pendingTitleEdits.current = { title: currentTitle, subtitle: currentSubtitle };
+        pendingEdits.current = { title: currentTitle, subtitle: currentSubtitle, tags: currentTagIds
+    };
 
         const editContent = (
-            <EditTitleForm
+            <EditTableDetailsForm
                 initialTitle={currentTitle}
                 initialSubtitle={currentSubtitle}
-                onTitleChange={(t) => { pendingTitleEdits.current.title = t; }}
-                onSubtitleChange={(s) => { pendingTitleEdits.current.subtitle = s; }}
+                onTitleChange={t => pendingEdits.current.title = t}
+                onSubtitleChange={s => pendingEdits.current.subtitle = s}
+                onTagChange={t => pendingEdits.current.tags = t}
+                initialTagIDs={currentTagIds}
+                allTags={allTags.filter(t => t.appliesTo.tables)}
             />
         );
 
-        showModal(editContent, "Edit Title and Tagline", {
+        showModal(editContent, "Edit Table Details", {
             acceptText: "Save",
             onAccept: () => {
-                setCurrentTitle(pendingTitleEdits.current.title);
-                setCurrentSubtitle(pendingTitleEdits.current.subtitle);
+                setCurrentTitle(clean(pendingEdits.current.title));
+                setCurrentSubtitle(clean(pendingEdits.current.subtitle));
+                setCurrentTagIds(pendingEdits.current.tags);
                 handleSaveTable({
-                    title: pendingTitleEdits.current.title,
-                    shortDescription: pendingTitleEdits.current.subtitle,
+                    title: clean(pendingEdits.current.title),
+                    shortDescription: clean(pendingEdits.current.subtitle),
+                    tags: pendingEdits.current.tags,
                 });
-            }
-        });
-    }
-
-    const editTags = () => {
-        if (!canEdit) { return }
-        pendingTagEdits.current = [...currentTagIds];
-
-        const editContent = (
-            <EditTagsForm
-                initialTagIDs={currentTagIds}
-                allTags={allTags}
-                onEditPendingTagIDs={tags => pendingTagEdits.current = tags}
-                showOnlyTableTags={true}
-            />)
-
-        showModal(editContent, "Edit Table Tags", {
-            acceptText: "Save",
-            onAccept: () => {
-                setCurrentTagIds(pendingTagEdits.current);
-                handleSaveTable({tags: pendingTagEdits.current });
             }
         });
     }
 
     useEffect(() => {
         if(startWithEditTitle) {
-            editTitleAndSubtitle();
+            editTableDetails();
         }
     });
 
@@ -165,7 +153,7 @@ export function TablePageLayout(props: TablePageLayoutProps) {
                         <Box
                             className={`flex items-center gap-1 ${canEdit ? "cursor-pointer" : ""}`}
                             sx={{"&:hover .edit-icon": { opacity: 1 } }}
-                            onClick={editTitleAndSubtitle}
+                            onClick={editTableDetails}
                         >
                             <CardHeader
                                 title={currentTitle}
@@ -183,7 +171,7 @@ export function TablePageLayout(props: TablePageLayoutProps) {
                     <Box
                         className={`flex items-center gap-1 ${canEdit ? "cursor-pointer" : ""}`}
                         sx={{"&:hover .edit-icon": { opacity: 1 } }}
-                        onClick={editTitleAndSubtitle}
+                        onClick={editTableDetails}
                     >
                         <Typography
                             sx={{ color: "white", opacity: 0.95 }}
@@ -193,7 +181,7 @@ export function TablePageLayout(props: TablePageLayoutProps) {
                         {canEdit ? (<EditIcon className="edit-icon text-white" sx={{ opacity: 0, transition: "opacity 0.2s", fontSize: "medium" }} />) : ""}
                     </Box>
 
-                    <Grid container onClick={editTags} className={`${canEdit ? "cursor-pointer" : ""}`}>
+                    <Grid container onClick={editTableDetails} className={`${canEdit ? "cursor-pointer" : ""}`}>
                         {renderTags(currentTagIds, allTags, canEdit)}
                     </Grid>
 

@@ -84,4 +84,4 @@ export { default as TableActionsBar } from "./TablePage/TableActionsBar";
 export * from "./TablePage/TablePageLayout";
 export { default as TablePageLayout } from "./TablePage/TablePageLayout";
 export * from "./TablePage/types";
-export {EditTitleForm} from "@/components/TablePage";
+export {EditTableDetailsForm} from "@/components/TablePage";
