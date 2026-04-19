@@ -1,2 +1,1 @@
-// utils exports (none yet)
-export {};
+export * from './searchUrl';

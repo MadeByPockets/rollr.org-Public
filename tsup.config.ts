@@ -92,11 +92,11 @@ function discoverEntries() {
   entries['mocks/index'] = 'src/mocks/index.ts';
 
   // 2) Components — publish under dist/* (recursive per-file) and folder-level entries
-  // Special alias: components/shared -> common
+  // No alias: components/shared -> shared
   const aliasComponents = (relDir: string) => {
     if (!relDir) return '';
     const parts = relDir.split('/');
-    if (parts[0] === 'shared') parts[0] = 'common';
+    // if (parts[0] === 'shared') parts[0] = 'common';
     return parts.join('/');
   };
 
@@ -115,8 +115,8 @@ function discoverEntries() {
   for (const file of srcFiles) {
     if (file.endsWith('.ts') && file !== 'index.ts' && file !== 'types.ts' && file !== 'mocks.ts') {
         const name = file.replace(/\.ts$/, '');
-        // Special case for shared -> common
-        const outName = name === 'shared' ? 'common' : name;
+        // No special case for shared
+        const outName = name;
         entries[outName] = `src/${file}`;
         entries[`${outName}/index`] = `src/${file}`;
     }
