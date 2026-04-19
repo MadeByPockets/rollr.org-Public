@@ -70,6 +70,7 @@ export function TablePageLayout(props: TablePageLayoutProps) {
                 onTagChange={t => pendingEdits.current.tags = t}
                 initialTagIDs={currentTagIds}
                 allTags={allTags.filter(t => t.appliesTo.tables)}
+                allowEditingTitles={true}
             />
         );
 
@@ -270,23 +271,6 @@ const renderTags = function (
                         }
                     }}>Edit Tags...</Button>
                 : "")}
-        </Grid>
-    );
-};
-
-const renderEditableTags = function (
-    selectedTags: Tag[],
-    allTags: Tag[],
-    onToggleTag: (tagId: number) => void
-): JSX.Element {
-    return (
-        <Grid size={{ xs: 12 }} sx={{ pb: 1.5 }}>
-            <TagEditor
-                title="Table Tags"
-                possibleTags={allTags.filter((tag) => tag.appliesTo?.tables)}
-                selectedTags={selectedTags}
-                onToggleTag={onToggleTag}
-            />
         </Grid>
     );
 };
