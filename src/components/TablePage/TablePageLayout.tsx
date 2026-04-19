@@ -52,6 +52,10 @@ export function TablePageLayout(props: TablePageLayoutProps) {
         setIsTableInEditMode(false);
     };
 
+    /*
+     * This is a simple profanity filter that replaces any instance of common slurs with the word "dudes". It's not meant to be comprehensive,
+     *  just to catch some of the more common and egregious cases. The regex is case-insensitive and looks for whole words only.
+     */
     const clean = (text: string) => text.replaceAll(
         /\b(n[i1!]g+(er|a|e)s?|f[a@]g|f[a@]g+[o0]ts?|k[i1!]k[e3]s?|ch[i1!]nks?|w[e3]tb[a@]cks?|r[a@]gh[e3][a@]ds?|t[o0]w[e3]lh[e3][a@]ds?|r[e3]t[a@]rd(ed|s)?|c[o0][o0]ns?|tr[a@]nn(y|i[e3]s?)|g[o0][o0]ks?)\b/gi,
         "dudes");
