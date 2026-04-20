@@ -32,8 +32,7 @@ const EventResultCard: React.FC<EventResultCardProps> = ({
     try {
       const date = new Date(dateString);
       return date.toLocaleDateString('en-US', options);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {
+    } catch (__) {
       return dateString; // Fallback to the original string if parsing fails
     }
   };

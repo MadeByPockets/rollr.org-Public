@@ -7,6 +7,7 @@ import Grid from "@mui/material/Grid";
 import {renderTagsFromIds} from "@/components/shared/TagComponents";
 import type { Player } from "@/types/player";
 import type { Tag } from "@/types/tag";
+import { DEFAULT_PROFILE_PIC } from "@/data/values";
 
 export type PlayerHighlightsCardProps = {
     addToTable?: (player: Player) => void;
@@ -36,7 +37,7 @@ export const PlayerHighlightsCard = function(props: PlayerHighlightsCardProps) {
                 <Grid container spacing={2} direction="column">
                     <Grid container direction="row">
                         <Grid>
-                            <Image alt={player.username + "'s profile pic"} height={64} src={player.miniPic || ""} width={64} />
+                            <Image alt={player.username + "'s profile pic"} height={64} src={player.miniPic || DEFAULT_PROFILE_PIC} width={64} />
                         </Grid>
                         <Grid>
                             <Typography variant="h5">{player.username}</Typography>
@@ -75,7 +76,7 @@ export const DMHighlightsCard = function({canEdit, player, allTags}:{canEdit: bo
                     </Grid>
                     <Grid container direction="row">
                         <Grid>
-                            <Image alt={player.username + "'s profile pic"} height={120} src={player.imageUrl ? player.imageUrl : ""} width={256} />
+                            <Image alt={player.username + "'s profile pic"} height={120} src={player.imageUrl || DEFAULT_PROFILE_PIC} width={256} />
                         </Grid>
                         <Grid>{renderTagsFromIds(player.tags, allTags)}</Grid>
                         <Typography>{player.description}</Typography>

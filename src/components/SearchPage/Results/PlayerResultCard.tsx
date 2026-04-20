@@ -1,6 +1,7 @@
 import React from 'react';
 import Avatar from '@mui/material/Avatar';
 import { SearchResultItem } from '@/types/search';
+import { DEFAULT_PROFILE_PIC } from '@/data/values';
 import BaseSearchResultCard, { BaseSearchResultCardProps } from './BaseSearchResultCard';
 import { Tag } from "@/types/tag";
 
@@ -44,7 +45,7 @@ const PlayerResultCard: React.FC<PlayerResultCardProps> = ({
   // Create avatar for use as icon
   const playerIcon = (
     <Avatar 
-      src={result.imageUrl} 
+      src={result.imageUrl || DEFAULT_PROFILE_PIC}
       alt={result.title}
       sx={{ 
         width: 40, 
