@@ -88,7 +88,6 @@ export function TablePageLayout(props: TablePageLayoutProps) {
         <Card
             sx={{
                 backgroundColor: isTableInEditMode ? "lightsalmon" : "white",
-                borderRadius: "5%",
                 p: 2,
                 boxShadow: "0px 8px 15px rgba(25, 118, 210, 0.3)",
             }}
