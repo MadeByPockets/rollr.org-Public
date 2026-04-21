@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Card, CardMedia, CardContent, Typography } from "@mui/material";
-import { ProfilePictureSettings } from "@/data/values";
+import {DEFAULT_PROFILE_PIC, ProfilePictureSettings} from "../../data/values";
 
 export type PlayerDisplayProps = {
     profilePicture: string | null;
@@ -11,16 +11,19 @@ export type PlayerDisplayProps = {
     preferredPronouns: string | null;
 };
 
-const PlayerDisplayCard: React.FC<PlayerDisplayProps> = ({ profilePicture, username, bio, preferredPronouns }) => {
-    const defaultImg = "/man-walking-silhouette-clipart.jpg";
-    const [imageSrc, setImageSrc] = useState<string>(defaultImg);
-    const { aspectRatio } = ProfilePictureSettings;
+const PlayerDisplayCard: React.FC<PlayerDisplayProps> = ({
+                                                             profilePicture,
+                                                             username,
+                                                             bio,
+                                                             preferredPronouns,
+                                                         }) => {
+    const [imageSrc, setImageSrc] = useState<string>(DEFAULT_PROFILE_PIC);
 
     useEffect(() => {
         async function validateImage() {
-            const newImage = profilePicture || defaultImg;
+            const newImage = profilePicture || DEFAULT_PROFILE_PIC;
             if (!profilePicture) {
-                setImageSrc(defaultImg);
+                setImageSrc(DEFAULT_PROFILE_PIC);
                 return;
             }
 
@@ -32,7 +35,7 @@ const PlayerDisplayCard: React.FC<PlayerDisplayProps> = ({ profilePicture, usern
             };
 
             img.onerror = () => {
-                setImageSrc(defaultImg);
+                setImageSrc(DEFAULT_PROFILE_PIC);
             };
         }
 

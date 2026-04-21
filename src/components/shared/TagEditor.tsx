@@ -1,15 +1,12 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
-import Autocomplete from "@mui/material/Autocomplete";
+import React, { useMemo } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import Grid from "@mui/material/Grid";
-import Popper, { PopperProps } from "@mui/material/Popper";
-import TextField from "@mui/material/TextField";
 import type { Tag } from "@/types/tag";
-import Chip from "@/components/shared/Chip";
+import {TagSelector} from "@/components/TablePage/EditComponents/TagSelector";
 
 export interface TagEditorProps {
   title?: string;
@@ -19,24 +16,26 @@ export interface TagEditorProps {
 }
 
 export function TagEditor({
-  title = "Tags",
+  title,
   selectedTags,
   possibleTags,
   onToggleTag,
 }: TagEditorProps) {
-  const [inputValue, setInputValue] = useState("");
   const selectedIds = useMemo(() => selectedTags.map((tag) => tag.id), [selectedTags]);
 
-  const options = useMemo(
-    () => possibleTags.map((tag) => ({ value: tag.id, label: tag.label })),
-    [possibleTags]
-  );
+  const onTagChange = (newSelectedIds: number[]) => {
+    const addedTags = newSelectedIds.filter((id) => !selectedIds.includes(id));
+    const removedTags = selectedIds.filter((id) => !newSelectedIds.includes(id));
+
+    addedTags.forEach((id) => onToggleTag(id));
+    removedTags.forEach((id) => onToggleTag(id));
+  }
 
   return (
     <Grid container>
       <Grid size={{ xs: 12 }}>
         <Card>
-          <CardHeader
+          {title ? (<CardHeader
             title={title}
             style={{
               background: "linear-gradient(135deg, rgba(25, 118, 210, 0.8), rgba(25, 118, 210, 1))",
@@ -44,71 +43,12 @@ export function TagEditor({
               fontSize: "1.5rem",
               textShadow: "0px 3px 6px rgba(0, 0, 0, 0.5)",
             }}
-          />
+          />) : ""}
           <CardContent>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {selectedTags.map((tag) => (
-                <Chip
-                  key={tag.id}
-                  tag={tag}
-                  removeCallback={() => onToggleTag(tag.id)}
-                />
-              ))}
-            </div>
-            <Grid container spacing={3}>
-              <Grid sx={{ marginTop: 3, width: "100%" }}>
-                <Autocomplete
-                  key={selectedIds.join("-")}
-                  options={options}
-                  filterOptions={(availableOptions, state) =>
-                    availableOptions
-                      .filter(
-                        (option) =>
-                          !selectedIds.includes(option.value) &&
-                          option.label.toLowerCase().includes(state.inputValue.toLowerCase())
-                      )
-                      .slice(0, 3)
-                  }
-                  value={null}
-                  inputValue={inputValue}
-                  onInputChange={(event, newInputValue) => {
-                    if (event && event.type === "change") {
-                      setInputValue(newInputValue);
-                    }
-                  }}
-                  onChange={(event, newValue) => {
-                    if (newValue) {
-                      onToggleTag(newValue.value);
-                    }
-                    setInputValue("");
-                  }}
-                  slots={{ popper: CustomPopper }}
-                  renderInput={(params) => <TextField {...params} label="Select Tags" />}
-                />
-              </Grid>
-            </Grid>
+            <TagSelector initialTagIDs={selectedIds} allTags={possibleTags} onTagChange={onTagChange} />
           </CardContent>
         </Card>
       </Grid>
     </Grid>
   );
 }
-
-const CustomPopper = (props: PopperProps) => {
-  return (
-    <Popper
-      {...props}
-      modifiers={[
-        {
-          name: "preventOverflow",
-          options: { boundary: "viewport" },
-        },
-        {
-          name: "offset",
-          options: { offset: [0, -10] },
-        },
-      ]}
-      placement="top-start"
-    />
-  );
-};

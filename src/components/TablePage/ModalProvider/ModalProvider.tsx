@@ -1,8 +1,15 @@
 "use client";
 
 import React, { ReactNode, useState } from "react";
-import { ModalContext } from './ModalContext';
-import Modal from "@/components/shared/Modal";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import { ModalContext, ModalOptions } from '@/components';
+import {Box} from "@mui/material";
+import DialogTitle from "@mui/material/DialogTitle";
 
 type ModalProviderProps = {
   children: ReactNode;
@@ -10,18 +17,46 @@ type ModalProviderProps = {
 
 export const ModalProvider = ({ children }: ModalProviderProps) => {
   const [modalContent, setModalContent] = useState<null | ReactNode>(null);
+  const [displayModal, setDisplayModal] = useState(false);
+  const [title, setTitle] = useState("");
+  const [options, setOptions] = useState<ModalOptions>({});
 
-  const showModal = (content: ReactNode) => setModalContent(content);
-  const hideModal = () => setModalContent(null);
+  const showModal = (content: ReactNode, title: string, opts?: ModalOptions) => {
+    setModalContent(content);
+    setTitle(title);
+    setOptions(opts ?? {});
+    setDisplayModal(true);
+  }
+  const hideModal = () => {
+    setDisplayModal(false);
+  };
 
   return (
     <ModalContext.Provider value={{ showModal, hideModal }}>
       {children}
-      {modalContent && (
-        <Modal onClose={hideModal}>
+      <Dialog open={displayModal} onClose={hideModal} sx={{height: "85%"}}>
+        <Box>
+          <DialogTitle sx={{marginRight: '20px', minWidth: '400px'}}>{title}</DialogTitle>
+          <IconButton
+            aria-label="close"
+            onClick={hideModal}
+            sx={{ position: 'absolute', right: 8, top: 8 }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </Box>
+        <DialogContent sx={{paddingTop: 0}}>
           {modalContent}
-        </Modal>
-      )}
+        </DialogContent>
+        {(options.acceptText || options.onAccept) && (
+          <DialogActions>
+            <Button variant="contained" onClick={() => { hideModal(); options.onAccept?.(); }}>
+              {options.acceptText ?? "OK"}
+            </Button>
+            <Button onClick={() => { hideModal(); options.onCancel?.(); }}>Cancel</Button>
+          </DialogActions>
+        )}
+      </Dialog>
     </ModalContext.Provider>
   );
 }

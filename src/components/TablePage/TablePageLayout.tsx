@@ -1,39 +1,103 @@
 "use client";
 
-import { JSX, useEffect, useMemo, useRef, useState } from "react";
-import { Box, Card, CardContent, CardHeader, Typography } from "@mui/material";
+import React, {JSX, useEffect, useMemo, useRef, useState} from "react";
+import {Box, Button, Card, CardContent, CardHeader, Typography} from "@mui/material";
 import Grid from "@mui/material/Grid";
 import AutoResizingTextarea from "@/components/shared/AutoResizingTextarea";
-import { TagEditor, generateTagsDisplay } from "@/components/shared";
-import { DMHighlightsCard, PlayerHighlightsCard } from "@/components/TablePage/players/PlayerHighlightsCard";
+import {generateTagsDisplay, TagEditor} from "@/components/shared";
+import {DMHighlightsCard, PlayerHighlightsCard} from "@/components/TablePage/players/PlayerHighlightsCard";
 import TableActionsBar from "@/components/TablePage/TableActionsBar";
-import type { Player } from "@/types/player";
-import type { TableRecord } from "@/types/tables";
-import type { Tag } from "@/types/tag";
-import type { TablePageLayoutProps } from "@/components/TablePage/types";
+import type {Player} from "@/types/player";
+import type {TableRecord} from "@/types/tables";
+import type {Tag} from "@/types/tag";
+import type {TablePageLayoutProps} from "@/components/TablePage/types";
+import {useModal} from "@/components";
+import EditIcon from '@mui/icons-material/Edit';
+import {EditTableDetailsForm} from "@/components/TablePage/EditComponents/EditTableDetailsForm";
+import Chip from "../shared/Chip";
 
 export function TablePageLayout(props: TablePageLayoutProps) {
-    const { allTags, dungeonMaster, onDeleteTable, onJoinWaitlist, onLeaveTable, onSaveDraft, players, table, tableStatus, waitlistPlayers } = props;
+    const { hideModal, showModal } = useModal();
+
+    const { allTags, dungeonMaster, onDeleteTable, onJoinWaitlist, onLeaveTable, onSaveDraft, players, table, tableStatus, waitlistPlayers, startWithEditTitle } = props;
+    const canEdit = tableStatus.isOwner;
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const [isTableInEditMode, setIsTableInEditMode] = useState(false);
 
+    const [currentTitle, setCurrentTitle] = useState(table.title);
+    const [currentSubtitle, setCurrentSubtitle] = useState(table.shortDescription);
     const [currentDescription, setCurrentDescription] = useState(table.description);
+
     const [currentDungeonMaster, setCurrentDungeonMaster] = useState(dungeonMaster);
     const [currentPlayers, setCurrentPlayers] = useState(players);
-    const [currentShortDescription, setCurrentShortDescription] = useState(table.shortDescription);
-    const [currentTitle, setCurrentTitle] = useState(table.title);
     const [currentWaitlistPlayers, setCurrentWaitlistPlayers] = useState(waitlistPlayers);
     const [currentTagIds, setCurrentTagIds] = useState<number[]>(table.tags ?? []);
 
+    const pendingEdits = useRef({ title: currentTitle, subtitle: currentSubtitle, tags: currentTagIds });
+
+    const handleSaveTable = (tableData: Partial<TableRecord> = {}) => {
+        const nextDraft: TableRecord = {
+            ...table,
+            description: currentDescription,
+            dungeonMaster: String(currentDungeonMaster.id),
+            players: currentPlayers.map((player) => player.id),
+            shortDescription: currentSubtitle,
+            tags: currentTagIds,
+            title: currentTitle,
+            waitlist: currentWaitlistPlayers.map((player) => player.id),
+            ...tableData,
+        };
+
+        void onSaveDraft?.(nextDraft);
+        setIsTableInEditMode(false);
+    };
+
+    /*
+     * This is a simple profanity filter that replaces any instance of common slurs with the word "dudes". It's not meant to be comprehensive,
+     *  just to catch some of the more common and egregious cases. The regex is case-insensitive and looks for whole words only.
+     */
+    const clean = (text: string) => text.replaceAll(
+        /\b(n[i1!]g+(er|a|e)s?|f[a@]g|f[a@]g+[o0]ts?|k[i1!]k[e3]s?|ch[i1!]nks?|w[e3]tb[a@]cks?|r[a@]gh[e3][a@]ds?|t[o0]w[e3]lh[e3][a@]ds?|r[e3]t[a@]rd(ed|s)?|c[o0][o0]ns?|tr[a@]nn(y|i[e3]s?)|g[o0][o0]ks?)\b/gi,
+        "dudes");
+
+    const editTableDetails = () => {
+        if (!canEdit) { return }
+        pendingEdits.current = { title: currentTitle, subtitle: currentSubtitle, tags: currentTagIds
+    };
+
+        const editContent = (
+            <EditTableDetailsForm
+                initialTitle={currentTitle}
+                initialSubtitle={currentSubtitle}
+                onTitleChange={t => pendingEdits.current.title = t}
+                onSubtitleChange={s => pendingEdits.current.subtitle = s}
+                onTagChange={t => pendingEdits.current.tags = t}
+                initialTagIDs={currentTagIds}
+                allTags={allTags.filter(t => t.appliesTo.tables)}
+                allowEditingTitles={true}
+            />
+        );
+
+        showModal(editContent, "Edit Table Details", {
+            acceptText: "Save",
+            onAccept: () => {
+                setCurrentTitle(clean(pendingEdits.current.title));
+                setCurrentSubtitle(clean(pendingEdits.current.subtitle));
+                setCurrentTagIds(pendingEdits.current.tags);
+                handleSaveTable({
+                    title: clean(pendingEdits.current.title),
+                    shortDescription: clean(pendingEdits.current.subtitle),
+                    tags: pendingEdits.current.tags,
+                });
+            }
+        });
+    }
+
     useEffect(() => {
-        setCurrentDescription(table.description);
-        setCurrentDungeonMaster(dungeonMaster);
-        setCurrentPlayers(players);
-        setCurrentShortDescription(table.shortDescription);
-        setCurrentTitle(table.title);
-        setCurrentWaitlistPlayers(waitlistPlayers);
-        setCurrentTagIds(table.tags ?? []);
-    }, [dungeonMaster, players, table, waitlistPlayers]);
+        if(startWithEditTitle) {
+            editTableDetails();
+        }
+    });
 
     const currentTags = useMemo(
         () => allTags.filter((tag) => currentTagIds.includes(tag.id)),
@@ -68,22 +132,6 @@ export function TablePageLayout(props: TablePageLayoutProps) {
         );
     };
 
-    const handleSaveTable = () => {
-        const nextDraft: TableRecord = {
-            ...table,
-            description: currentDescription,
-            dungeonMaster: String(currentDungeonMaster.id),
-            players: currentPlayers.map((player) => player.id),
-            shortDescription: currentShortDescription,
-            tags: currentTagIds,
-            title: currentTitle,
-            waitlist: currentWaitlistPlayers.map((player) => player.id),
-        };
-
-        void onSaveDraft?.(nextDraft);
-        setIsTableInEditMode(false);
-    };
-
     return (
         <Card
             sx={{
@@ -106,15 +154,11 @@ export function TablePageLayout(props: TablePageLayoutProps) {
                     }}
                 >
                     <Box>
-                        {isTableInEditMode ? (
-                            <input
-                                onChange={(e) => setCurrentTitle(e.target.value)}
-                                style={{ backgroundColor: '#fffbea' }}
-                                tabIndex={0}
-                                type="text"
-                                value={currentTitle}
-                            />
-                        ) : (
+                        <Box
+                            className={`flex items-center gap-1 ${canEdit ? "cursor-pointer" : ""}`}
+                            sx={{"&:hover .edit-icon": { opacity: 1 } }}
+                            onClick={editTableDetails}
+                        >
                             <CardHeader
                                 title={currentTitle}
                                 sx={{
@@ -125,27 +169,24 @@ export function TablePageLayout(props: TablePageLayoutProps) {
                                     },
                                 }}
                             />
-                        )}
+                            {canEdit ? (<EditIcon className="edit-icon text-white" sx={{ opacity: 0, transition: "opacity 0.2s" }} />) : ""}
+                        </Box>
+                    </Box>
+                    <Box
+                        className={`flex items-center gap-1 ${canEdit ? "cursor-pointer" : ""}`}
+                        sx={{"&:hover .edit-icon": { opacity: 1 } }}
+                        onClick={editTableDetails}
+                    >
+                        <Typography
+                            sx={{ color: "white", opacity: 0.95 }}
+                        >
+                            {currentSubtitle}
+                        </Typography>
+                        {canEdit ? (<EditIcon className="edit-icon text-white" sx={{ opacity: 0, transition: "opacity 0.2s", fontSize: "medium" }} />) : ""}
                     </Box>
 
-                    {isTableInEditMode ? (
-                        <input
-                            onChange={(e) => setCurrentShortDescription(e.target.value)}
-                            style={{ backgroundColor: '#fffbea' }}
-                            tabIndex={0}
-                            type="text"
-                            value={currentShortDescription}
-                        />
-                    ) : (
-                        <Typography sx={{ color: "white", opacity: 0.95 }}>
-                            {currentShortDescription}
-                        </Typography>
-                    )}
-
-                    <Grid container>
-                        {isTableInEditMode
-                            ? renderEditableTags(currentTags, allTags, handleToggleTag)
-                            : renderTags(currentTagIds, allTags)}
+                    <Grid container onClick={editTableDetails} className={`${canEdit ? "cursor-pointer" : ""}`}>
+                        {renderTags(currentTagIds, allTags, canEdit)}
                     </Grid>
 
                     <TableActionsBar
@@ -211,7 +252,8 @@ export function TablePageLayout(props: TablePageLayoutProps) {
 
 const renderTags = function (
     tags: number[] | undefined,
-    allTags: Tag[] | undefined
+    allTags: Tag[] | undefined,
+    canEdit: boolean
 ): JSX.Element {
     if (!tags || !allTags) {
         return <></>;
@@ -220,27 +262,21 @@ const renderTags = function (
         <Grid container spacing={1} sx={{ pb: 1.5 }}>
             {tags.map((tagId) => {
                 const tag = allTags.find((potentialTag) => tagId === potentialTag.id);
-                return tag ? generateTagsDisplay(tag) : <></>;
+                return tag ? <Chip tag={tag} key={tag.id}  /> : <></>;
             })}
-        </Grid>
-    );
-};
-
-const renderEditableTags = function (
-    selectedTags: Tag[],
-    allTags: Tag[],
-    onToggleTag: (tagId: number) => void
-): JSX.Element {
-    return (
-        <Grid size={{ xs: 12 }} sx={{ pb: 1.5 }}>
-            <TagEditor
-                title="Table Tags"
-                possibleTags={allTags.filter((tag) => tag.appliesTo?.tables)}
-                selectedTags={selectedTags}
-                onToggleTag={onToggleTag}
-            />
+            {(canEdit ? <Button variant={"text"}
+                    className="inline-block text-sm px-3 py-1font-outlined m-0.5 font-stretch-105% font-sans"
+                    sx={{
+                        color: "white",
+                        textShadow: "black 1.5px 1px 1.5px",
+                        '&:hover': {
+                            background: '#889'
+                        }
+                    }}>Edit Tags...</Button>
+                : "")}
         </Grid>
     );
 };
 
 export default TablePageLayout;
+

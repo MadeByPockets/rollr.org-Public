@@ -42,6 +42,66 @@ export const MockedTags: Tag[] = [
       tables: true
     }
   },
+  {
+    id: 14,
+    label: 'Pathfinder 2e',
+    color: '#E05A00',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: true
+    }
+  },
+  {
+    id: 15,
+    label: 'Warhammer 40K',
+    color: '#8B0000',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: true
+    }
+  },
+  {
+    id: 16,
+    label: 'Pokemon TCG',
+    color: '#FFCC00',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: true
+    }
+  },
+  {
+    id: 17,
+    label: 'Dungeons & Dragons',
+    color: '#C0392B',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: true
+    }
+  },
+  {
+    id: 18,
+    label: 'Vampire: The Masquerade',
+    color: '#6C0057',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: true
+    }
+  },
+  {
+    id: 19,
+    label: 'Starfinder',
+    color: '#1A6BB5',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: true
+    }
+  },
   // Play style tags
   {
     id: 5,
@@ -81,6 +141,66 @@ export const MockedTags: Tag[] = [
       players: true,
       events: true,
       tables: false
+    }
+  },
+  {
+    id: 20,
+    label: 'Hardcore',
+    color: '#FF2200',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: false
+    }
+  },
+  {
+    id: 21,
+    label: 'Narrative Focused',
+    color: '#9B59B6',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: false
+    }
+  },
+  {
+    id: 22,
+    label: 'Combat Heavy',
+    color: '#E74C3C',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: false
+    }
+  },
+  {
+    id: 23,
+    label: 'Puzzle Focused',
+    color: '#1ABC9C',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: false
+    }
+  },
+  {
+    id: 24,
+    label: 'One-Shot',
+    color: '#F39C12',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: true
+    }
+  },
+  {
+    id: 25,
+    label: 'Long Campaign',
+    color: '#27AE60',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: true
     }
   },
   // Social indicator tags
@@ -124,14 +244,94 @@ export const MockedTags: Tag[] = [
       tables: true
     }
   },
-    {
-        id:13,
-        label: 'Youmacon 2025',
-        color: '#FFC300',
-        appliesTo: {
-            players: true,
-            events: true,
-            tables: true,
-        }
+  {
+    id: 26,
+    label: 'Adults Only',
+    color: '#7F8C8D',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: true
     }
+  },
+  {
+    id: 27,
+    label: 'Accessibility Friendly',
+    color: '#2ECC71',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: true
+    }
+  },
+  {
+    id: 28,
+    label: 'Online Play',
+    color: '#3498DB',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: true
+    }
+  },
+  {
+    id: 29,
+    label: 'In-Person Only',
+    color: '#E67E22',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: true
+    }
+  },
+  {
+    id: 30,
+    label: 'Veterans Welcome',
+    color: '#16A085',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: true
+    }
+  },
+  {
+    id:13,
+    label: 'Youmacon 2025',
+    color: '#FFC300',
+    appliesTo: {
+        players: true,
+        events: true,
+        tables: true,
+    }
+  },
+  {
+    id: 31,
+    label: 'GenCon 2025',
+    color: '#8E44AD',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: true
+    }
+  },
+  {
+    id: 32,
+    label: 'DragonCon 2025',
+    color: '#2980B9',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: true
+    }
+  },
+  {
+    id: 33,
+    label: 'PAX Unplugged 2025',
+    color: '#D35400',
+    appliesTo: {
+      players: true,
+      events: true,
+      tables: true
+    }
+  },
 ];
