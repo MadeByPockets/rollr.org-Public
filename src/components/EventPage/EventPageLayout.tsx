@@ -4,7 +4,7 @@ import EventBanner from "@/components/EventPage/EventBanner";
 import Grid from "@mui/material/Grid";
 import EventBasicInfo from "@/components/EventPage/EventBasicInfo";
 import EventTablesCard from "@/components/EventPage/EventTablesCard";
-import type { EventDetails, EventEditContextValue } from "@/types/event";
+import type { EventDetails } from "@/types/event";
 import type { Tag } from "@/types/tag";
 import { EventEditProvider } from "@/components/EventPage/editMode/EventEditContext";
 
