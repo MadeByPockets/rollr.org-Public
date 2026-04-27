@@ -1,7 +1,7 @@
 import {MockedTags} from "@/mocks/Tags";
-import {EventDB} from "@/types/event";
+import {EventDetails} from "@/types/event";
 
-export const MockedEventObjects : EventDB[] = [
+export const MockedEventObjects : EventDetails[] = [
     {
         id: 1,
         title: "Youmacon 2025",

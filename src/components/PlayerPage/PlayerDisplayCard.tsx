@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Card, CardMedia, CardContent, Typography } from "@mui/material";
-import {DEFAULT_PROFILE_PIC, ProfilePictureSettings} from "../../data/values";
+import {DEFAULT_PROFILE_PIC, ProfilePictureSettings} from "@/data/values";
 
 export type PlayerDisplayProps = {
     profilePicture: string | null;
@@ -60,7 +60,7 @@ const PlayerDisplayCard: React.FC<PlayerDisplayProps> = ({
                 image={imageSrc}
                 alt={`${username}'s Profile Picture`}
                 sx={{
-                    aspectRatio: aspectRatio,
+                    aspectRatio: ProfilePictureSettings.aspectRatio,
                     height: "auto", // Updates to maintain aspect ratio and fill space nicely
                     width: "100%",
                     objectFit: "cover",

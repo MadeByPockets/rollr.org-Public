@@ -1,8 +1,8 @@
 "use client"
 import React, { useState } from "react";
 import EventPageLayout from "@/components/EventPage/EventPageLayout";
-import { MockedEventObjects } from "@/mocks/EventDB";
-import { EventDB } from "@/types/event";
+import { MockedEventObjects } from "@/mocks/EventDetails";
+import { EventDetails } from "@/types/event";
 import {
     MockedSearchResultsTablesOnly,
     MockedSearchResultsPlayersOnly,
@@ -19,13 +19,13 @@ import {
 
 const EventPage = () => {
     const event = MockedEventObjects[0];
-    const [eventPatch, setEventPatch] = useState<Partial<EventDB>>({});
-    const [pendingPatch, setPendingPatch] = useState<Partial<EventDB> | null>(null);
+    const [eventPatch, setEventPatch] = useState<Partial<EventDetails>>({});
+    const [pendingPatch, setPendingPatch] = useState<Partial<EventDetails> | null>(null);
 
     // Merging logic happens at the page level
     const mergedEvent = { ...event, ...eventPatch };
 
-    const updateEvent = (patch: Partial<EventDB>) => {
+    const updateEvent = (patch: Partial<EventDetails>) => {
         setPendingPatch(patch);
     };
 

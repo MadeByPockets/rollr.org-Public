@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useEventEdit } from "./editMode/EventEditContext";
-import type { EventDB } from "../../types/event";
+import type { EventDetails } from "../../types/event";
 import EventBannerEdit from "./editMode/EventBannerEdit";
 import { generateTagsDisplay } from "@/components/shared/TagComponents";
 import { Box, Button } from "@mui/material";
@@ -10,19 +10,19 @@ export type EventBannerProps = {
     attendees: number;
     numGames: number;
     // These are now optional as they are taken from context if not provided
-    bannerUrl?: EventDB["bannerUrl"];
-    links?: EventDB["links"];
-    title?: EventDB["title"];
-    eventTag?: EventDB["eventTag"];
+    bannerUrl?: EventDetails["bannerUrl"];
+    links?: EventDetails["links"];
+    title?: EventDetails["title"];
+    eventTag?: EventDetails["eventTag"];
     bannerColor?: string;
 };
 
 export type EventBannerEditPayload = {
-    bannerUrl: EventDB["bannerUrl"];
-    bannerColor?: EventDB["bannerColor"];
-    links: EventDB["links"];
-    title: EventDB["title"];
-    eventTag: EventDB["eventTag"];
+    bannerUrl: EventDetails["bannerUrl"];
+    bannerColor?: EventDetails["bannerColor"];
+    links: EventDetails["links"];
+    title: EventDetails["title"];
+    eventTag: EventDetails["eventTag"];
 };
 
 export default function EventBanner(props: EventBannerProps) {
@@ -76,11 +76,11 @@ export default function EventBanner(props: EventBannerProps) {
 }
 
 type EventBannerViewProps = {
-    bannerUrl: EventDB["bannerUrl"];
-    links: EventDB["links"];
+    bannerUrl: EventDetails["bannerUrl"];
+    links: EventDetails["links"];
     bannerColor?: string;
     title: string;
-    eventTag: EventDB["eventTag"];
+    eventTag: EventDetails["eventTag"];
     attendees: number;
     numGames: number;
     isOwner: boolean;

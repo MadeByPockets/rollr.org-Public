@@ -1,9 +1,9 @@
 "use client"
 import React, { createContext, useContext, ReactNode, useState, useEffect } from "react";
-import { EventEditContextValue, EventDB } from "@/types/event";
+import { EventEditContextValue, EventDetails } from "@/types/event";
 
 type ExtendedEventEditContextValue = EventEditContextValue & {
-    event: EventDB | null;
+    event: EventDetails | null;
 };
 
 /**
@@ -27,7 +27,7 @@ const EventEditContext = createContext<ExtendedEventEditContextValue>(defaultVal
  */
 type EventEditProviderProps = {
     value?: Partial<EventEditContextValue>;
-    initialEvent: EventDB;
+    initialEvent: EventDetails;
     children: ReactNode;
 };
 
@@ -39,14 +39,14 @@ export function EventEditProvider({
                                       initialEvent,
                                       children,
                                   }: EventEditProviderProps) {
-    const [event, setEvent] = useState<EventDB>(initialEvent);
+    const [event, setEvent] = useState<EventDetails>(initialEvent);
 
     // Update internal state if initialEvent changes (e.g. from parent fetch)
     useEffect(() => {
         setEvent(initialEvent);
     }, [initialEvent]);
 
-    const handleUpdateEvent = async (patch: Partial<EventDB>) => {
+    const handleUpdateEvent = async (patch: Partial<EventDetails>) => {
         if (value?.updateEvent) {
             const result = value.updateEvent(patch);
             

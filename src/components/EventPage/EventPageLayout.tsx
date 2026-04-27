@@ -4,14 +4,14 @@ import EventBanner from "@/components/EventPage/EventBanner";
 import Grid from "@mui/material/Grid";
 import EventBasicInfo from "@/components/EventPage/EventBasicInfo";
 import EventTablesCard from "@/components/EventPage/EventTablesCard";
-import type { EventDB, EventEditContextValue } from "@/types/event";
+import type { EventDetails, EventEditContextValue } from "@/types/event";
 import type { Tag } from "@/types/tag";
 import { EventEditProvider } from "@/components/EventPage/editMode/EventEditContext";
 
 export type EventPageProps = {
-    mergedEvent: EventDB;
+    mergedEvent: EventDetails;
     isOwner: boolean;
-    updateEvent?: (patch: Partial<EventDB>) => void;
+    updateEvent?: (patch: Partial<EventDetails>) => void;
     updateImages?: () => void;
     attendees: number;
     numGames: number;
