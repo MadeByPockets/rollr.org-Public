@@ -8,7 +8,9 @@ import TypeFilter from './Filters/TypeFilter';
 import TagsFilter from './Filters/TagsFilter';
 import TextSearchCard from './Filters/TextSearchCard';
 import ExpiredTablesFilter from './Filters/ExpiredTablesFilter';
+import DistanceFilter from './Filters/DistanceFilter';
 import { Tag } from '@/types/tag';
+import { DistanceOption } from '@/types/search';
 
 interface FiltersContainerProps {
   initialSelectedTypes?: string[];
@@ -22,6 +24,8 @@ interface FiltersContainerProps {
     titleOnly: boolean;
   };
   includeExpiredTables?: boolean;
+  distance?: number;
+  distances: DistanceOption[];
   onTypeChange?: (selectedTypes: string[]) => void;
   onTagChange?: (selectedTags: {
     mustHave: number[];
@@ -30,6 +34,7 @@ interface FiltersContainerProps {
   }) => void;
   onTextSearchChange?: (textSearch: { query: string; titleOnly: boolean }) => void;
   onIncludeExpiredTablesChange?: (include: boolean) => void;
+  onDistanceChange?: (distance: number) => void;
   onSubmit?: () => void;
   tags: Tag[];
   searchTypes: { id: string; label: string }[];
@@ -43,10 +48,13 @@ const FiltersContainer: React.FC<FiltersContainerProps> = ({
   initialSelectedTags,
   initialTextSearch,
   includeExpiredTables = false,
+  distance,
+  distances,
   onTypeChange,
   onTagChange,
   onTextSearchChange,
   onIncludeExpiredTablesChange,
+  onDistanceChange,
   onSubmit,
   tags,
   searchTypes
@@ -74,6 +82,15 @@ const FiltersContainer: React.FC<FiltersContainerProps> = ({
         types={searchTypes}
         initialSelectedTypes={initialSelectedTypes}
         onChange={handleTypeChange}
+      />
+
+      <Divider sx={{ my: 2 }} />
+
+      {/* Distance Filter */}
+      <DistanceFilter
+        distances={distances}
+        selectedDistance={distance}
+        onChange={onDistanceChange || (() => {})}
       />
 
       <Divider sx={{ my: 2 }} />

@@ -3,7 +3,7 @@
 import React, { useState, useEffect, Suspense, useMemo } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import SearchPageLayout from '@/components/SearchPage/SearchPageLayout';
-import { SearchResultItem, PaginationData, SearchCriteria } from '@/types/search';
+import { SearchResultItem, PaginationData, SearchCriteria, DistanceOption } from '@/types/search';
 import { MockedTags } from '@/mocks/Tags';
 import { MockedSearchFilters } from '@/mocks/SearchResults';
 import { performSearchAction } from './actions';
@@ -16,6 +16,15 @@ const SearchPageContent = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
+
+  // Define valid distances
+  const validDistances: DistanceOption[] = [
+    { display: '5 miles', value: 5 },
+    { display: '10 miles', value: 10 },
+    { display: '25 miles', value: 25 },
+    { display: '50 miles', value: 50 },
+    { display: '100 miles', value: 100 },
+  ];
 
   // State to store results
   const [results, setResults] = useState<SearchResultItem[]>([]);
@@ -91,6 +100,8 @@ const SearchPageContent = () => {
         initialSelectedTags={currentCriteria.selectedTags}
         initialTextSearch={currentCriteria.textSearch}
         includeExpiredTables={currentCriteria.includeExpiredTables}
+        initialDistance={currentCriteria.distance}
+        distances={validDistances}
     />
   );
 };

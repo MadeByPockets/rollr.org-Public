@@ -33,6 +33,12 @@ export interface SearchCriteria {
     titleOnly: boolean;
   };
   includeExpiredTables: boolean;
+  distance?: number;
+}
+
+export interface DistanceOption {
+  display: string;
+  value: number;
 }
 
 export interface PaginationData {

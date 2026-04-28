@@ -48,8 +48,6 @@ const TypeFilter: React.FC<TypeFilterProps> = ({ types, initialSelectedTypes = [
               <Checkbox 
                 checked={selectedTypes.includes(type.id)}
                 onChange={() => handleTypeChange(type.id)}
-                disabled={type.id === 'event'}
-                title={type.id === 'event' ? 'Coming soon! Currently only player and table search are supported.' : ''}
               />
             }
             label={type.label}

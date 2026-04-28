@@ -34,6 +34,10 @@ export function criteriaToSearchParams(criteria: SearchCriteria, packet: number)
     params.set('showExpired', 'true');
   }
 
+  if (criteria.distance !== undefined) {
+    params.set('distance', criteria.distance.toString());
+  }
+
   if (packet > 1) {
     params.set('page', packet.toString());
   }
@@ -52,6 +56,7 @@ export function searchParamsToCriteria(params: URLSearchParams): { criteria: Sea
   const q = params.get('query') || '';
   const titleOnly = params.get('titleOnly') === 'true';
   const expired = params.get('showExpired') === 'true';
+  const distanceStr = params.get('distance');
   const pStr = params.get('page');
 
   const criteria: SearchCriteria = {
@@ -66,6 +71,7 @@ export function searchParamsToCriteria(params: URLSearchParams): { criteria: Sea
       titleOnly: titleOnly,
     },
     includeExpiredTables: expired,
+    distance: distanceStr ? parseInt(distanceStr, 10) || undefined : undefined,
   };
 
   const packet = pStr ? parseInt(pStr, 10) || 1 : 1;

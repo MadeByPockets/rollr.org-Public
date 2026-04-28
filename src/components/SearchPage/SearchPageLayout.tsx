@@ -8,7 +8,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useMediaQuery, useTheme } from '@mui/material';
 import FiltersContainer from './FiltersContainer';
 import ResultsContainer from './ResultsContainer';
-import { SearchResultItem, PaginationData, SearchCriteria } from '@/types/search';
+import { SearchResultItem, PaginationData, SearchCriteria, DistanceOption } from '@/types/search';
 import { Tag } from '@/types/tag';
 
 interface SearchPageLayoutProps {
@@ -47,6 +47,16 @@ interface SearchPageLayoutProps {
   };
 
   /**
+   * Initial selected distance for the distance filter
+   */
+  initialDistance?: number;
+
+  /**
+   * Array of valid distances to search
+   */
+  distances: DistanceOption[];
+
+  /**
    * Initial text search values
    */
   initialTextSearch?: {
@@ -82,6 +92,11 @@ interface SearchPageLayoutProps {
    * Optional callback for when include expired tables changes
    */
   onIncludeExpiredTablesChange?: (include: boolean) => void;
+
+  /**
+   * Optional callback for when distance changes
+   */
+  onDistanceChange?: (distance: number) => void;
 
   allTags: Tag[];
   validTags: Tag[];
@@ -124,11 +139,13 @@ export default function SearchPageLayout({
     query: '',
     titleOnly: false
   },
-  includeExpiredTables: initialIncludeExpiredTables = false,
+  initialDistance,
+  distances,
   onTypeChange,
   onTagChange,
   onTextSearchChange,
   onIncludeExpiredTablesChange,
+  onDistanceChange,
   onSubmit,
   onResultClick,
   onPacketChange,
@@ -145,7 +162,8 @@ export default function SearchPageLayout({
   const [selectedTypes, setSelectedTypes] = useState<string[]>(initialSelectedTypes);
   const [selectedTags, setSelectedTags] = useState(initialSelectedTags);
   const [textSearch, setTextSearch] = useState(initialTextSearch);
-  const [includeExpiredTables, setIncludeExpiredTables] = useState<boolean>(initialIncludeExpiredTables);
+  const [includeExpiredTables, setIncludeExpiredTables] = useState<boolean>(false);
+  const [distance, setDistance] = useState<number | undefined>(initialDistance);
   
   // Update internal state when props change
   useEffect(() => {
@@ -160,9 +178,10 @@ export default function SearchPageLayout({
     setTextSearch(initialTextSearch);
   }, [initialTextSearch]);
 
+
   useEffect(() => {
-    setIncludeExpiredTables(initialIncludeExpiredTables);
-  }, [initialIncludeExpiredTables]);
+    setDistance(initialDistance);
+  }, [initialDistance]);
 
   // Handle filter changes and sync with props
   const handleTypeChange = (types: string[]) => {
@@ -189,12 +208,18 @@ export default function SearchPageLayout({
     if (onIncludeExpiredTablesChange) onIncludeExpiredTablesChange(include);
   };
 
+  const handleDistanceChange = (dist: number) => {
+    setDistance(dist);
+    if (onDistanceChange) onDistanceChange(dist);
+  };
+
   const handleSubmit = () => {
     const currentCriteria: SearchCriteria = {
       selectedTypes,
       selectedTags,
       textSearch,
-      includeExpiredTables
+      includeExpiredTables,
+      distance
     };
 
     if (onSubmit) {
@@ -239,10 +264,13 @@ export default function SearchPageLayout({
                 initialSelectedTags={selectedTags}
                 initialTextSearch={textSearch}
                 includeExpiredTables={includeExpiredTables}
+                distance={distance}
+                distances={distances}
                 onTypeChange={handleTypeChange}
                 onTagChange={handleTagChange}
                 onTextSearchChange={handleTextSearchChange}
                 onIncludeExpiredTablesChange={handleIncludeExpiredTablesChange}
+                onDistanceChange={handleDistanceChange}
                 onSubmit={handleSubmit}
                 tags={validTags}
                 searchTypes={searchTypes}
