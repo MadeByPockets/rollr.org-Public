@@ -65,7 +65,7 @@ const SearchPageContent = () => {
    */
   const handleSearch = (criteria: SearchCriteria) => {
     const params = criteriaToSearchParams(criteria, 1);
-    router.push(`${pathname}?${params.toString()}`);
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
   /**
@@ -74,11 +74,7 @@ const SearchPageContent = () => {
   const handlePacketChange = (packet: number) => {
     if (!activeCriteria) return;
     const params = criteriaToSearchParams(activeCriteria, packet);
-    router.push(`${pathname}?${params.toString()}`);
-  };
-
-  const handleResultClick = (id: number) => {
-    console.log('Result clicked:', id);
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
   // Get current criteria from search params for initial state of layout
@@ -92,7 +88,6 @@ const SearchPageContent = () => {
         onPacketChange={handlePacketChange}
         isLoading={isLoading}
         onSubmit={handleSearch}
-        onResultClick={handleResultClick} 
         allTags={MockedTags} 
         validTags={MockedTags}
         searchTypes={MockedSearchFilters.types}

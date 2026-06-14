@@ -76,7 +76,7 @@ const FiltersContainer: React.FC<FiltersContainerProps> = ({
   };
 
   return (
-    <Box>
+    <Box component="form" onSubmit={(e: React.FormEvent) => { e.preventDefault(); if (onSubmit) onSubmit(); }}>
       {/* Type Filters */}
       <TypeFilter 
         types={searchTypes}
@@ -130,11 +130,11 @@ const FiltersContainer: React.FC<FiltersContainerProps> = ({
       {/* Submit Button */}
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
         <Button
+          type="submit"
           variant="contained"
           color="primary"
           size="large"
           startIcon={<SearchIcon />}
-          onClick={onSubmit}
           sx={{
             width: '100%',
             py: 1.5,

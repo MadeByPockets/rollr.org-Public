@@ -5,9 +5,10 @@ import { DEFAULT_PROFILE_PIC } from '@/data/values';
 import BaseSearchResultCard, { BaseSearchResultCardProps } from './BaseSearchResultCard';
 import { Tag } from "@/types/tag";
 
-interface PlayerResultCardProps extends BaseSearchResultCardProps {
+interface PlayerResultCardProps extends Omit<BaseSearchResultCardProps, 'onClick'> {
   result: SearchResultItem & { type: 'player' }
   tags: Tag[];
+  onClick?: (id: number) => void;
 }
 
 /**

@@ -7,8 +7,9 @@ import EventIcon from '@mui/icons-material/Event';
 import { SearchResultItem } from '@/types/search';
 import BaseSearchResultCard, { BaseSearchResultCardProps } from './BaseSearchResultCard';
 
-interface EventResultCardProps extends BaseSearchResultCardProps {
+interface EventResultCardProps extends Omit<BaseSearchResultCardProps, 'onClick'> {
   result: SearchResultItem & { type: 'event' };
+  onClick?: (id: number) => void;
 }
 
 /**

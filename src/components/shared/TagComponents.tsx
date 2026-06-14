@@ -16,5 +16,19 @@ export function renderTagsFromIds(ids: number[] | undefined, legalTags: Tag[]) {
         .map((id) => legalTags.find((tag) => tag.id === id))
         .filter((tag): tag is Tag => Boolean(tag));
 
-    return validTags.map((tag) => generateTagsDisplay(tag));
+    // Sort tags: "Organizer Run" first, then "Display Only", then others
+    const sortedTags = [...validTags].sort((a, b) => {
+        const priorityOrder = ["Organizer Run", "Display Only"];
+        const aIndex = priorityOrder.indexOf(a.label);
+        const bIndex = priorityOrder.indexOf(b.label);
+
+        if (aIndex !== -1 && bIndex !== -1) {
+            return aIndex - bIndex;
+        }
+        if (aIndex !== -1) return -1;
+        if (bIndex !== -1) return 1;
+        return 0;
+    });
+
+    return sortedTags.map((tag) => generateTagsDisplay(tag));
 }

@@ -34,17 +34,17 @@ const ResultsContainer: React.FC<ResultsContainerProps> = ({
     );
   }
 
-  const onPlayerClick = (id: number) => {
-    onResultClick?.(id, 'player');
-  }
+  const onPlayerClick = onResultClick ? (id: number) => {
+    onResultClick(id, 'player');
+  } : undefined;
 
-  const onTableClick = (id: number) => {
-    onResultClick?.(id, 'table');
-  }
+  const onTableClick = onResultClick ? (id: number) => {
+    onResultClick(id, 'table');
+  } : undefined;
 
-  const onEventClick = (id: number) => {
-    onResultClick?.(id, 'event');
-  }
+  const onEventClick = onResultClick ? (id: number) => {
+    onResultClick(id, 'event');
+  } : undefined;
 
   const handlePacketChange = (_event: React.ChangeEvent<unknown>, packet: number) => {
     onPacketChange?.(packet);

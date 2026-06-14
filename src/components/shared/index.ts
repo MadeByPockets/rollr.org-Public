@@ -11,3 +11,5 @@ export * from "./NameGenerator";
 export * from "./NextGameCountdown";
 export * from "./TagComponents";
 export * from "./TagEditor";
+export * from "./UserAgreementModal";
+export { default as UserAgreementModal } from "./UserAgreementModal";

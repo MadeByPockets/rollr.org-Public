@@ -119,6 +119,7 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "postcss": "^8.5.12"
+    "postcss": "^8.5.12",
+    "react-markdown": "^10.1.0"
   }
 }

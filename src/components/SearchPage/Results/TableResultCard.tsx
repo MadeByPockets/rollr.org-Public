@@ -9,8 +9,9 @@ import TableRestaurantIcon from '@mui/icons-material/TableRestaurant';
 import { SearchResultItem } from '@/types/search';
 import BaseSearchResultCard, { BaseSearchResultCardProps } from './BaseSearchResultCard';
 
-interface TableResultCardProps extends BaseSearchResultCardProps {
+interface TableResultCardProps extends Omit<BaseSearchResultCardProps, 'onClick'> {
   result: SearchResultItem & { type: 'table' };
+  onClick?: (id: number) => void;
 }
 
 /**

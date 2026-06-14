@@ -3,6 +3,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import { useRouter } from 'next/navigation';
 import { Tag } from '@/types/tag';
 import { SearchResultItem } from '@/types/search';
 import NextGameLabel from "@/components/TablePage/NextGameLabel";
@@ -26,22 +27,25 @@ const BaseSearchResultCard: React.FC<BaseSearchResultCardProps> = ({
   icon,
   tags
 }) => {
+  const router = useRouter();
+
   const handleClick = (e: React.MouseEvent) => {
+    // Determine the target URL
+    const url = `/${result.type}/${result.id}`;
+
+    // If modifier key is pressed, let the browser handle the navigation behavior (open in new tab)
+    if (e.ctrlKey || e.metaKey || e.shiftKey) {
+      e.stopPropagation();
+      window.open(url, '_blank');
+      return;
+    }
+
     if (onClick) {
-      // If modifier key is pressed, let the browser handle the navigation behavior
-      if (e.ctrlKey || e.metaKey || e.shiftKey) {
-        // Prevent the default onClick behavior
-        e.stopPropagation();
-
-        // Get the URL that would be navigated to
-        const url = `/${result.type}/${result.id}`;
-
-        // Open in new tab/window based on the modifier key
-        window.open(url, '_blank');
-      } else {
-        // Normal click - use the provided onClick handler
-        onClick(result.id);
-      }
+      // Use the provided onClick handler if available
+      onClick(result.id);
+    } else {
+      // Default behavior: Redirect to the detail page
+      router.push(url);
     }
   };
 
@@ -50,7 +54,7 @@ const BaseSearchResultCard: React.FC<BaseSearchResultCardProps> = ({
       elevation={6}
       sx={{ 
         width: '100%', 
-        cursor: onClick ? 'pointer' : 'default',
+        cursor: 'pointer',
         boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.15)',
         transition: 'box-shadow 0.3s ease-in-out',
         '&:hover': {
