@@ -10,14 +10,22 @@ export function generateTagsDisplay(tag: Tag) {
     )
 }
 
-export function renderTagsFromIds(ids: number[] | undefined, legalTags: Tag[]) {
+export function renderTagsFromIds(ids: number[] | undefined, legalTags: Tag[], options: { showEventTag?: boolean, eventTagId?: number } = {}) {
     if (!ids || !legalTags || legalTags.length === 0) { return ( <></>) }
+    const { showEventTag = false, eventTagId } = options;
     const validTags = ids
         .map((id) => legalTags.find((tag) => tag.id === id))
         .filter((tag): tag is Tag => Boolean(tag));
 
-    // Sort tags: "Organizer Run" first, then "Display Only", then others
+    // Sort tags: event tag (if shown) first, then "Organizer Run", then "Display Only", then others
     const sortedTags = [...validTags].sort((a, b) => {
+        // Handle event tag priority if enabled
+        if (showEventTag && eventTagId !== undefined) {
+            if (a.id === eventTagId && b.id === eventTagId) return 0;
+            if (a.id === eventTagId) return -1;
+            if (b.id === eventTagId) return 1;
+        }
+
         const priorityOrder = ["Organizer Run", "Display Only"];
         const aIndex = priorityOrder.indexOf(a.label);
         const bIndex = priorityOrder.indexOf(b.label);

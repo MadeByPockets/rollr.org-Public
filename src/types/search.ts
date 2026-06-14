@@ -19,6 +19,7 @@ export interface SearchResultItem {
   shortDescription?: string;
   fullDescription?: string;
   nextGameTime?: string | Date;
+  eventTagId?: number;
 }
 
 export interface SearchCriteria {

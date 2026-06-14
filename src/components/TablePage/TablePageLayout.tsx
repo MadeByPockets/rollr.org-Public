@@ -10,6 +10,7 @@ import TableActionsBar from "@/components/TablePage/TableActionsBar";
 import type {Player} from "@/types/player";
 import type {TableRecord} from "@/types/tables";
 import type {Tag} from "@/types/tag";
+import { renderTagsFromIds } from "@/components/shared/TagComponents";
 import type {TablePageLayoutProps} from "@/components/TablePage/types";
 import {useModal} from "@/components";
 import EditIcon from '@mui/icons-material/Edit';
@@ -19,7 +20,7 @@ import Chip from "../shared/Chip";
 export function TablePageLayout(props: TablePageLayoutProps) {
     const { hideModal, showModal } = useModal();
 
-    const { allTags, dungeonMaster, onDeleteTable, onJoinWaitlist, onLeaveTable, onSaveDraft, players, table, tableStatus, waitlistPlayers, startWithEditTitle } = props;
+    const { allTags, dungeonMaster, onDeleteTable, onJoinWaitlist, onLeaveTable, onSaveDraft, players, table, tableStatus, waitlistPlayers, startWithEditTitle, eventTagId } = props;
     const canEdit = tableStatus.isOwner;
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const [isTableInEditMode, setIsTableInEditMode] = useState(false);
@@ -186,7 +187,7 @@ export function TablePageLayout(props: TablePageLayoutProps) {
                     </Box>
 
                     <Grid container onClick={editTableDetails} className={`${canEdit ? "cursor-pointer" : ""}`}>
-                        {renderTags(currentTagIds, allTags, canEdit)}
+                        {renderTags(currentTagIds, allTags, canEdit, table.eventTagId || eventTagId)}
                     </Grid>
 
                     <TableActionsBar
@@ -253,17 +254,15 @@ export function TablePageLayout(props: TablePageLayoutProps) {
 const renderTags = function (
     tags: number[] | undefined,
     allTags: Tag[] | undefined,
-    canEdit: boolean
+    canEdit: boolean,
+    eventTagId?: number
 ): JSX.Element {
     if (!tags || !allTags) {
         return <></>;
     }
     return (
         <Grid container spacing={1} sx={{ pb: 1.5 }}>
-            {tags.map((tagId) => {
-                const tag = allTags.find((potentialTag) => tagId === potentialTag.id);
-                return tag ? <Chip tag={tag} key={tag.id}  /> : <></>;
-            })}
+            {renderTagsFromIds(tags, allTags, { showEventTag: true, eventTagId })}
             {(canEdit ? <Button variant={"text"}
                     className="inline-block text-sm px-3 py-1font-outlined m-0.5 font-stretch-105% font-sans"
                     sx={{

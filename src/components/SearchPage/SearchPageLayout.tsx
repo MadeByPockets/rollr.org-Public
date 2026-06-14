@@ -106,6 +106,7 @@ interface SearchPageLayoutProps {
    * If provided, SearchPageLayout will call this when it determines a backend search is needed.
    */
   onSubmit?: (criteria: SearchCriteria) => void;
+  eventTagId?: number;
 
   /**
    * Is the search loading?
@@ -153,7 +154,8 @@ export default function SearchPageLayout({
   validTags,
   allTags,
   searchTypes,
-  isLoading = false
+  isLoading = false,
+  eventTagId
 }: SearchPageLayoutProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -304,6 +306,8 @@ export default function SearchPageLayout({
                   onPacketChange={onPacketChange}
                   onResultClick={onResultClick}
                   tags={allTags}
+                  showEventTag={true}
+                  eventTagId={eventTagId}
                 />
               )}
             </CardContent>

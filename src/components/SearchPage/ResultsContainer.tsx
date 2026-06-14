@@ -14,6 +14,8 @@ interface ResultsContainerProps {
   tags: Tag[];
   pagination?: PaginationData;
   onPacketChange?: (packet: number) => void;
+  showEventTag?: boolean;
+  eventTagId?: number;
 }
 
 /**
@@ -24,7 +26,9 @@ const ResultsContainer: React.FC<ResultsContainerProps> = ({
   onResultClick,
   tags,
   pagination,
-  onPacketChange
+  onPacketChange,
+  showEventTag,
+  eventTagId
 }) => {
   if (!results || results.length === 0 || !results.map) {
     return (
@@ -82,6 +86,8 @@ const ResultsContainer: React.FC<ResultsContainerProps> = ({
                 result={result as SearchResultItem & { type: 'table' }} 
                 onClick={onTableClick}
                 tags={tags}
+                showEventTag={showEventTag}
+                eventTagId={eventTagId}
               />
             );
           case 'event':

@@ -16,4 +16,5 @@ export interface TableRecord {
   numPlayers: number;
   hasDM: boolean;
   nextGameTime?: Date | string;
+  eventTagId?: number;
 }

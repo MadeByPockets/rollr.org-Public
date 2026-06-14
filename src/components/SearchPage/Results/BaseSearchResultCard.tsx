@@ -15,6 +15,8 @@ export interface BaseSearchResultCardProps {
   icon?: React.ReactNode;
   children?: React.ReactNode;
   tags: Tag[];
+  showEventTag?: boolean;
+  eventTagId?: number;
 }
 
 /**
@@ -25,7 +27,9 @@ const BaseSearchResultCard: React.FC<BaseSearchResultCardProps> = ({
   onClick,
   children,
   icon,
-  tags
+  tags,
+  showEventTag,
+  eventTagId
 }) => {
   const router = useRouter();
 
@@ -108,7 +112,7 @@ const BaseSearchResultCard: React.FC<BaseSearchResultCardProps> = ({
 
           {result.tags && result.tags.length > 0 && (
             <Box sx={{ mt: 1, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-              {renderTagsFromIds(result.tags, tags)}
+              {renderTagsFromIds(result.tags, tags, { showEventTag, eventTagId })}
             </Box>
           )}
         </Box>

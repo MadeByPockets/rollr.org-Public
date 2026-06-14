@@ -11,6 +11,8 @@ export interface ScrollableResultsListProps {
   maxHeight?: number | string;
   onResultClick?: (id: number, type: 'player' | 'event' | 'table') => void;
   emptyText?: string;
+  showEventTag?: boolean;
+  eventTagId?: number;
 }
 
 /**
@@ -22,13 +24,21 @@ const ScrollableResultsList: React.FC<ScrollableResultsListProps> = ({
   maxHeight = 400,
   onResultClick,
   emptyText,
+  showEventTag,
+  eventTagId
 }) => {
   const hasResults = Array.isArray(results) && results.length > 0;
 
   return (
     <Box sx={{ maxHeight, overflowY: 'auto', pr: 1 }}>
       {hasResults ? (
-        <ResultsContainer results={results} onResultClick={onResultClick} tags={tags} />
+        <ResultsContainer 
+          results={results} 
+          onResultClick={onResultClick} 
+          tags={tags} 
+          showEventTag={showEventTag}
+          eventTagId={eventTagId}
+        />
       ) : (
         <Box sx={{ textAlign: 'center', py: 2 }}>
           {emptyText || 'No results to display.'}

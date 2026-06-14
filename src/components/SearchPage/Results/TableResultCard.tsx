@@ -12,6 +12,8 @@ import BaseSearchResultCard, { BaseSearchResultCardProps } from './BaseSearchRes
 interface TableResultCardProps extends Omit<BaseSearchResultCardProps, 'onClick'> {
   result: SearchResultItem & { type: 'table' };
   onClick?: (id: number) => void;
+  showEventTag?: boolean;
+  eventTagId?: number;
 }
 
 /**
@@ -21,7 +23,9 @@ interface TableResultCardProps extends Omit<BaseSearchResultCardProps, 'onClick'
 const TableResultCard: React.FC<TableResultCardProps> = ({ 
   result,
   onClick,
-  tags
+  tags,
+  showEventTag,
+  eventTagId
 }) => {
   // Use real capacity and player counts from result when available; no randomization
   const rawCapacity = result.capacity;
@@ -45,7 +49,14 @@ const TableResultCard: React.FC<TableResultCardProps> = ({
   );
 
   return (
-    <BaseSearchResultCard result={result} onClick={onClick} icon={tableIcon} tags={tags}>
+    <BaseSearchResultCard 
+      result={result} 
+      onClick={onClick} 
+      icon={tableIcon} 
+      tags={tags}
+      showEventTag={showEventTag}
+      eventTagId={eventTagId}
+    >
       <Box sx={{ mb: 2 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
           <Typography variant="body2">

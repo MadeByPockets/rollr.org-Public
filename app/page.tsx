@@ -136,6 +136,7 @@ export default function Home() {
           <ul className="list-disc list-inside text-sm sm:text-base leading-7 mt-2 space-y-1">
             <li><code className="px-1 py-0.5 rounded bg-black/5 dark:bg-white/10">components/TablePage</code> — layout, actions bar, and player/table cards.</li>
             <li><code className="px-1 py-0.5 rounded bg-black/5 dark:bg-white/10">components/SearchPage</code> — result cards and related UI.</li>
+            <li><code className="px-1 py-0.5 rounded bg-black/5 dark:bg-white/10">components/shared/TagComponents</code> — central logic for tag rendering and priority sorting (Event Tag > Organizer Run > Display Only).</li>
           </ul>
           <h3 id="structure-mocks" className="text-lg font-medium mt-6">src/mocks</h3>
           <p className="text-sm sm:text-base leading-7 mt-2">

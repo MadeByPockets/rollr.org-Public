@@ -8,6 +8,8 @@ export interface TablesScrollableListProps {
   tags: Tag[];
   maxHeight?: number | string;
   onResultClick?: (id: number) => void;
+  showEventTag?: boolean;
+  eventTagId?: number;
 }
 
 /**
@@ -18,6 +20,8 @@ const TablesScrollableList: React.FC<TablesScrollableListProps> = ({
   tags,
   maxHeight,
   onResultClick,
+  showEventTag,
+  eventTagId
 }) => {
   const tables = (results || []).filter((r): r is SearchResultItem & { type: 'table' } => r?.type === 'table');
   const handleClick = (id: number) => onResultClick?.(id);
@@ -30,6 +34,8 @@ const TablesScrollableList: React.FC<TablesScrollableListProps> = ({
       onResultClick={(id, type) => {
         if (type === 'table') handleClick(id);
       }}
+      showEventTag={showEventTag}
+      eventTagId={eventTagId}
     />
   );
 };

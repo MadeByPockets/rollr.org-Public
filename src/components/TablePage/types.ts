@@ -31,4 +31,5 @@ export interface TablePageLayoutProps {
   onJoinWaitlist?: () => void | Promise<void>;
   onLeaveTable?: () => void | Promise<void>;
   onDeleteTable?: () => void | Promise<void>;
+  eventTagId?: number;
 }
