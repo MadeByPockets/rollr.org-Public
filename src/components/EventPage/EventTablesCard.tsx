@@ -12,6 +12,8 @@ export interface EventTablesCardProps {
   tags: Tag[];
   maxHeight?: number | string;
   onTableClick?: (id: number) => void;
+  showEventTag?: boolean;
+  eventTagId?: number;
 }
 
 /**
@@ -22,13 +24,22 @@ const EventTablesCard: React.FC<EventTablesCardProps> = ({
   tags,
   maxHeight = 450,
   onTableClick,
+  showEventTag,
+  eventTagId,
 }) => {
   return (
     <Card elevation={6} sx={{ width: '100%', boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.15)' }}>
       <CardHeader title="Tables" />
       <Divider />
       <CardContent>
-        <TablesScrollableList results={tables} tags={tags} maxHeight={maxHeight} onResultClick={onTableClick} />
+        <TablesScrollableList 
+          results={tables} 
+          tags={tags} 
+          maxHeight={maxHeight} 
+          onResultClick={onTableClick} 
+          showEventTag={showEventTag}
+          eventTagId={eventTagId}
+        />
       </CardContent>
     </Card>
   );

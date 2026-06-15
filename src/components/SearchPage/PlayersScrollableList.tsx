@@ -21,16 +21,15 @@ const PlayersScrollableList: React.FC<PlayersScrollableListProps> = ({
   onResultClick,
 }) => {
   const players = (results || []).filter((r): r is SearchResultItem & { type: 'player' } => r?.type === 'player');
-  const handleClick = (id: number) => onResultClick?.(id);
 
   return (
     <ScrollableResultsList
       results={players}
       tags={tags}
       maxHeight={maxHeight}
-      onResultClick={(id, type) => {
-        if (type === 'player') handleClick(id);
-      }}
+      onResultClick={onResultClick ? (id, type) => {
+        if (type === 'player') onResultClick(id);
+      } : undefined}
     />
   );
 };

@@ -24,16 +24,15 @@ const TablesScrollableList: React.FC<TablesScrollableListProps> = ({
   eventTagId
 }) => {
   const tables = (results || []).filter((r): r is SearchResultItem & { type: 'table' } => r?.type === 'table');
-  const handleClick = (id: number) => onResultClick?.(id);
 
   return (
     <ScrollableResultsList
       results={tables}
       tags={tags}
       maxHeight={maxHeight}
-      onResultClick={(id, type) => {
-        if (type === 'table') handleClick(id);
-      }}
+      onResultClick={onResultClick ? (id, type) => {
+        if (type === 'table') onResultClick(id);
+      } : undefined}
       showEventTag={showEventTag}
       eventTagId={eventTagId}
     />

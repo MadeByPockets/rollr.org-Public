@@ -9,6 +9,8 @@ interface PlayerResultCardProps extends Omit<BaseSearchResultCardProps, 'onClick
   result: SearchResultItem & { type: 'player' }
   tags: Tag[];
   onClick?: (id: number) => void;
+  showEventTag?: boolean;
+  eventTagId?: number;
 }
 
 /**
@@ -18,7 +20,9 @@ interface PlayerResultCardProps extends Omit<BaseSearchResultCardProps, 'onClick
 const PlayerResultCard: React.FC<PlayerResultCardProps> = ({ 
   result,
   onClick,
-  tags
+  tags,
+  showEventTag,
+  eventTagId
 }) => {
   // Get the first letter of the username for the avatar fallback
   const firstLetter = result.title.charAt(0).toUpperCase();
@@ -59,7 +63,14 @@ const PlayerResultCard: React.FC<PlayerResultCardProps> = ({
   );
 
   return (
-    <BaseSearchResultCard result={result} onClick={onClick} icon={playerIcon} tags={tags}>
+    <BaseSearchResultCard 
+      result={result} 
+      onClick={onClick} 
+      icon={playerIcon} 
+      tags={tags}
+      showEventTag={showEventTag}
+      eventTagId={eventTagId}
+    >
       {/* No additional content needed after removing join date */}
     </BaseSearchResultCard>
   );

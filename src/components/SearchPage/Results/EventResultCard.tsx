@@ -10,6 +10,8 @@ import BaseSearchResultCard, { BaseSearchResultCardProps } from './BaseSearchRes
 interface EventResultCardProps extends Omit<BaseSearchResultCardProps, 'onClick'> {
   result: SearchResultItem & { type: 'event' };
   onClick?: (id: number) => void;
+  showEventTag?: boolean;
+  eventTagId?: number;
 }
 
 /**
@@ -19,7 +21,9 @@ interface EventResultCardProps extends Omit<BaseSearchResultCardProps, 'onClick'
 const EventResultCard: React.FC<EventResultCardProps> = ({ 
   result,
   onClick,
-  tags
+  tags,
+  showEventTag,
+  eventTagId
 }) => {
   // Format the date for display
   const formatDate = (dateString: string) => {
@@ -52,7 +56,14 @@ const EventResultCard: React.FC<EventResultCardProps> = ({
   );
 
   return (
-    <BaseSearchResultCard result={result} onClick={onClick} icon={eventIcon} tags={tags}>
+    <BaseSearchResultCard 
+      result={result} 
+      onClick={onClick} 
+      icon={eventIcon} 
+      tags={tags}
+      showEventTag={showEventTag}
+      eventTagId={eventTagId}
+    >
       <Box sx={{ mb: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
           <CalendarTodayIcon sx={{ mr: 1, color: 'primary.main' }} />

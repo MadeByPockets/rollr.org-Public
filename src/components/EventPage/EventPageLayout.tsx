@@ -47,7 +47,12 @@ export default function EventPageLayout({
                         />
                     </Grid>
                     <Grid size={{ xs: 12, md: 8 }} spacing={3} padding={3}>
-                        <EventTablesCard tables={tables} tags={allTags} />
+                        <EventTablesCard 
+                            tables={tables} 
+                            tags={allTags} 
+                            showEventTag={true}
+                            eventTagId={mergedEvent.id}
+                        />
                     </Grid>
                 </Grid>
                 <Grid />

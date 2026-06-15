@@ -77,6 +77,8 @@ const ResultsContainer: React.FC<ResultsContainerProps> = ({
                 result={result as SearchResultItem & { type: 'player' }} 
                 onClick={onPlayerClick}
                 tags={tags}
+                showEventTag={showEventTag}
+                eventTagId={eventTagId}
               />
             );
           case 'table':
@@ -97,6 +99,8 @@ const ResultsContainer: React.FC<ResultsContainerProps> = ({
                 result={result as SearchResultItem & { type: 'event' }} 
                 onClick={onEventClick}
                 tags={tags}
+                showEventTag={showEventTag}
+                eventTagId={eventTagId}
               />
             );
           default:
